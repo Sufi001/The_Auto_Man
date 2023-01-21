@@ -1,0 +1,329 @@
+﻿@model Inventory.ViewModels.Journal.JournalViewModel
+@*<link href="~/AdminLte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css" rel="stylesheet" />*@
+<style>
+.callout, .card, .info-box, .mb-3, .my-3, .small-box {
+        margin-bottom: 0.2rem !important;
+    }
+    .card-header {
+        padding: .50rem 1.0rem;
+        padding-top: 0.25rem;
+        padding-right: 1.0rem;
+        padding-bottom: 0.0rem;
+        padding-left: 1.25rem;
+    }
+
+    select:focus, input:focus {
+        outline: none !important;
+        border-color: #719ECE !important;
+        box-shadow: 0 0 5px #719ECE !important;
+    }
+
+    #New, #list, #Sumbit {
+        width: 90px;
+        margin-left: 3px;
+    }
+     #Print {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #Product {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    table thead tr th {
+        color: white;
+    }
+</style>
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        @Html.EditorFor(model => model.Doc_Seq, new { htmlAttributes = new { @class = "form-control", @id = "Doc_Seq", @style = "display:none" } })
+
+        <div class="row was-validated" id="form" >
+            @*<div class="form-group">
+                <div class="row">
+                    <div class="col-12">
+                        <input type="text" class="form-control datetimepicker-input" id="datetimepicker5" data-toggle="datetimepicker" data-target="#datetimepicker5"/>
+                    </div>
+                </div>
+            </div>*@
+
+            <div class="col-12">
+                <!-- Custom Tabs -->
+                <div class="card">
+                    <div class="card-header d-flex p-0" style="background-color:#3498DB">
+                        <h2 class="card-title p-3"><b style="color:white">Invoice</b></h2>
+                        <ul class="nav nav-pills ml-auto p-2">
+                            <li><button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="New" class="btn  fa-pull-right" onclick="location.href='@Url.Action("ReservationInvoice", "Journal", new { target="_blank" })'">New</button></li>
+                            <li><input style="border:1px solid; background-color:#3985d2;color:white" type="button" value="Save" id="Sumbit" class="btn fa-pull-right" /></li>
+                            <li><button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="list" class="btn  fa-pull-right" onclick="location.href='@Url.Action("List", "Journal", new { viewName="InvoiceList" })'">List</button></li>
+                            <li><input style="border:1px solid; background-color:#3985d2;color:white" type="button" value="Print" id="Print" onclick="Report()" class="btn fa-pull-right"/></li>
+                        </ul>
+                    </div><!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <div class="form-group has-float-label">
+                                    @*@Html.EditorFor(model => model.VoucherDate, new { htmlAttributes = new { @class = "form-control datetimepicker-input", @id = "VoucherDate", @placeholder = "Voucher Date", @type = "text", @data_toggle = "datetimepicker", @data_target = "#VoucherDate" } })*@
+                                    @Html.EditorFor(model => model.VoucherDate, new { htmlAttributes = new { @Value = Model.VoucherDate.Value.ToString("yyyy-MM-dd"), @class = "form-control ", @id = "VoucherDate", @required = "required", @placeholder = "Voucher Date", @type = "date" } })
+                                    <label for="VoucherDate">Voucher Date</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <div class="form-group has-float-label">
+                                    @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control", @id = "Amount", @required = "required", @placeholder = "Amount",@onchange="GetAmountInWords()", @type = "number", autocomplete = "off" } })
+                                    <label for="Amount">Amount</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <div class="form-group has-float-label">
+                                    @Html.EditorFor(model => model.ReceivedFrom, new { htmlAttributes = new { @class = "form-control ", @id = "ReceivedFrom", @required = "required", @placeholder = "Received From", @type = "text", autocomplete = "off" } })
+                                    <label for="ReceivedFrom">Received From</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <div class="form-group has-float-label">
+                                    @Html.DropDownListFor(model => model.Doc_Type, new SelectList(Model.docTypeList, "value", "text"), "Select Doc Type", new { @class = "form-control", @id = "ddl_Doc_Type", @name = "ddl_Doc_Type", @required = "required " })
+                                    <label for="ddl_Doc_Type">Doc Type</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <div class="form-grou has-float-label">
+                                    @Html.EditorFor(model => model.BankName, new { htmlAttributes = new { @class = "form-control", @id = "BankName", @placeholder = "Bank Name", @name = "BankName", @type = "text", autocomplete = "off" } })
+                                    <label for="BankName">Bank Name</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <div class="form-group has-float-label">
+                                    @*@Html.EditorFor(model => model.Dated, new { htmlAttributes = new { @Value = Model.Dated.Value.ToString("dd/MM/yyyy"), @class = "form-control datetimepicker-input", @id = "Dated", @placeholder = "Dated", @type = "text", @data_toggle = "datetimepicker", @data_target = "#Dated" } })*@
+                                    @Html.EditorFor(model => model.Dated, new { htmlAttributes = new { @Value = Model.Dated.Value.ToString("yyyy/MM/dd"), @class = "form-control", @id = "Dated", @placeholder = "Dated", @type = "text", onfocus = "(this.type='date')" , autocomplete = "off" } })
+                                    <label for="Dated">Dated</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group has-float-label">
+                                    @Html.EditorFor(model => model.AmountInWords, new { htmlAttributes = new { @class = "form-control", @id = "AmountInWords", @placeholder = "Amount In Words", @type = "text", autocomplete = "off", @readonly= "readonly" } })
+                                    <label for="AmountInWords">Amount In Words</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <div class="form-group has-float-label">
+                                    @Html.EditorFor(model => model.PaymentPurpose, new { htmlAttributes = new { @class = "form-control", @id = "PaymentPurpose", @placeholder = "Payment Purpose", @type = "text", autocomplete = "off" } })
+                                    <label for="PaymentPurpose">Payment Purpose</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <div class="form-group has-float-label">
+                                    @Html.EditorFor(model => model.Company, new { htmlAttributes = new { @class = "form-control", @id = "Company", @placeholder = "Company", @type = "text", autocomplete = "off" } })
+                                    <label for="Company">Company</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <div class="form-group has-float-label">
+                                    @Html.DropDownListFor(model => model.PaymentMode, new SelectList(Model.TransactionMode, "value", "text"), "Select Payment Mode", new { @class = "form-control", @id = "ddl_PaymentMode", @name = "ddl_PaymentMode", @required = "required "@*,@onchange="ShowChequeBox(this)"*@})
+                                    <label for="ddl_PaymentMode">Payment Mode</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <div class="form-group has-float-label">
+                                    @Html.EditorFor(model => model.ChequeNo, new { htmlAttributes = new { @class = "form-control", @id = "ChequeNo", @placeholder = "Cheque No", @type = "text", autocomplete = "off"@*, @style = "display:none"*@ } })
+                                    <label for="ChequeNo">Cheque No</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group has-float-label">
+                                    @Html.EditorFor(model => model.Narration, new { htmlAttributes = new { @class = "form-control", @id = "Narration", @placeholder = "Narration", @type = "text", autocomplete = "off"} })
+                                    <label for="Narration">Narration</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <div class="form-group has-float-label">
+                                    @Html.DropDownListFor(m => m.RoomCode, new SelectList(ViewBag.Reservations, "ROOM_CODE", "ROOM_NAME"), "Select Room Type", new { @class = "form-control", @id = "ddl_ROOM_TYPE", @name = "ddl_ROOM_TYPE"})
+                                    <label for="ddl_ROOM_TYPE">ROOM TYPE</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12 col-xs-12">
+            <div class="modal fade" id="myReportModal" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <iframe name="DetailFrame" id="DetailFrame" src="about:blank" class="col-xs-12" style="height:600px"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+@section scripts{
+    <script src="~/AdminLte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/AdminLte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+@*<script src="~/AdminLte/plugins/jQuery-Floating-Placeholder-Text-Plugin-Placeholder-Label/src/jquery.placeholder.label.js"></script>
+<script src="~/AdminLte/plugins/moment/moment.min.js"></script>
+<script src="~/AdminLte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.js"></script>*@
+    <script>
+        @*$(document).ready(function () {
+        });
+        @if (Model.VoucherDate.HasValue) {
+            var date = Model.VoucherDate.Value.ToString("dd/MM/yyyy");
+        }
+         @if (Model.Dated.HasValue)
+         {
+             var date = Model.Dated.Value.ToString("dd/MM/yyyy");
+         }*@
+        //$('input[placeholder]').placeholderLabel({
+        //    // placeholder color
+        //    placeholderColor: "black",
+        //    // label color
+        //    labelColor: "black",
+        //    // size of label
+        //    labelSize: "10px",
+        //    // font style
+        //    fontStyle: "normal", 
+        //    // uses border color
+        //    useBorderColor: true, 
+        //    // displayed in the input
+        //    inInput: true, 
+        //    // time to move
+        //    timeMove: 100 
+        //});
+
+        @if (ViewBag.Update != null && ViewBag.Update)
+        {
+            @:$('#ddl_Doc_Type').attr('readonly', 'readonly');
+                        }
+        //$("#ProductTable").DataTable();
+        $("#Sumbit").click(function () {
+
+            var doc_Seq = $('#Doc_Seq').val();
+            var roomCode = $('#ddl_ROOM_TYPE').val();
+            var roomName = $('#ddl_ROOM_TYPE option:selected').text();
+            var doc_Type = $('#ddl_Doc_Type').val();
+            var narration = $('#Narration').val();
+            var voucherDate = $('#VoucherDate').val();
+            var amount = $('#Amount').val();
+            var receivedFrom = $('#ReceivedFrom').val();
+            var bankName = $('#BankName').val();
+            var dated = $('#Dated').val();
+            var amountInWords = $('#AmountInWords').val();
+            var paymentPurpose = $('#PaymentPurpose').val();
+            var company = $('#Company').val();
+            var chequeNo = $('#ChequeNo').val();
+            var paymentMode = $('#ddl_PaymentMode').val();
+           
+            if (VoucherDate == null || VoucherDate == "") {
+                toastr.error("Select Voucher Date");
+                return;
+            }
+            else if (Amount == null || Amount == "") {
+                toastr.error("Enter Amount");
+                return;
+            }
+            else if (ReceivedFrom == null || ReceivedFrom == "") {
+                toastr.error("Received From Field Is Required");
+                return;
+            }
+            else if (paymentMode == null || paymentMode == "") {
+                toastr.error("Select Payment Mode e.g Cash or Bank");
+                return;
+            }
+            else if (paymentMode == "cheque" && (chequeNo == null || chequeNo == "")) {
+                toastr.error("Enter Cheque Number");
+                return;
+            }
+            else if (doc_Type == null || doc_Type == "") {
+                toastr.error("Select Payment Document Type");
+                return;
+            }
+            else {
+                VM = {};
+                VM.Doc_Seq = doc_Seq;
+                VM.Doc_Type = doc_Type;
+                VM.VoucherDate = voucherDate;
+                VM.Amount = amount;
+                VM.ReceivedFrom = receivedFrom;
+                VM.BankName = bankName;
+                VM.Dated = dated;
+                VM.AmountInWords = amountInWords;
+                VM.PaymentPurpose = paymentPurpose;
+                VM.Company = company;
+                VM.ChequeNo = chequeNo;
+                VM.PaymentMode = paymentMode;
+                VM.Narration = narration;
+                VM.RoomCode = roomCode;
+                VM.RoomName = roomName;
+                debugger;
+                $.ajax({
+                    url: "/Journal/Save",
+                    method: "post",
+                    data: VM
+                }).done(function (obj) {
+                    //if (obj == "OK") {
+                    //    setTimeout(function () { window.location.href = "/Journal/Index"; }, 1500);
+                    //}
+                    if (obj == "Ex") {
+                        toastr.error('Invalid Query');
+                    }
+                    else {
+                        toastr.success('Data Save Successfully');
+                        $('#Doc_Seq').val(obj);
+                    }
+                }).fail(function () {
+                    toastr.error('Data not saved.');
+                });
+            }
+        });
+        function Report() {
+            var doc_Seq = $('#Doc_Seq').val();
+            if (doc_Seq != "" || doc_Seq != null) {
+                var DetailUrl = "/Reports/Invoice?Doc_No=" + doc_Seq;
+                $('#DetailFrame').attr('src', DetailUrl);
+                $("#myReportModal").modal();
+            }
+        }
+
+        function GetAmountInWords() {
+            var amount = $('#Amount').val();
+            if (amount != null && amount != "") {
+                $.ajax({
+                    url: "/Journal/AmountInWords/?amount=" + amount,
+                    method: "get",
+                }).done(function (obj) {
+                    if (obj == "Ex") {
+                        toastr.error('Conversion Failed');
+                    }
+                    else {
+                        $('#AmountInWords').val(obj);
+                    }
+                }).fail(function () {
+                    toastr.error('Conversion Call Fail');
+                });
+            }
+            
+        }
+        //function ShowChequeBox(e) {
+        //    if (e.value == "cheque") {
+        //        $("#ChequeNo").show();
+        //    }
+        //    else {
+        //        $("#ChequeNo").hide();
+        //    }
+        //}
+        
+    </script>
+}

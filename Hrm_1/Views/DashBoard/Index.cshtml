@@ -1,0 +1,961 @@
+﻿@model Inventory.ViewModels.DashboardViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    .lnk:hover {
+        cursor: pointer;
+    }
+
+    .btnCustom {
+        width: 15.666667%;
+        padding: 27px 7.5px;
+        margin: 0 0 10px 10px;
+        height: 100px;
+        font-size: medium;
+    }
+
+    .cntr {
+        text-align: center;
+    }
+
+    .info-box-icon {
+        border-right: solid 1px white;
+    }
+
+    @@media only screen and (min-width:782px) {
+        .my-chart {
+            height: 230px;
+            min-height: 230px;
+        }
+    }
+
+    @@media only screen and (min-width:400px) and (max-width:781px) {
+        .my-chart {
+            height: 150px;
+            min-height: 150px;
+        }
+    }
+
+    @@media only screen and (max-width:399px) {
+        .my-chart {
+            height: 100px;
+            min-height: 100px;
+        }
+    }
+</style>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    @*<section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Flot Charts</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Flot</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>*@
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+
+            <!--Info Tabs-->
+            <div class="row" style="margin-top:20px">
+                @*<div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-red">
+                            <span class="info-box-icon"><i class="fas fa-comments"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Today Sale</span>
+                                <span class="info-box-number">@Model.TodaySale</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>*@
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 ">
+                    <div class="info-box bg-gradient-blue">
+                        <span class="info-box-icon lnk"><i  onclick="window.location = '/Reports/Sales'" class="fas fa-dollar-sign"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text cntr text-bold">Today Sale</span>
+                            <span class="info-box-number mb-3">VR-BT:<span style="float:right">    @Model.TodaySaleB1</span></span>
+                            <span class="info-box-number mb-3">VR-JT:<span style="float:right">    @Model.TodaySaleB2</span></span>
+                            <span class="info-box-number mb-2">VR-BNU:<span style="float:right">    @Model.TodaySaleB3</span></span>
+                            <span class="info-box-number mb-2" style="border-top:1px solid black">Total:<span style="float:right"> @Model.TodaySaleTotal</span></span>
+                            @*<div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>*@
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                @*<div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-warning">
+                            <span class="info-box-icon"><i class="far fa-calendar-alt"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Yesderday Sale</span>
+                                <span class="info-box-number">@Model.YesterdaySale</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>*@
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" >
+                    <div class="info-box bg-gradient-warning">
+                        <span class="info-box-icon lnk"><i class="fas fa-dollar-sign" onclick="window.location = '/Reports/Sales'"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text cntr text-bold">Yesterday Sale</span>
+                            <span class="info-box-number mb-3">VR-BT: <span style="float:right">   @Model.YesterdaySaleB1</span></span>
+                            <span class="info-box-number mb-3">VR-JT: <span style="float:right">   @Model.YesterdaySaleB2</span></span>
+                            <span class="info-box-number mb-2">VR-BNU: <span style="float:right">   @Model.YesterdaySaleB3</span></span>
+                            <span class="info-box-number mb-2" style="border-top:1px solid black">Total:<span style="float:right"> @Model.YesterdaySaleTotal</span></span>
+                            @*<div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>*@
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box bg-gradient-lime">
+                        <span class="info-box-icon lnk"><i class="fas fa-dollar-sign" onclick="window.location = '/Reports/Sales'"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text cntr text-bold">Current Month Sale</span>
+                            <span class="info-box-number mb-3">VR-BT: <span style="float:right">   @Model.CurrentMonthSaleB1</span></span>
+                            <span class="info-box-number mb-3">VR-JT: <span style="float:right">   @Model.CurrentMonthSaleB2</span></span>
+                            <span class="info-box-number mb-2">VR-BNU: <span style="float:right">   @Model.CurrentMonthSaleB3</span></span>
+                            <span class="info-box-number mb-2" style="border-top:1px solid black">Total:<span style="float:right"> @Model.CurrentMonthSale</span></span>
+                            @*<div class="progress">
+                        <div class="progress-bar" style="width: 70%"></div>
+                    </div>*@
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box bg-purple">
+                        <span class="info-box-icon lnk"><i class="fas fa-dollar-sign" onclick="window.location = '/Reports/Sales'"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text cntr text-bold">Previous Month Sale</span>
+                            <span class="info-box-number mb-3">VR-BT: <span style="float:right">   @Model.PreviousMonthSaleB1</span></span>
+                            <span class="info-box-number mb-3">VR-JT: <span style="float:right">   @Model.PreviousMonthSaleB2</span></span>
+                            <span class="info-box-number mb-2">VR-BNU: <span style="float:right">   @Model.PreviousMonthSaleB3</span></span>
+                            <span class="info-box-number mb-2" style="border-top:1px solid black">Total:<span style="float:right"> @(Convert.ToInt32(Model.PreviousMonthSaleB1) + Convert.ToInt32(Model.PreviousMonthSaleB2) + Convert.ToInt32(Model.PreviousMonthSaleB3)) </span></span>
+                            @*<div class="progress">
+                        <div class="progress-bar" style="width: 70%"></div>
+                    </div>*@
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                @*<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 ">
+                    <div class="info-box bg-gradient-red">
+                        <span class="info-box-icon lnk"><i onclick="window.location = '/Reports/Sales'" class="fas fa-dollar-sign"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text cntr text-bold">Today Bill Void</span>
+                            <span class="info-box-number mb-3">B1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.BillVoidQtyB1 &nbsp;&nbsp;:<span style="float:right"> @Model.BillVoidValueB1    </span></span></span>
+                            <span class="info-box-number mb-3">B2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.BillVoidQtyB2 &nbsp;&nbsp;:<span style="float:right"> @Model.BillVoidValueB2   </span></span></span>
+                            <span class="info-box-number mb-2">B3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.BillVoidQtyB3 &nbsp;&nbsp;:<span style="float:right"> @Model.BillVoidValueB3   </span></span></span>
+                            <span class="info-box-number mb-2" style="border-top:1px solid black">Total:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@(Convert.ToInt32(Model.BillVoidQtyB1) + Convert.ToInt32(Model.BillVoidQtyB2) + Convert.ToInt32(Model.BillVoidQtyB3))  &nbsp;&nbsp;&nbsp;&nbsp;:<span style="float:right">@(Convert.ToInt32(Model.BillVoidValueB1) + Convert.ToInt32(Model.BillVoidValueB2) + Convert.ToInt32(Model.BillVoidValueB3))</span></span></span>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 ">
+                    <div class="info-box bg-gradient-indigo">
+                        <span class="info-box-icon lnk"><i onclick="window.location = '/Reports/Sales'" class="fas fa-dollar-sign"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text cntr text-bold">Today Item Void</span>
+                            <span class="info-box-number mb-3">B1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.ItemVoidQtyB1 &nbsp;&nbsp;:<span style="float:right"> @Model.ItemVoidValueB1   </span></span></span>
+                            <span class="info-box-number mb-3">B2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.ItemVoidQtyB2 &nbsp;&nbsp;:<span style="float:right"> @Model.ItemVoidValueB2   </span></span></span>
+                            <span class="info-box-number mb-2">B3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.ItemVoidQtyB3 &nbsp;&nbsp;:<span style="float:right"> @Model.ItemVoidValueB3   </span></span></span>
+                            <span class="info-box-number mb-2" style="border-top:1px solid black">
+                                Total:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@(Convert.ToInt32(Model.ItemVoidQtyB1) + Convert.ToInt32(Model.ItemVoidQtyB2) + Convert.ToInt32(Model.ItemVoidQtyB3)) &nbsp;&nbsp;&nbsp;&nbsp;:<span style="float:right">@(Convert.ToInt32(Model.ItemVoidValueB1) + Convert.ToInt32(Model.ItemVoidValueB2) + Convert.ToInt32(Model.ItemVoidValueB3))</span></span>
+                            </span>
+                            <div class="progress">
+                        <div class="progress-bar" style="width: 70%"></div>
+                    </div>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>*@
+                @*<div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-info">
+                            <span class="info-box-icon"><i class="far fa-bookmark"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Today Purchase</span>
+                                <span class="info-box-number">@Model.TodayPurchase</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 50%"></div>
+                                </div>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-maroon">
+                            <span class="info-box-icon"><i class="far fa-bookmark"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text text-sm">Yesterday Purchase</span>
+                                <span class="info-box-number">@Model.YesterdayPurchase</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 50%"></div>
+                                </div>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>*@
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" >
+                    <div class="info-box bg-gradient-info heightbg" style="min-height:155px;">
+                        <span class="info-box-icon lnk"><i class="fas fa-store" onclick="window.location = '/Reports/Purchase'"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text cntr text-bold">Purchase</span>
+                            <span class="info-box-number mb-3">
+                                Today:     <span style="float:right">@Model.TodayPurchase</span>
+                            </span>
+                            <span class="info-box-number mb-3">
+                                Yesterday: <span style="float:right">@Model.YesterdayPurchase</span>
+                            </span>
+                            <span class="info-box-number mb-2">
+                                Monthly:   <span style="float:right">@Model.MonthlyPurchase</span>
+                            </span>
+                                        @*<div class="progress">
+                                                <div class="progress-bar" style="width: 50%"></div>
+                                            </div>*@
+                        </div>
+
+                        <!-- /.info-box-content -->
+                    </div>
+
+                </div>
+                @*<div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-success">
+                            <span class="info-box-icon"><i class="far fa-calendar-alt"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Net Payable</span>
+                                <span class="info-box-number">@Model.NetPayable</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-teal">
+                            <span class="info-box-icon"><i class="far fa-calendar-alt"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Net Receiveable</span>
+                                <span class="info-box-number">@Model.NetReceiveable</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>*@
+                @*<div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-success">
+                            <div class="info-box-content">
+                                <span class="info-box-text cntr">Net Payable</span>
+                                <span class="info-box-number mb-4">@Model.NetPayable</span>
+
+
+
+                                <span class="info-box-text cntr">Net Receiveable</span>
+                                <span class="info-box-number mb-3">@Model.NetReceiveable</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>*@
+
+                @*<div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-dark">
+                            <span class="info-box-icon"><i class="far fa-calendar-alt"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Today Payments</span>
+                                <span class="info-box-number">@Model.TodayPayment</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-indigo">
+                            <span class="info-box-icon"><i class="far fa-calendar-alt"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Today Receipts</span>
+                                <span class="info-box-number">@Model.TodayReceipt</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>*@
+
+
+                @*<div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-dark">
+                            <div class="info-box-content">
+                                <span class="info-box-text cntr">Today Payments</span>
+                                <span class="info-box-number mb-4">@Model.TodayPayment</span>
+
+                                <span class="info-box-text cntr">Today Receipts</span>
+                                <span class="info-box-number mb-3">@Model.TodayReceipt</span>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>*@
+
+
+
+
+
+                @*<div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-olive">
+                            <span class="info-box-icon"><i class="far fa-calendar-alt"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Stock</span>
+                                <span class="info-box-number">@Model.Stock</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>*@
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" >
+                    <div class="info-box bg-gradient-olive heightbg" style="min-height:155px;">
+                        <span class="info-box-icon lnk"><i class="far fa-bookmark" onclick="window.location='/Reports/Inventory'"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text cntr text-bold">Current Stock</span>
+                            <span class="info-box-number mb-2">HD:&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.StockQty &nbsp;&nbsp;:<span style="float:right">@Model.StockValue</span></span></span>
+                            <span class="info-box-number mb-2">B1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.StockQtyB1 &nbsp;&nbsp;:<span style="float:right">@Model.StockValueB1</span></span></span>
+                            <span class="info-box-number mb-2">B2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.StockQtyB2 &nbsp;&nbsp;:<span style="float:right">@Model.StockValueB2</span></span></span>
+                            <span class="info-box-number">B3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.StockQtyB3 &nbsp;&nbsp;:<span style="float:right">@Model.StockValueB3</span></span></span>
+                            @*<div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>*@
+
+                        </div>
+                    </div>
+                </div>
+
+                @*<div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-orange">
+                            <span class="info-box-icon"><i class="far fa-thumbs-up"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Today Receovery</span>
+                                <span class="info-box-number">@Model.TodayRecovery</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-blue">
+                            <span class="info-box-icon"><i class="far fa-calendar-alt"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Today Order</span>
+                                <span class="info-box-number">@Model.TodayOrder</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>*@
+
+                @*<div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-fuchsia">
+                            <span class="info-box-icon"><i class="far fa-calendar-alt"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text text-sm">Monthly Purchase</span>
+                                <span class="info-box-number">@Model.MonthlyPurchase</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>*@
+
+           
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 ">
+                    <div class="info-box bg-gradient-purple">
+                        <span class="info-box-icon lnk"><i onclick="window.location = '/Reports/Sales'" class="fas fa-dollar-sign"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text cntr text-bold">Stock Transfer</span>
+                            <span class="info-box-number mb-2">HD:&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.StockTransferQty   &nbsp;&nbsp;:<span style="float:right">@Model.StockTransferValue</span></span></span>
+                            <span class="info-box-number mb-2">B1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.StockTransferQtyB1 &nbsp;&nbsp;:<span style="float:right">@Model.StockTransferValueB1</span></span></span>
+                            <span class="info-box-number mb-2">B2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.StockTransferQtyB2 &nbsp;&nbsp;:<span style="float:right">@Model.StockTransferValueB2</span></span></span>
+                            <span class="info-box-number">B3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.StockTransferQtyB3 &nbsp;&nbsp;:<span style="float:right"> @Model.StockTransferValueB3</span></span></span>
+                            <span class="info-box-number mb-2" style="border-top:1px solid black">Total:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@(Convert.ToInt32(Model.StockTransferQty) + Convert.ToInt32(Model.StockTransferQtyB1) + Convert.ToInt32(Model.StockTransferQtyB2) + Convert.ToInt32(Model.StockTransferQtyB3)) &nbsp;&nbsp;&nbsp;&nbsp;:<span style="float:right">@(Convert.ToInt32(Model.StockTransferValue) + Convert.ToInt32(Model.StockTransferValueB1) + Convert.ToInt32(Model.StockTransferValueB2) + Convert.ToInt32(Model.StockTransferValueB3))</span></span>
+                            @*<div class="progress">
+                        <div class="progress-bar" style="width: 70%"></div>
+                    </div>*@
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 ">
+                    <div class="info-box bg-gradient-maroon">
+                        <span class="info-box-icon lnk"><i onclick="window.location = '/Reports/Sales'" class="fas fa-dollar-sign"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text cntr text-bold">Stock Receive</span>
+                            <span class="info-box-number mb-2">HD:&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.StockReceiveQty   &nbsp;&nbsp;:<span style="float:right">@Model.StockReceiveValue</span></span></span>
+                            <span class="info-box-number mb-2">B1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.StockReceiveQtyB1 &nbsp;&nbsp;:<span style="float:right">@Model.StockReceiveValueB1</span></span></span>
+                            <span class="info-box-number mb-2">B2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.StockReceiveQtyB2 &nbsp;&nbsp;:<span style="float:right">@Model.StockReceiveValueB2</span></span></span>
+                            <span class="info-box-number">B3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@Model.StockReceiveQtyB3 &nbsp;&nbsp;:<span style="float:right"> @Model.StockReceiveValueB3</span></span></span>
+                            <span class="info-box-number mb-2" style="border-top:1px solid black">
+                                Total:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@(Convert.ToInt32(Model.StockReceiveQty) + Convert.ToInt32(Model.StockReceiveQtyB1) + Convert.ToInt32(Model.StockReceiveQtyB2) + Convert.ToInt32(Model.StockReceiveQtyB3)) &nbsp;&nbsp;&nbsp;:<span style="float:right">@(Convert.ToInt32(Model.StockReceiveValue) + Convert.ToInt32(Model.StockReceiveValueB1) + Convert.ToInt32(Model.StockReceiveValueB2) + Convert.ToInt32(Model.StockReceiveValueB3))</span></span>
+                                @*<div class="progress">
+                            <div class="progress-bar" style="width: 70%"></div>
+                        </div>*@
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                @*<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 ">
+                    <div class="info-box bg-gradient-orange">
+                        <span class="info-box-icon lnk"><i onclick="window.location = '/Reports/Sales'" class="fas fa-dollar-sign"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text cntr text-bold">Negative Stock</span>
+                            <span class="info-box-number mb-2">HD:<span style="float:right">@Model.NegitiveStockItemCount</span></span>
+                            <span class="info-box-number mb-2">B1:<span style="float:right">@Model.NegitiveStockItemCountB1</span></span>
+                            <span class="info-box-number mb-2">B2:<span style="float:right">@Model.NegitiveStockItemCountB2</span></span>
+                            <span class="info-box-number">B3:<span style="float:right"> @Model.NegitiveStockItemCountB3</span></span>
+                            <span class="info-box-number mb-2" style="border-top:1px solid black">
+                                Total:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-center">@(Convert.ToInt32(Model.NegitiveStockItemCount) + Convert.ToInt32(Model.NegitiveStockItemCountB1) + Convert.ToInt32(Model.NegitiveStockItemCountB2) + Convert.ToInt32(Model.StockTransferQtyB3)) </span></span>
+                                @*<div class="progress">
+                            <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>*@
+
+                @*<div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-red">
+                            <span class="info-box-icon"><i class="fas fa-comments"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text text-sm text-bold">Today Web Sale</span>
+                                <span class="info-box-number">@Model.WebTodaySale</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="info-box bg-gradient-warning">
+                            <span class="info-box-icon"><i class="far fa-calendar-alt"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text text-sm text-bold"> Web Pending Order</span>
+                                <span class="info-box-number">@Model.WebPendingOrderCount</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>*@
+
+
+            </div>
+            <!--/Info Tabs-->
+            <!--Links Tabs-->
+            @*<div class="row" style="padding-top:20px">
+                    <a href="/Sales/Index?docType=IN&requestPage=Index" class="btn btn-app btnCustom">
+                        <i class="fas fa-edit"></i> Make a Sale
+                    </a>
+                    <a href="/Purchase/PurchasePage" class="btn btn-app btnCustom">
+                        <i class="fas fa-play"></i> Make a Purchase
+                    </a>
+                    <a href="/Journal/Voucher" class="btn btn-app btnCustom">
+                        <i class="fas fa-receipt"></i> Receipt & Payments
+                    </a>
+                    <a href="/Reports/Sales" class="btn btn-app btnCustom">
+                        <i class="fas fa-save"></i> Sales Report
+                    </a>
+                    <a href="/Reports/Purchase" class="btn btn-app btnCustom">
+                        <i class="fas fa-bullhorn"></i> Purchase Report
+                    </a>
+                    <a href="/Reports/Inventory" class="btn btn-app btnCustom">
+                        <i class="fas fa-barcode"></i> Stock Report
+                    </a>
+                </div>
+                <div class="row">
+                    <a class="btnCustom">
+                    </a>
+                    <a class="btnCustom">
+                    </a>
+                    <a href="/Reports/Customer" class="btn btn-app btnCustom">
+                        <i class="fas fa-users"></i> Customer Balance
+                    </a>
+                    <a href="/Reports/CSSRecovery?ViewName=CustomerStaff" class="btn btn-app btnCustom">
+                        <i class="fas fa-inbox"></i> Customer Recovery
+                    </a>
+                    <a class="btnCustom">
+                    </a>
+                    <a class="btnCustom">
+                    </a>
+                </div>*@
+            <!-- /Links Tabs-->
+            <!--Charts-->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">Weekly Sales</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <canvas id="WeeklySalesChart" style="height:230px; min-height:230px"></canvas>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">Monthly Sales</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <canvas id="MonthlySalesChart" style="height:230px; min-height:230px"></canvas>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">Sales By Department</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="SalesByDepartmentPieChart" class="my-chart" @*style="height:230px; min-height:230px"*@></canvas>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">Stock By Department</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="StockByDepartmentPieChart" class="my-chart"></canvas>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            </div>
+            <!--/Charts-->
+            @*<div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="example1" class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Customer Name</th>
+                                                <th>Address</th>
+                                                <th>Phone Number</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Zubair</td>
+
+                                                <td>hsp</td>
+                                                <td>03023456789</td>
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="example1" class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+
+                                                <th>Customer Name</th>
+                                                <th>Address</th>
+                                                <th>Phone Number</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Zubair</td>
+
+                                                <td>hsp</td>
+                                                <td>03023456789</td>
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="example1" class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+
+                                                <th>Customer Name</th>
+                                                <th>Address</th>
+                                                <th>Phone Number</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Zubair</td>
+
+                                                <td>hsp</td>
+                                                <td>03023456789</td>
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+@section scripts{
+    <script src="~/AdminLte/plugins/chart.js/Chart.min.js"></script>
+    <script>
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        $(function () {
+            //---------------------------------SalesByDepartmentPieChart------------------------------//
+            var salesLblArray = [];
+            var saleDataArray = [];
+            var saleColorArray = [];
+            @foreach (var item in Model.SalesByDepartment)
+            {
+                @:salesLblArray.push('@item.DeptName');
+                                        @:saleDataArray.push('@item.Amount');
+                                        @:saleColorArray.push(getRandomColor());
+                                                }
+
+            var SalesByDepartmentPieChartData = {
+                labels: salesLblArray,
+                //    [
+                //    'Chrome',
+                //    'IE',
+                //    'FireFox',
+                //    'Safari',
+                //    'Opera',
+                //    'Navigator',
+                //],
+                datasets: [
+                  {
+                      data: saleDataArray,
+                      //data: [700, 500, 400, 600, 300, 100],
+                      backgroundColor: saleColorArray,
+                      //backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
+                  }
+                ]
+            }
+            var SalesByDepartmentPieChartCanvas = $('#SalesByDepartmentPieChart').get(0).getContext('2d')
+            var SalesByDepartmentPieChart = new Chart(SalesByDepartmentPieChartCanvas, {
+                type: 'pie',
+                data: SalesByDepartmentPieChartData,
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: false,
+                }
+            })
+            //---------------------------------//SalesByDepartmentPieChart------------------------------//
+            //---------------------------------StockByDepartmentPieChart------------------------------//
+
+            var stockLblArray = [];
+            var stockdataArray = [];
+            var stockColorArray = [];
+            @foreach (var item in Model.StockByDepartment)
+        {
+                 @:stockLblArray.push('@item.DeptName');
+                                                     @:stockdataArray.push('@item.Amount');
+                                                     @:stockColorArray.push(getRandomColor());
+                                                  }
+
+
+            var StockByDepartmentPieCharttData = {
+                labels: stockLblArray,
+
+                //    [
+                //    'Chrome',
+                //    'IE',
+                //    'FireFox',
+                //    'Safari',
+                //    'Opera',
+                //    'Navigator',
+                //],
+                datasets:
+                    [
+                  {
+                      data: stockdataArray,
+                      //data: [700, 500, 400, 600, 300, 100],
+                      backgroundColor: stockColorArray,
+                      //backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
+                  }
+                    ]
+            }
+            var StockByDepartmentPieChartCanvas = $('#StockByDepartmentPieChart').get(0).getContext('2d')
+            var StockByDepartmentPieChart = new Chart(StockByDepartmentPieChartCanvas, {
+                type: 'pie',
+                data: StockByDepartmentPieCharttData,
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: false,
+                }
+            })
+            //---------------------------------//StockByDepartmentPieChart------------------------------//
+        })
+    </script>
+    <script>
+        $(function () {
+            //---------------------------------BarChartMonthly------------------------------//
+
+
+            var MonthlyChartDataArray = [];
+            var MonthlyChartLblArray = [];
+
+            @foreach (var item in Model.MonthlySales)
+            {
+                @:MonthlyChartLblArray.push('@item.Month');
+                                                    @:MonthlyChartDataArray.push('@item.Amount');
+                                                }
+
+
+
+            var MonthlyChartData = {
+                labels: MonthlyChartLblArray,
+                //labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                datasets: [
+                  {
+                      label: 'Sales',
+                      backgroundColor: 'rgba(60,141,188,0.9)',
+                      borderColor: 'rgba(60,141,188,0.8)',
+                      pointRadius: false,
+                      pointColor: '#3b8bba',
+                      pointStrokeColor: 'rgba(60,141,188,1)',
+                      pointHighlightFill: '#fff',
+                      pointHighlightStroke: 'rgba(60,141,188,1)',
+                      data: MonthlyChartDataArray
+                      //data: [28, 48, 40, 19, 86, 27, 90, 28, 48, 40, 19, 86, 27, 90]
+                  },
+                ]
+            }
+            var MonthlyBarChartCanvas = $('#MonthlySalesChart').get(0).getContext('2d')
+            var MonthlySalesbarChart = new Chart(MonthlyBarChartCanvas, {
+                type: 'bar',
+                data: MonthlyChartData,
+                options: {
+                    legend: {
+                        display: false
+                    },
+
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    datasetFill: false
+                }
+            })
+            //---------------------------------BarChartMonthly------------------------------//
+
+            //---------------------------------BarChartMonthly------------------------------//
+
+            var WeeklyChartDataArray = [];
+            var WeeklyChartLblArray = [];
+
+            @foreach (var item in Model.WeeklySales)
+            {
+                @:WeeklyChartLblArray.push('@item.Day');
+                                        @:WeeklyChartDataArray.push('@item.Amount');
+                                    }
+            var WeeklyChartData = {
+                labels: WeeklyChartLblArray,
+                //labels: ['Monday', 'Tuesday', 'Wednessday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                datasets: [
+                  {
+                      label: 'Sales',
+                      backgroundColor: 'rgba(60,141,188,0.9)',
+                      borderColor: 'rgba(60,141,188,0.8)',
+                      pointRadius: false,
+                      pointColor: '#3b8bba',
+                      pointStrokeColor: 'rgba(60,141,188,1)',
+                      pointHighlightFill: '#fff',
+                      pointHighlightStroke: 'rgba(60,141,188,1)',
+                      data: WeeklyChartDataArray
+                      //data: [28, 48, 40, 19, 86, 27, 90]
+                  },
+                ]
+            }
+            var WeeklyBarChartCanvas = $('#WeeklySalesChart').get(0).getContext('2d')
+            var WeeklySalesbarChart = new Chart(WeeklyBarChartCanvas, {
+                type: 'bar',
+                data: WeeklyChartData,
+                options: {
+                    legend: {
+                        display: false
+                    },
+
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    datasetFill: false
+                }
+            })
+            //---------------------------------BarChartMonthly------------------------------//
+        })
+    </script>
+
+    <!-- Histats.com  (div with counter) --><div id="histats_counter"></div>
+    <!-- Histats.com  START  (aync)-->
+    <script type="text/javascript">
+        var _Hasync = _Hasync || [];
+        _Hasync.push(['Histats.start', '1,4487110,4,202,118,45,00011000']);
+        _Hasync.push(['Histats.fasi', '1']);
+        _Hasync.push(['Histats.track_hits', '']);
+        (function () {
+            var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+            hs.src = ('//s10.histats.com/js15_as.js');
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+        })();</script>
+    <noscript><a href="/" target="_blank"><img src="//sstatic1.histats.com/0.gif?4487110&101" alt="free site statistics" border="0"></a></noscript>
+    <!-- Histats.com  END  -->
+
+}
+

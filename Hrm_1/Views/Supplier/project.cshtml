@@ -1,0 +1,660 @@
+﻿
+@model Inventory.ViewModel.CustomerSupplierViewModel
+@{
+    ViewBag.Title = "Supplier";
+}
+@section CSS{
+    <style>
+        #btn_submit, #btn_cancel, #btn_close {
+            width: 70px;
+            margin-left: 10px;
+        }
+
+        #btn_custAddRecord, #Purchase {
+            width: 151px;
+            margin-left: 3px;
+        }
+
+        #list {
+            width: 90px;
+            margin-left: 3px;
+        }
+
+        #Product {
+            width: 90px;
+            margin-left: 3px;
+        }
+
+        table thead tr th {
+            color: white;
+        }
+
+
+        @@media only screen and (max-width:400px) {
+            .col33 {
+                max-width: 33.33%;
+                flex: 0 0 33.33%;
+            }
+
+            .col66 {
+                max-width: 66.33%;
+                flex: 0 0 66.33%;
+            }
+
+            #btn_custAddRecord, #Purchase {
+                width: 89px;
+            }
+
+            .card-title {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+}
+<script>
+</script>
+<br />
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header" style="background-color:#3498DB; margin-top:-14px">
+                            <div class="row">
+                                <div class="col-6 col33 pt-1">
+                                    <h2 class="card-title"><b style="color:white">Supplier List</b></h2>
+                                </div>
+                                <div class="col-6 col66">
+                                    <button style="border:1px solid; background-color:#3985d2;color:white" class="btn fa-pull-right" id="btn_custAddRecord" onclick="ClearForm()" name="btn_custAddRecord" data-toggle="modal" data-target="#AddNewSupplier">Add New Project</button>
+                                    <a style="border:1px solid; background-color:#3985d2;color:white" id="Purchase" class="btn btn-default fa-pull-right" href="@Url.Action("PurchasePage","Purchase")">Purchase</a>
+                                    <a style="border:1px solid; background-color:#3985d2;color:white" id="Purchase" class="btn btn-default fa-pull-right" href="@Url.Action("ProjectPage","Purchase")">New Project Item</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                    <thead style="background-color:#3498DB">
+                                        <tr>
+                                            <th style="width:5%">Sr</th>
+                                            <th style="width:5%">Code</th>
+                                            <th style="width:25%">Name</th>
+                                            <th style="width:25%">Name</th>
+                                            <th style="width:10%">City</th>
+                                            <th style="width:10%">Area</th>
+                                            <th style="width:10%">Phone</th>
+                                            <th style="width:5%">Balance</th>
+                                            <th style="width:5%">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{int i = 0;}
+                                        @foreach (var item in Model.CustomerSupplierList)
+                                        {
+                                            i = i + 1;
+                                            <tr>
+                                                <td>@i</td>
+                                                <td>@item.SUPL_CODE</td>
+                                                <td>@item.SUPL_NAME</td>
+                                                <td align="right">@item.UrduName</td>
+                                                <td>@item.CITY</td>
+                                                <td>@item.AREA</td>
+                                                <td>@item.Phone</td>
+                                                <td>@item.Balance</td>
+                                                <td><span onclick="GetData('@item.SUPL_CODE')"><i style="color:#3498DB" class='fa fa-edit'></i></span></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@using (Html.BeginForm("Save", "Supplier", FormMethod.Post, new { enctype = "multipart/form-data", onkeydown = "return event.keyCode!=13", Class = "was-validated" }))
+{
+    @Html.HiddenFor(m => m.SUPL_CODE, new { @id = "txt_SuplCode", @name = "txt_SuplCode" })
+    <div id="AddNewSupplier" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+
+            <div class="modal-content">
+                <div class="modal-header btn-primary">
+                    <h4 class="modal-title">Add Project</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label" style="display:none">
+                                @Html.DropDownListFor(m => m.LOCATION, new SelectList(Model.LocationList, "LOC_ID", "NAME"), "Select Location", new { @id = "ddl_location", @class = "form-control", @onchange = "AddTextBox()", @required = "required", @readonly = "readonly" })
+                                <label for="ddl_location">Location</label>
+                                <form method="post" name="locform" id="locform">
+                                    <div class="form-group" id="txt_locdiv">
+                                        <div>
+                                            <input type="text" class="form-control" id="txt_loc" name="txt_loc" placeholder="New Location" />
+                                        </div>
+                                        <input type="button" class="btn btn-default" onclick="SaveLoc()" style="margin-left:135px;margin-top:8px" value="Save" />
+                                        <input type="button" id="cancel" class="btn btn-danger pull-right" onclick="HideMe()" style="margin-right:155px;margin-top:8px" value="Clear">
+                                    </div>
+                                </form>
+                            </div>
+
+
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.NAME, new { @class = "form-control", @id = "txt_customerName", @name = "txt_CustomerName", @placeholder = "Supplier Name", @required = "required", @MaxLength = "45" })
+                                <label for="txt_CustomerName">Project Name</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.UrduName, new { @class = "form-control", @id = "txt_UrduName", @name = "txt_UrduName", @placeholder = "Supplier Name In Urdu", @required = "required" })
+                                <label for="txt_UrduName">Owner Name</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", @id = "txt_mobileno", @name = "txt_mobileno", @placeholder = "Phone No", @MaxLength = "11" })
+                                <label for="txt_mobileno">Phone No</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.EMAIL, new { @class = "form-control", @id = "txt_email", @name = "txt_email", @placeholder = "Email", @type = "email" })
+                                <label for="txt_email">E-Mail</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group has-float-label" style="display:none">
+                                    @Html.DropDownListFor(m => m.LOCATION, new SelectList(Model.LocationList, "LOC_ID", "NAME"), "Select Location", new { @id = "ddl_location", @class = "form-control", @onchange = "AddTextBox()", @required = "required", @readonly = "readonly" })
+                                    <label for="ddl_location">Location</label>
+                                    <form method="post" name="locform" id="locform">
+                                        <div class="form-group" id="txt_locdiv">
+                                            <div>
+                                                <input type="text" class="form-control" id="txt_loc" name="txt_loc" placeholder="New Location" />
+                                            </div>
+                                            <input type="button" class="btn btn-default" onclick="SaveLoc()" style="margin-left:135px;margin-top:8px" value="Save" />
+                                            <input type="button" id="cancel" class="btn btn-danger pull-right" onclick="HideMe()" style="margin-right:155px;margin-top:8px" value="Clear">
+                                        </div>
+                                    </form>
+                                </div>
+
+
+                                <div class="form-group has-float-label">
+                                    @Html.TextBoxFor(m => m.NAME, new { @class = "form-control", @id = "txt_customerName", @name = "txt_CustomerName", @placeholder = "Supplier Name", @required = "required", @MaxLength = "45" })
+                                    <label for="txt_CustomerName">Supplier Name</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group has-float-label">
+                                    @Html.TextBoxFor(m => m.UrduName, new { @class = "form-control", @id = "txt_UrduName", @name = "txt_UrduName", @placeholder = "Supplier Name In Urdu", @required = "required" })
+                                    <label for="txt_UrduName">Supplier Name In Urdu</label>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.DropDownListFor(m => m.CITY, new SelectList(Model.CityList, "CITY_CODE", "CITY_NAME"), "Select City", new { @id = "ddl_City", @class = "form-control", @onchange = "GetArea()" })
+                                <label for="ddl_City">City</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.DropDownListFor(m => m.AREA, new SelectList("", "AREA_CODE", "AREA_NAME"), "Select Area", new { @id = "ddl_Area", @class = "form-control", @onchange = "ShowArea()" })
+                                <label for="ddl_Area">Area</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.ADDRESS, new { @class = "form-control", @id = "txt_customerAddress", @name = "txt_customerAddress", @placeholder = "Project Address", @required = "required" })
+                                <label for="txt_customerAddress">Project Address</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control", @id = "txt_phoneno", @name = "txt_phoneno", @placeholder = "Type of Project", @required = "required", @MaxLength = "11" })
+                                <label for="txt_phoneno">Type of Project</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.CNIC, new { @class = "form-control", @id = "txt_cnic", @name = "txt_cnic", @placeholder = "Project Duration", @MaxLength = "13", @MinLength = "13" })
+                                <label for="txt_cnic">Project Duration</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.STRN, new { @class = "form-control", @id = "txt_strn", @name = "txt_strn", @placeholder = "Project Cost" })
+                                <label for="txt_strn">Project Cost</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.CNIC, new { @class = "form-control", @id = "txt_cnic", @name = "txt_cnic", @placeholder = "Project Start Date", @MaxLength = "13", @MinLength = "13" })
+                                <label for="txt_cnic">Project Start Date</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.STRN, new { @class = "form-control", @id = "txt_strn", @name = "txt_strn", @placeholder = "Project End Date" })
+                                <label for="txt_strn">Project End Date</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.CNIC, new { @class = "form-control", @id = "txt_cnic", @name = "txt_cnic", @placeholder = "CNIC", @MaxLength = "13", @MinLength = "13" })
+                                <label for="txt_cnic">CNIC</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.STRN, new { @class = "form-control", @id = "txt_strn", @name = "txt_strn", @placeholder = "STRN" })
+                                <label for="txt_strn">STRN</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.ADDRESS, new { @class = "form-control", @id = "txt_customerAddress", @name = "txt_customerAddress", @placeholder = "Address", @required = "required" })
+                                <label for="txt_customerAddress">Address</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control", @id = "txt_phoneno", @name = "txt_phoneno", @placeholder = "Mobile No", @required = "required", @MaxLength = "11" })
+                                <label for="txt_phoneno">Mobile No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.Contact_Person, new { @class = "form-control", @id = "txt_contactPerson", @name = "txt_contactPerson", @placeholder = "Contact Person Name", @MaxLength = "45" })
+                                <label for="txt_contactPerson">Contact Person Name</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.Phone2, new { @class = "form-control", @id = "txt_mobileno2", @name = "txt_mobileno2", @placeholder = "Contact Person Mob", @MaxLength = "11" })
+                                <label for="txt_mobileno2">Contact Person Mobile No</label>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.DropDownListFor(m => m.PayTerms, new SelectList(Model.PayTermsList, "Value", "Text"), null, new { @id = "ddl_PayTerms", @class = "form-control" })
+                                <label for="ddl_PayTerms">Pay Terms</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                @Html.TextBoxFor(m => m.PayDays, new { @class = "form-control", @id = "txt_PayDays", @name = "txt_PayDays", @placeholder = "Pay Days" })
+                                <label for="txt_PayDays">Pay Days</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <textarea style="width:100%;height:100px;margin-bottom:10px;" name="comment" form="usrform">Comments...</textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group has-float-label">
+                                <div class="row">
+                                    <div class="col-6">
+                                        @Html.TextBoxFor(m => m.Balance, new { @class = "form-control", @id = "txt_Balance", @name = "txt_Balance", @Value = "0", @required = "required", @type = "number", @disabled = "disabled" })
+                                        <label for="txt_Balance">Balance</label>
+                                    </div>
+                                    <div class="col-6">
+                                        @Html.TextBoxFor(m => m.OpeningBalance, new { @class = "form-control", @id = "txt_openingBalance", @name = "txt_openingBalance", @Value = "0", @required = "required", @type = "number" })
+                                        <label for="txt_openingBalance">Opening Balance</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="submit" id="btn_submit" name="btn_submit" class="btn btn-primary fa-pull-right">Submit</button>
+                                    <button type="button" id="btn_cancel" onclick="ClearForm()" class="btn btn-primary fa-pull-right" data-toggle="modal" data-target="#AddNewSupplier">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="AddCity" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add City</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group has-float-label">
+                        <input class="form-control" id="CityName" />
+                        <label for="CityName">City Name</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="SaveCity()">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="AddArea" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Area</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group has-float-label">
+                        <input class="form-control" id="AreaName" />
+                        <label for="AreaName">Area Name</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="SaveArea()">Save</button>
+                    <button type="button" class="btn btn-secondary closeModal" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@section scripts{
+    <script src="~/AdminLte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/AdminLte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script>
+        $("#example1").DataTable({
+            "pageLength": 50
+        });
+
+        @if (TempData["message"] != null)
+        {
+            var message = TempData["message"].ToString();
+            if (message == "success")
+            {
+                @:toastr.success('Data save successfully');
+                    }
+            else if (message == "fail")
+            {
+                @:toastr.error('Something went wrong! Data not Saved.');
+                @:$("#AddNewSupplier").modal('show');
+            }
+            else
+            {
+                @:toastr.error('@message');
+                @:$("#AddNewSupplier").modal('show');
+            }
+        }
+
+        var GetData = function (id) {
+            if (id == "" || id == null) {
+                return;
+            }
+            $.ajax({
+                url: "/Supplier/Edit/?id=" + id,
+                type: "GET",
+                dataType: "JSON"
+            }).done(function (obj) {
+                $('#ddl_Area').empty();
+                var obj = JSON.parse(obj);
+                $("#txt_SuplCode").val(obj.SUPL_CODE);
+                $("#txt_customerName").val(obj.NAME);
+                $("#txt_customerAddress").val(obj.ADDRESS);
+                $("#txt_phoneno").val(obj.Mobile);
+                $("#txt_mobileno").val(obj.Phone);
+                $("#txt_mobileno2").val(obj.Phone2);
+                $("#txt_email").val(obj.EMAIL);
+                $("#txt_UrduName").val(obj.UrduName);
+                $("#txt_cnic").val(obj.CNIC);
+                $("#txt_strn").val(obj.STRN);
+                //$("#ddl_location").val(obj.LOCATION);
+                $("#ddl_City").val(obj.CITY);
+                if (obj.AREA_NAME != "" && obj.AREA_NAME != null && obj.AREA != "" && obj.AREA != null) {
+                    $('#ddl_Area').append(new Option(obj.AREA_NAME, obj.AREA));
+                }
+                $("#txt_openingBalance").val(obj.OpeningBalance);
+                $("#txt_Balance").val(obj.Balance);
+                $("#txt_contactPerson").val(obj.Contact_Person);
+                $("#ddl_PayTerms").val(obj.PayTerms);
+                debugger;
+                $("#txt_PayDays").val(obj.PayDays);
+
+                $("#AddNewSupplier").modal();
+            }).fail(function (xhr) {
+                alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+            })
+        };
+        AddNewLoc();
+        AddNewCity();
+
+        function AddNewLoc() {
+            $('#ddl_location').append(new Option('Add New', ''));
+            $('#ddl_location option:last-child').css("color", "blue");
+        }
+        function SaveLoc() {
+            var vm = {};
+            vm.LOC_ID = '';
+            var LocName = $("#txt_loc").val();
+            if (LocName == "" || LocName == null) {
+                toastr.error('Enter Location Name.');
+                return;
+            }
+            var uppervalue = toUpper(LocName);
+            vm.NAME = uppervalue;
+            $.ajax({
+                url: "/api/Location",
+                method: "post",
+                data: vm
+            })
+            .done(function (obj) {
+                var lastind;
+                $('#ddl_location').empty();
+                $('#ddl_location').append(new Option('Select location', ''));
+                $.each(obj, function (index, element) {
+                    $('#ddl_location').append(new Option(obj[index].NAME, obj[index].LOC_ID));
+                    lastind = obj[index].LOC_ID;
+                });
+                $('#ddl_location').val(lastind);
+                toastr.success('Location saved successfully.');
+                HideMe();
+                $('#btn_submit').removeAttr('disabled');
+                AddNewLoc();
+                $("#ddl_location").show();
+                $("#txt_loc").val("");
+            })
+            .fail(function () {
+                toastr.error('Data not saved.');
+            });
+        }
+        function AddTextBox() {
+            var v = jQuery("#ddl_location option:selected").text();
+            if (v == 'Add New') {
+                $("#txt_locdiv").show();
+                $("#ddl_location").hide();
+                $('#btn_submit').attr('disabled', 'disabled');
+
+            }
+            else {
+                $("#txt_locdiv").hide();
+                $("#ddl_location").show();
+                $('#btn_submit').removeAttr('disabled');
+            }
+
+        }
+        function ClearForm() {
+            $("#txt_SuplCode").val('');
+            $("#txt_customerName").val('');
+            $("#txt_customerName").focus();
+            $("#txt_UrduName").val('');
+            $("#ddl_Area").empty();
+            $("#txt_customerAddress").val('');
+            $("#txt_phoneno").val('');
+            $("#txt_contactPerson").val('');
+            $("#txt_cnic").val('');
+            $("#txt_strn").val('');
+            $("#txt_mobileno2").val('');
+            $("#txt_mobileno").val('');
+            $("#txt_email").val('');
+            $("#txt_Balance").val('0');
+            $("#txt_openingBalance").val('0');
+        }
+        function GetArea() {
+            $('#ddl_Area').empty();
+            var City_Id = $('#ddl_City').val();
+            if (City_Id == 'addnew') {
+                $("#AddCity").modal();
+                return;
+            }
+            $.ajax({
+                url: "/Location/CityAreaList/" + City_Id,
+                type: "GET",
+                dataType: "JSON",
+                success: function (obj) {
+                    $('#ddl_Area').append(new Option('Select Area', ""));
+                    $.each(obj, function (index, element) {
+                        $('#ddl_Area').append(new Option(obj[index].AREA_NAME, obj[index].AREA_CODE));
+                    });
+                    AddNewArea();
+                },
+                error: function (xhr) {
+                    alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                }
+            }
+            );
+        }
+
+        function ShowArea() {
+            var v = $("#ddl_Area").val();
+            if (v == 'addnew') {
+                $("#AddArea").modal();
+            }
+        }
+        function AddNewCity() {
+            $('#ddl_City').append(new Option('Add New', 'addnew'));
+            $('#ddl_City option:last-child').css("color", "blue");
+        }
+        function AddNewArea() {
+            $('#ddl_Area').append(new Option('Add New', 'addnew'));
+            $('#ddl_Area option:last-child').css("color", "blue");
+        }
+
+        function SaveCity() {
+            var CN = $("#CityName").val().trim();
+            if (CN == "" || CN == null) {
+                toastr.error("Name Cannot null or Empty");
+                return;
+            }
+            loc = {};
+            loc.CITY_NAME = CN;
+            $.ajax({
+                url: "/Location/SaveCity",
+                method: "post",
+                data: loc
+            }).done(function (obj) {
+                if (obj == "exist") {
+                    toastr.error('Location with this name is already exist.');
+                }
+                else if (obj == "ex") {
+                    toastr.error('Something Went Wrong');
+                }
+                else {
+                    toastr.success('City Saved');
+                    $('#ddl_Area').empty();
+                    $('#ddl_City option:last-child').remove();
+                    $('#ddl_City').append(new Option(CN, obj));
+                    $('#ddl_City').val(obj);
+                    $('#ddl_Area').append(new Option("Select Area", ""));
+                    AddNewArea();
+                    $('#AddCity').modal('toggle');
+                }
+            }).fail(function () {
+                toastr.error('Data not saved.');
+            });
+        }
+        function SaveArea() {
+            var selectedCity = $('#ddl_City').val();
+            if (selectedCity == null || selectedCity == "" || selectedCity == undefined) {
+                toastr.error("Select City");
+                return;
+            }
+
+            var AN = $("#AreaName").val().trim();
+            if (AN == "" || AN == null) {
+                toastr.error("Name Cannot null or Empty");
+                return;
+
+            }
+            loc = {};
+            loc.AREA_NAME = AN;
+            loc.CITY_CODE = selectedCity;
+            $.ajax({
+                url: "/Location/SaveArea",
+                method: "post",
+                data: loc
+            }).done(function (obj) {
+                if (obj == "exist") {
+                    toastr.error('Location with this name is already exist.');
+                }
+                else if (obj == "ex") {
+                    toastr.error('Something Went Wrong');
+                }
+                else {
+                    toastr.success('Area Saved');
+                    $('#ddl_Area option:last-child').remove();
+                    $('#ddl_Area').append(new Option(AN, obj));
+                    $('#ddl_Area').val(obj);
+                    AddNewArea();
+                    $('#AddArea').modal('toggle');
+
+                }
+            }).fail(function () {
+                toastr.error('Data not saved.');
+            });
+
+
+        }
+    </script>
+}
+
+

@@ -1,0 +1,231 @@
+﻿@{
+    ViewBag.Title = "Customer Recovery";
+}
+<link href="~/AdminLte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+<style>
+    .mar-top10 {
+        margin-top: 10px;
+    }
+
+    .float-right1 {
+        float: right;
+    }
+
+    .float-left1 {
+        float: left;
+    }
+
+    .desktopview {
+        display: block;
+    }
+
+    .mobileview {
+        display: none;
+    }
+
+    @@media only screen and (max-width:400px) {
+        .mar-top10 {
+            margin-top: 0px;
+        }
+        /*.col3-mbl{
+            max-width:33%;
+        }*/
+        .float-left1 {
+            float: none;
+        }
+
+        .float-right1 {
+            float: none;
+        }
+        /*.mar-topmblminus5{
+            margin-top:-5px;
+        }*/
+        .font-sizesmall {
+            font-size: 14px;
+        }
+        /*.mar-leftmbl{
+                margin-left: 251px;
+        }
+        .mar-topmblminus58{
+            margin-top:-58px;
+        }
+         .mar-topmblminus44{
+            margin-top:-44px;
+        }*/
+        .desktopview {
+            display: none;
+        }
+
+        .mobileview {
+            display: block;
+        }
+
+        .mar-topmbl {
+            margin-top: 62px;
+        }
+
+        .positionmbl {
+            position: absolute;
+            top: 128px;
+            width: 93%;
+        }
+
+        .pabsolute {
+            position: absolute;
+        }
+
+        .marleft165 {
+            margin-left: 165px;
+        }
+
+        .reportbtnmbl {
+            width: 88px;
+            float: right;
+            margin-right: 10px;
+        }
+    }
+</style>
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="card" style="width:100%">
+                    <div class="card-header" style="background-color:rgba(0, 0, 0, 0.075)">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6 mar-top10 mar-topmbl">
+                                <div class="float-left1"><strong>From:</strong></div>
+                                <div class="float-right1"><input type="date" id="FromDate" name="FromDate" class="form-control" /></div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mar-top10 mar-topmbl">
+                                <select class="form-control" id="Query" onchange="show()">
+                                    <option value="CustomerStaffDocumentWise">Document Wise</option>
+                                    <option value="CustomerWise">Customer Wise</option>
+                                    <option value="CustomerStaffWise">Staff Wise</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-sm-3 mar-top10 pabsolute">
+                                <div class="ds">
+                                    <input type="radio" id="Detail" name="DS" value="Detail" onclick="IframeView(this)" />  &nbsp;&nbsp;<span class="font-sizesmall"> Detail   </span>  &nbsp;&nbsp;&nbsp;
+                                    <input type="radio" id="Summary" name="DS" value="Summary" onclick="IframeView(this)" />&nbsp;&nbsp;<span class="font-sizesmall"> Summary</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-3 mar-top10 pabsolute">
+                                <button id="Report" class="btn btn-primary form-control pull-right reportbtnmbl" onclick="GetData()">Report</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6 mar-top10 positionmbl">
+                                <div class="float-left1"><strong>&nbsp;&nbsp;&nbsp;To: </strong></div>
+                                <div class="float-right1"><input type="date" id="ToDate" name="ToDate" class="form-control" /></div>
+                            </div>
+                            <div class="col-3" style="margin-top:10px;display:none" id="StaffDiv">
+                                @Html.DropDownList("Supplier", new SelectList(ViewBag.Staff, "SUPL_CODE", "SUPL_NAME"), "Select Staff",
+                        new { @style = "margin-top:2px", @id = "ddl_Staff", name = "ddl_Staff", @class = "form-control" })
+                            </div>
+                            <div class="col-3" style="margin-top:10px;display:none" id="CustomerDiv">
+                                @Html.DropDownList("Supplier", new SelectList(ViewBag.Customer, "SUPL_CODE", "SUPL_NAME"), "Select Customer",
+                        new { @style = "margin-top:2px", @id = "ddl_Supplier", name = "ddl_Supplier", @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="DetailReport">
+                            <iframe name="DetailFrame" id="DetailFrame" src="" style="width:100%;height:800px;background-color:white" frameborder="0"></iframe>
+                            @*</div>
+                                <div id="SummaryReport">*@
+                            <iframe name="SummaryFrame" id="SummaryFrame" src="" style="width:100%;height:800px;background-color:white" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                    @*<div class="card-footer">Footer</div>*@
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+
+        $("#SetExtraText").text("Customer Recovery");
+
+
+
+        $(document).ready(function () {
+
+            var now = new Date();
+            var day = now.getDate() < 10 ? "0" + now.getDate() : now.getDate();
+            var month = (now.getMonth() + 1) < 10 ? "0" + (now.getMonth() + 1) : (now.getMonth() + 1);
+            var year = now.getFullYear();
+            var today = year + '-' + month + '-' + day;
+            day = (parseInt(day) - 1) < 10 ? "0" + (parseInt(day) - 1) : (parseInt(day) - 1);
+            if (day == "00") {
+                day = "30";
+                month = (parseInt(month) - 1) < 10 ? "0" + (parseInt(month) - 1) : (parseInt(month) - 1);
+            }
+            var yesterday = year + '-' + month + '-' + day;
+            $('#FromDate').val(yesterday);
+            $('#ToDate').val(today);
+            $(".ds").hide();
+        });
+        function IframeView(e) {
+            var valueofRadio = e.value;
+            if (valueofRadio == "Detail") {
+                $("#DetailFrame").show();
+                $("#SummaryFrame").hide();
+            }
+            else {
+                $("#DetailFrame").hide();
+                $("#SummaryFrame").show();
+            }
+        }
+        function GetData() {
+            var code = "";
+            var SupplierId = $("#ddl_Supplier").val();
+            var StaffId = $("#ddl_Staff").val();
+            var DateFrom = $("#FromDate").val();
+            var DateTo = $("#ToDate").val();
+            var query = $("#Query").val();
+
+            if (query == "CustomerWise") {
+                code = SupplierId;
+            }
+            else if (query == "CustomerStaffWise") {
+                code = StaffId;
+            }
+
+
+            $("#Report").attr("disabled", "disabled");
+            var DetailUrl = "";
+            var SummaryUrl = "";
+            //PRDepartment
+            DetailUrl = "/Reports/Customer_Supplier_Staff_Recovery?Query=" + query + "&Code=" + code + "&FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=True";
+            SummaryUrl = "/Reports/Customer_Supplier_Staff_Recovery?Query=" + query + "&Code=" + code + "&FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=False";
+
+            $('#DetailFrame').attr('src', "");
+            $('#DetailFrame').attr('src', DetailUrl);
+            $('#SummaryFrame').attr('src', "");
+            $('#SummaryFrame').attr('src', SummaryUrl);
+            $("#Report").removeAttr("disabled");
+            $("#Detail").click();
+            $(".ds").show();
+        }
+        function show() {
+            var query = $("#Query").val();
+            debugger;
+            if (query == "CustomerWise") {
+                $("#CustomerDiv").show();
+                $("#StaffDiv").hide();
+            }
+            else if (query == "CustomerStaffWise") {
+                $("#StaffDiv").show();
+                $("#CustomerDiv").hide();
+
+            }
+            else {
+                $("#CustomerDiv").hide();
+                $("#StaffDiv").hide();
+            }
+        }
+    </script>
+}

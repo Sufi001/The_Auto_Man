@@ -1,0 +1,129 @@
+﻿@model Inventory.ViewModels.UnauthorizeDocumentViewModel
+@{
+
+    ViewBag.Title = "Index";
+}
+<style>
+    .callout, .card, .info-box, .mb-3, .my-3, .small-box {
+        margin-bottom: 0.2rem !important;
+    }
+
+    .card-header {
+        padding: .50rem 1.0rem;
+        padding-top: 0.25rem;
+        padding-right: 1.0rem;
+        padding-bottom: 0.0rem;
+        padding-left: 1.25rem;
+    }
+
+    select:focus, input:focus {
+        outline: none !important;
+        border-color: #719ECE !important;
+        box-shadow: 0 0 5px #719ECE !important;
+    }
+
+    #list, #Sumbit, #New, #Print, #authorize {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    table thead tr th {
+        color: white;
+    }
+</style>
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+            <div class="col-12">
+                <!-- Custom Tabs -->
+@using (Html.BeginForm("Save", "ManageDocument", FormMethod.Post, new { enctype = "multipart/form-data", id = "Form", Class = "was-validated" }))
+{
+                <div class="card">
+                    <div class="card-header d-flex p-0" style="background-color:#3498DB">
+                        <h2 class="card-title p-3"><b style="color:white">Invoice</b></h2>
+                        <ul class="nav nav-pills ml-auto p-2">
+                            <li><input style="border:1px solid; background-color:#3985d2;color:white" type="submit" value="Save" id="Sumbit" class="btn fa-pull-right" /></li>
+                        </ul>
+                    </div><!-- /.card-header -->
+                    <div class="card-body">
+                       
+                            <div class="row">
+                                <div class="col-lg-3 col-md-3 col-sm-5">
+                                    <div class="form-group has-float-label">
+                                        @Html.DropDownListFor(model => model.DocType, new SelectList(Model.Documents, "value", "text"), null @*"Select Doc Type"*@, new { @class = "form-control", @id = "ddl_Doc_Type", @name = "ddl_Doc_Type", @required = "required", onchange = "GetPre()" })
+                                        <label for="ddl_Doc_Type">Doc Type</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-1 col-md-1 col-sm-1">
+                                    <div class="">
+                                        <span style="padding-top: 10px;" id="documentPrefix" class="fa-pull-right">G</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-5">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.DocNumber, new { htmlAttributes = new { @class = "form-control ", @id = "DocNumber", @placeholder = "eg. 00001", @type = "text", @required = "required " } })
+                                        <label for="Balance">Document Number</label>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+}
+
+
+            </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+
+        @if (TempData["Message"] != null) {
+            var message = TempData["Message"].ToString();
+            if (message == "ok")
+            {
+                @:toastr.success('Document Unauthorized Successfully');
+            }
+            else if (message == "wrong")
+            {
+             @:toastr.error('Document Unauthorize Fail');
+            }
+        }
+
+        function GetPre() {
+            debugger;
+            var doc = $("#ddl_Doc_Type").val();
+
+
+            if (doc == "Purchase") {
+                $("#documentPrefix").text("G");
+            }
+            else if (doc == "PurchaseReturn") {
+                $("#documentPrefix").text("R");
+            }
+            else if (doc == "Sale") {
+                $("#documentPrefix").text("IN");
+            }
+            else if (doc == "SaleReturn") {
+                $("#documentPrefix").text("IR");
+            }
+            else if (doc == "Receipt") {
+                $("#documentPrefix").text("R");
+            }
+            else if (doc == "Payment") {
+                $("#documentPrefix").text("P");
+            }
+            else if (doc == "StockTransferIn") {
+                $("#documentPrefix").text("I");
+            }
+            else if (doc == "StockTransferOut") {
+                $("#documentPrefix").text("O");
+            }
+            else if (doc == "Waste") {
+                $("#documentPrefix").text("W");
+            }
+            else if (doc == "Gain") {
+                $("#documentPrefix").text("G");
+            }
+        }
+    </script>
+}

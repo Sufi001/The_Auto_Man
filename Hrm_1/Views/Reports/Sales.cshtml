@@ -1,0 +1,397 @@
+﻿@{
+    ViewBag.Title = "Sales";
+}
+<link href="~/AdminLte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+<style>
+    .mar-top10 {
+        margin-top: 10px;
+    }
+
+    .float-right1 {
+        float: right;
+    }
+
+    .float-left1 {
+        float: left;
+    }
+
+    .desktopview {
+        display: block;
+    }
+
+    .mobileview {
+        display: none;
+    }
+
+    @@media only screen and (max-width:400px) {
+           .mar-top10 {
+        margin-top: 0px;
+    }
+        /*.col3-mbl{
+            max-width:33%;
+        }*/
+        .float-left1 {
+            float: none;
+        }
+
+        .float-right1 {
+            float: none;
+        }
+        /*.mar-topmblminus5{
+            margin-top:-5px;
+        }*/
+        .font-sizesmall {
+            font-size: 14px;
+        }
+        /*.mar-leftmbl{
+                margin-left: 251px;
+        }
+        .mar-topmblminus58{
+            margin-top:-58px;
+        }
+         .mar-topmblminus44{
+            margin-top:-44px;
+        }*/
+        .desktopview {
+            display: none;
+        }
+
+        .mobileview {
+            display: block;
+        }
+
+        .mar-topmbl {
+            margin-top: 62px;
+        }
+
+        .positionmbl {
+            position: absolute;
+            top: 128px;
+            width: 93%;
+        }
+        .pabsolute{
+            position:absolute;
+        }
+        .marleft165{
+            margin-left:165px;
+        }
+    }
+</style>
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="card" style="width:100%">
+                    <div class="card-header" style="background-color:rgba(0, 0, 0, 0.075)">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6 mar-top10 mar-topmbl">
+                                <div class="float-left1"><strong>From:</strong></div>
+                                <div class="float-right1"><input type="date" id="FromDate" name="FromDate" class="form-control" /></div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mar-top10 mar-topmbl">
+                                <select class="form-control" id="Query" onchange="show()">
+                                    <option value="DocumentWise">Document Wise</option>
+                                    <option value="ItemVoid">Item Void</option>
+                                    <option value="PriceOverride">Price Override</option>
+                                    <option value="SupplierWise">Supplier Wise</option>
+                                    <option value="DepartmentWise">Department Wise</option>
+                                    <option value="BranchWise">Branch Wise</option>
+                                    <option value="BillVoid">Bill Void</option>
+
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mar-top10 pabsolute mar-top10">
+                                <div class="ds">
+                                    <input type="radio" id="Detail" name="DS" value="Detail" onclick="IframeView(this)" /><span class="font-sizesmall"> &nbsp;&nbsp; Detail &nbsp;&nbsp;&nbsp;</span>
+                                    <input type="radio" id="Summary" name="DS" value="Summary" onclick="IframeView(this)" />&nbsp;&nbsp;<span class="font-sizesmall"> Summary</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mar-top10 pabsolute marleft165">
+                                <input type="checkbox" id="web-checkbox" class="pull-left" /> Web &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @*<button id="Report" class="btn btn-primary pull-right" onclick="GetData(true)">Web</button>*@
+                                <button id="Report" class="btn btn-primary pull-right" onclick="GetData(false)">Report</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6 mar-top10 positionmbl">
+                                <div class="float-left1"><strong>&nbsp;&nbsp;&nbsp;To: </strong></div>
+                                <div class="float-right1"><input type="date" id="ToDate" name="ToDate" class="form-control" /></div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mar-top10 mar-topmblminus44">
+                                @Html.DropDownList("Department", new SelectList(ViewBag.Departmentlist, "DEPT_CODE", "DEPT_NAME"), "Select Department",
+                        new { @style = "margin-top:2px", @id = "ddl_Department", name = "ddl_Department", @onchange = "FillGroup()", @class = "form-control" })
+
+                                @Html.DropDownList("Supplier", new SelectList(ViewBag.Supplierlist, "SUPL_CODE", "SUPL_NAME"), "Select Supplier",
+                        new { @style = "margin-top:2px", @id = "ddl_Supplier", name = "ddl_Supplier", @onchange = "Supplier()", @class = "form-control" })
+
+                                @Html.DropDownList("Branch", new SelectList(ViewBag.Branch, "Id", "Name"), "Select Branch",
+                        new { @style = "margin-top:2px", @id = "ddl_Branch", name = "ddl_Branch", @onchange = "Branch()", @class = "form-control" })
+
+                                <input type="text" id="bill-no" class="form-control" placeholder="Bill No" />
+
+                            </div>
+                            <div class="col-md-3 col-sm-6 mar-top10 mar-topmblminus44">
+                                @Html.DropDownList("Group", new SelectList("", "GROUP_CODE", "GROUP_NAME"), "Select Department",
+                        new { @style = "margin-top:2px", @id = "ddl_Group", name = "ddl_Group", @onchange = "FillSubGroup()", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3 col-sm-6 mar-top10">
+                                @Html.DropDownList("SubGroup", new SelectList("", "SGROUP_CODE", "SGROUP_NAME"), "Select Department",
+                        new { @style = "margin-top:2px", @id = "ddl_SubGroup", name = "ddl_SubGroup", @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="DetailReport">
+                            <iframe name="DetailFrame" id="DetailFrame" src="" style="width:100%;height:800px;background-color:white" frameborder="0"></iframe>
+                            @*</div>
+                                <div id="SummaryReport">*@
+                            <iframe name="SummaryFrame" id="SummaryFrame" src="" style="width:100%;height:800px;background-color:white" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                    @*<div class="card-footer">Footer</div>*@
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+
+        $("#SetExtraText").text("(Sales Report)");
+
+
+
+        $(document).ready(function () {
+            var now = new Date();
+            var day = now.getDate() < 10 ? "0" + now.getDate() : now.getDate();
+            var month = (now.getMonth() + 1) < 10 ? "0" + (now.getMonth() + 1) : (now.getMonth() + 1);
+            var year = now.getFullYear();
+            var today = year + '-' + month + '-' + day;
+            day = (parseInt(day) - 1) < 10 ? "0" + (parseInt(day) - 1) : (parseInt(day) - 1);
+            if (day == "00") {
+                day = "30";
+                month = (parseInt(month) - 1) < 10 ? "0" + (parseInt(month) - 1) : (parseInt(month) - 1);
+            }
+            var yesterday = year + '-' + month + '-' + day;
+            $('#FromDate').val(yesterday);
+            $('#ToDate').val(today);
+
+            $('#ddl_Group').empty();
+            $('#ddl_SubGroup').empty();
+            $('#ddl_Group').append(new Option('Group', ''));
+            $('#ddl_SubGroup').append(new Option('Sub Group', ''));
+
+            $("#ddl_Branch").hide();
+            $("#ddl_Department").hide();
+            $("#ddl_Group").hide();
+            $("#ddl_SubGroup").hide();
+            $("#ddl_Supplier").hide();
+            $('#bill-no').hide();
+
+            $(".ds").hide();
+        });
+
+
+        function FillGroup() {
+            $('#ddl_Supplier').prop('selectedIndex', 0);
+            $('#ddl_Group').empty();
+            $('#ddl_SubGroup').empty();
+            $('#ddl_SubGroup').append(new Option('Group', ''));
+            var DepartmentCode = $('#ddl_Department').val();
+            $.ajax({
+                url: "/Reports/FillGroup/" + DepartmentCode,
+                type: "GET",
+                dataType: "JSON",
+                success: function (_data) {
+                    var obj = JSON.parse(_data);
+                    $('#ddl_Group').append(new Option('Group', ''));
+                    $.each(obj, function (index, element) {
+                        $('#ddl_Group').append(new Option(obj[index].GROUP_NAME, obj[index].GROUP_CODE));
+                    });
+                },
+                error: function (xhr) {
+                    alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                }
+            }
+          );
+        }
+        function FillSubGroup() {
+            $('#ddl_SubGroup').empty();
+            var _id = '';
+            var Dept_Id = $('#ddl_Department').val();
+            var Group_Id = $('#ddl_Group').val();
+            _id = Dept_Id + Group_Id;
+            $.ajax({
+                url: "/Reports/FillSubGroup/" + _id,
+                type: "GET",
+                dataType: "JSON",
+                success: function (_data) {
+                    var obj = JSON.parse(_data);
+                    $('#ddl_SubGroup').append(new Option('Sub Group', ''));
+                    $.each(obj, function (index, element) {
+                        $('#ddl_SubGroup').append(new Option(obj[index].SGROUP_NAME, obj[index].SGROUP_CODE));
+                    });
+                },
+                error: function (xhr) {
+                    alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                }
+            }
+            );
+        }
+        function Supplier() {
+            $('#ddl_Department').prop('selectedIndex', 0);
+            $('#ddl_Group').prop('selectedIndex', 0);
+            $('#ddl_SubGroup').prop('selectedIndex', 0);
+        }
+        function show() {
+            var queryType = $('#Query').val();
+            if (queryType == "DepartmentWise") {
+                $("#ddl_Supplier").hide();
+                $('#ddl_Department').prop('selectedIndex', 0);
+                $("#ddl_Department").show();
+                $("#ddl_Group").show();
+                $("#ddl_SubGroup").show();
+                $('#ddl_Branch').hide();
+                $('#bill-no').hide();
+
+            }
+            else if (queryType == "SupplierWise") {
+                $("#ddl_Supplier").show();
+                $("#ddl_Department").hide();
+                $('#ddl_Department').prop('selectedIndex', 0);
+                $("#ddl_Group").hide();
+                $("#ddl_Group").prop('selectedIndex', 0)
+                $("#ddl_SubGroup").hide();
+                $("#ddl_SubGroup").prop('selectedIndex', 0)
+                $('#ddl_Branch').hide();
+                $('#bill-no').hide();
+
+            }
+            else if (queryType == "BranchWise") {
+                $("#ddl_Supplier").hide();
+                $('#ddl_Supplier').prop('selectedIndex', 0);
+                $("#ddl_Department").hide();
+                $('#ddl_Department').prop('selectedIndex', 0);
+                $("#ddl_Group").hide();
+                $("#ddl_Group").prop('selectedIndex', 0)
+                $("#ddl_SubGroup").hide();
+                $("#ddl_SubGroup").prop('selectedIndex', 0)
+                $('#ddl_Branch').show();
+                $('#bill-no').hide();
+
+            }
+            else if (queryType == "BillVoid") {
+                $("#ddl_Supplier").hide();
+                $('#ddl_Supplier').prop('selectedIndex', 0);
+                $("#ddl_Department").hide();
+                $('#ddl_Department').prop('selectedIndex', 0);
+                $("#ddl_Group").hide();
+                $("#ddl_Group").prop('selectedIndex', 0)
+                $("#ddl_SubGroup").hide();
+                $("#ddl_SubGroup").prop('selectedIndex', 0)
+                $('#ddl_Branch').hide();
+                $('#bill-no').show();
+
+
+            }
+            else {
+                $("#ddl_Supplier").hide();
+                $("#ddl_Department").hide();
+                $('#ddl_Department').prop('selectedIndex', 0);
+                $("#ddl_Group").hide();
+                $("#ddl_Group").prop('selectedIndex', 0);
+                $("#ddl_SubGroup").hide();
+                $("#ddl_SubGroup").prop('selectedIndex', 0);
+                $('#ddl_Branch').hide();
+                $('#bill-no').hide();
+
+            }
+
+
+
+
+
+
+
+        }
+        function IframeView(e) {
+            var valueofRadio = e.value;
+            if (valueofRadio == "Detail") {
+                $("#DetailFrame").show();
+                $("#SummaryFrame").hide();
+            }
+            else {
+                $("#DetailFrame").hide();
+                $("#SummaryFrame").show();
+            }
+        }
+        //function(s for webReport)
+        function GetData() {
+            var QueryFor = $("#Query").val();
+            var DeptId = $("#ddl_Department").val();
+            var GroupId = $("#ddl_Group").val();
+            var SubGroupId = $("#ddl_SubGroup").val();
+            var SupplierId = $("#ddl_Supplier").val();
+            var DateFrom = $("#FromDate").val();
+            var DateTo = $("#ToDate").val();
+            var IsForWeb = $("#web-checkbox").is(':checked');
+            //var IsForWeb = s;
+
+            var BranchId = $("#ddl_Branch").val();
+            var BillNo = $("#bill-no").val();
+
+
+
+
+
+            $("#Report").attr("disabled", "disabled");
+
+            var DetailUrl = "";
+            var SummaryUrl = "";
+            if (QueryFor == "DocumentWise") {
+                DetailUrl = "/Reports/SalesByDocument?FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=true" + "&ForWeb=" + IsForWeb;
+                SummaryUrl = "/Reports/SalesByDocument?&FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=False" + "&ForWeb=" + IsForWeb;
+            }
+            else if (QueryFor == "DepartmentWise") {
+                DetailUrl = "/Reports/SalesByDGS?Dept_Code=" + DeptId + "&Group_Code=" + GroupId + "&SubGroup_Code=" + SubGroupId + "&FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=true" + "&ForWeb=" + IsForWeb;
+                SummaryUrl = "/Reports/SalesByDGS?Dept_Code=" + DeptId + "&Group_Code=" + GroupId + "&SubGroup_Code=" + SubGroupId + "&FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=False" + "&ForWeb=" + IsForWeb;
+                //var DetailUrl = "/Reports/Salereport?Dept_Code=" + DepartmentCode + "&Supl_Code=" + SupplierCode + "&btn=" + btn + "&Loc_Code=" + Loc_Code + "&Group_Code=" + Group_CODE + "&SubGroup_Code=" + SubGroup_CODE + "&DateFrom=" + DateFrom + "&DateTo=" + DateTo + "&Number=" + Number + "#page=0.5&zoom=70";
+                //var Summaryurl = "/Reports/Salereport?Dept_Code=" + DepartmentCode + "&Supl_Code=" + SupplierCode + "&Visibility=false&btn=" + btn + "&Loc_Code=" + Loc_Code + "&Group_Code=" + Group_CODE + "&SubGroup_Code=" + SubGroup_CODE + "&DateFrom=" + DateFrom + "&DateTo=" + DateTo + "&Number=" + Number + "#page=0.5&zoom=70";
+            }
+            else if (QueryFor == "SupplierWise") {
+                DetailUrl = "/Reports/SalesBySupplier?Supl_Code=" + SupplierId + "&FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=true" + "&ForWeb=" + IsForWeb;
+                SummaryUrl = "/Reports/SalesBySupplier?Supl_Code=" + SupplierId + "&FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=False" + "&ForWeb=" + IsForWeb;
+            }
+            else if (QueryFor == "ItemVoid") {
+                DetailUrl = "/Reports/ItemVoid?FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=true" + "&ForWeb=" + IsForWeb;
+                SummaryUrl = "/Reports/ItemVoid?FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=False" + "&ForWeb=" + IsForWeb;
+                //var DetailUrl = "/Reports/ItemVoidreport?Dept_Code=" + DepartmentCode + "&Supl_Code=" + SupplierCode + "&btn=" + btn + "&Loc_Code=" + Loc_Code + "&Group_Code=" + Group_CODE + "&SubGroup_Code=" + SubGroup_CODE + "&DateFrom=" + DateFrom + "&DateTo=" + DateTo + "#page=0.5&zoom=70";
+                //var Summaryurl = "/Reports/ItemVoidreport?Dept_Code=" + DepartmentCode + "&Supl_Code=" + SupplierCode + "&Visibility=false&btn=" + btn + "&Loc_Code=" + Loc_Code + "&Group_Code=" + Group_CODE + "&SubGroup_Code=" + SubGroup_CODE + "&DateFrom=" + DateFrom + "&DateTo=" + DateTo + "#page=0.5&zoom=70";
+            }
+            else if (QueryFor == "PriceOverride") {
+                DetailUrl = "/Reports/PriceOverride?FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=true" + "&ForWeb=" + IsForWeb;
+                SummaryUrl = "/Reports/PriceOverride?FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=False" + "&ForWeb=" + IsForWeb;
+                //var DetailUrl = "/Reports/PriceOverridereport?Dept_Code=" + DepartmentCode + "&Supl_Code=" + SupplierCode + "&btn=" + btn + "&Loc_Code=" + Loc_Code + "&Group_Code=" + Group_CODE + "&SubGroup_Code=" + SubGroup_CODE + "&DateFrom=" + DateFrom + "&DateTo=" + DateTo + "#page=0.5&zoom=70";
+                //var Summaryurl = "/Reports/PriceOverridereport?Dept_Code=" + DepartmentCode + "&Supl_Code=" + SupplierCode + "&Visibility=false&btn=" + btn + "&Loc_Code=" + Loc_Code + "&Group_Code=" + Group_CODE + "&SubGroup_Code=" + SubGroup_CODE + "&DateFrom=" + DateFrom + "&DateTo=" + DateTo + "#page=0.5&zoom=70";
+            }
+            else if (QueryFor == "BranchWise") {
+                DetailUrl = "/Reports/SalesByBranch?Branch=" + BranchId + "&FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=true";
+                SummaryUrl = "/Reports/SalesByBranch?Branch=" + BranchId + "&FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=false";
+            }
+            else if (QueryFor == "BillVoid") {
+                DetailUrl = "/Reports/BillVoid?BillNo=" + BillNo + "&FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=true";
+                SummaryUrl = "/Reports/BillVoid?BillNo=" + BillNo + "&FromDate=" + DateFrom + "&ToDate=" + DateTo + "&Visibility=false";
+            }
+
+            $('#DetailFrame').attr('src', "");
+            $('#DetailFrame').attr('src', DetailUrl);
+            $('#SummaryFrame').attr('src', "");
+            $('#SummaryFrame').attr('src', SummaryUrl);
+            $("#Report").removeAttr("disabled");
+            $("#Detail").click();
+            $(".ds").show();
+        }
+
+    </script>
+}

@@ -1,0 +1,874 @@
+﻿@model Inventory.ViewModels.ReservationViewModel
+
+@{
+    ViewBag.Title = "Reservation";
+}
+@section CSS{
+
+    <link href="~/content/fullcalendar.css" rel="stylesheet" />
+}
+<style>
+    .SearchBar {
+        margin-top: 5px;
+    }
+
+    .fc-month-button {
+        width: 90px;
+        height: 35px;
+        color: #ffffff;
+        background-color: #eb4aa5;
+    }
+
+    .fc-basicWeek-button {
+        width: 90px;
+        height: 35px;
+        color: #ffffff;
+        background-color: #6dc7be;
+    }
+
+    .fc-basicDay-button {
+        width: 90px;
+        height: 35px;
+        color: #ffffff;
+        background-color: #b198dc;
+    }
+
+    .fc-btnJan-button {
+        width: 90px;
+        height: 50px;
+        color: #ffffff;
+        background-color: #f87952;
+    }
+
+    .fc-btnFaceBook-button {
+        width: 90px;
+        height: 35px;
+        color: #ffffff;
+        background-color: #56bdde;
+    }
+
+    .fc-btnList-button {
+        width: 90px;
+        height: 35px;
+        color: #ffffff;
+        background-color: #56bdde;
+    }
+
+    .btn_search {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #btn_new {
+        width: 90px;
+        margin-left: 3px;
+    }
+    #btn_list {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #btn_save {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #btn_authorize {
+        width: 92px;
+        margin-left: 3px;
+    }
+
+    #btn_cancel {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #btn_close {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #btn_print {
+        width: 90px;
+        margin-left: 3px;
+    }
+    #btn_journal {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    .form-control {
+        margin: 5px;
+    }
+
+    .modal-full {
+        min-width: 100%;
+        margin: 0 auto;
+        padding: 0;
+    }
+
+        .modal-full .modal-content {
+            min-height: 100vh;
+        }
+
+    .modal {
+        overflow-y: auto;
+    }
+
+    .table td, .table th {
+        vertical-align: middle;
+    }
+</style>
+<div class="content-wrapper">
+    <input type="hidden" id="RES_ID" value="@Model.main.RES_ID" />
+    <input type="hidden" id="STATUS" value="@Model.main.STATUS" />
+    <input type="hidden" id="SUPL_CODE" value="@Model.main.SUPL_CODE" />
+    <form id="pform" onkeydown="return event.keyCode!=13" Class="was-validated">
+        <div id="calender" style="padding-top: 30px;"></div>
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog modal-full">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:#3498DB;color:white">
+                        <h4 class="modal-title">Reservation</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" id="_form">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <!-- Custom Tabs -->
+                                        <div class="card">
+                                            <div class="card-header d-flex p-0">
+                                                <h3 class="card-title p-3"></h3>
+                                                @*<input type="text" id="SearchBar" class="form-control" style="background-image:none;border:none;max-width:55%" placeholder="Search" />*@
+                                                <ul class="nav nav-pills ml-auto p-2">
+                                                    <li><button type="button" id="btn_new" onclick="ClearForm()" class="btn btn-outline-primary fa-pull-right" data-toggle="modal" data-target="#modal-lg">New</button></li>
+                                                    <li><button type="button" id="btn_list" class="btn btn-outline-primary fa-pull-right" onclick="window.location.href = '/Reservation/List'">List</button></li>
+                                                    <li><button type="button" id="btn_save" onclick="SaveData()" class="btn btn-outline-success js-save fa-pull-right">Save</button></li>
+                                                    <li><input type="button" id="btn_authorize" class="btn btn-outline-success fa-pull-right" onclick="Authorize()" value="Authorize" data-toggle="modal" data-target="#modal-lg"></li>
+                                                    <li><button type="button" id="btn_cancel" class="btn btn-outline-danger" onclick="CancelBooking()">Cancel</button></li>
+                                                    @*<li><button type="button" id="btn_close" class="btn btn-outline-secondary" data-dismiss="modal">Close</button></li>*@
+                                                    <li><button type="button" id="btn_print" onclick="Print_Report()" class="btn btn-outline-info">Print</button></li>
+                                                    <li><button type="button" id="btn_journal" onclick="Journal()" class="btn btn-outline-info">Ledger</button></li>
+                                                </ul>
+                                            </div>
+                                            <!-- Personal Info -->
+                                            <div class="card card-primary collapsed-card">
+                                                <span data-card-widget="collapse" style="background-color:#3498DB">
+                                                    <div class="card-header">
+                                                        <a href="#" data-card-widget="collapse"><h5 class="card-title" style="color:white;">Personal Info</h5></a>
+                                                        <div class="card-tools">
+                                                            <button type="button" id="PersonalInfo" class="btn btn-tool" data-card-widget="collapse">
+                                                                <i class="fas fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                        <!-- /.card-tools -->
+                                                    </div>
+                                                </span>
+                                                <!-- /.card-header -->
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.main.DOC_DATE, new { @Value = Model.main.DOC_DATE.ToString("yyyy-MM-dd"), @type = "date", @id = "DOC_DATE", @name = "DOC_DATE", @class = "form-control", @required = "required" })
+                                                                <label for="DOC_DATE">DOC DATE</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.main.FIRST_NAME, new { @type = "text", @id = "FIRST_NAME", @name = "FIRST_NAME", @class = "form-control", @required = "required ", @placeholder = "First Name" })
+                                                                <label for="FIRST_NAME">FIRST NAME</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.main.LAST_NAME, new { @type = "text", @id = "LAST_NAME", @name = "LAST_NAME", @class = "form-control", @placeholder = "Last Name" })
+                                                                <label for="LAST_NAME">LAST NAME</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.main.PHONE, new { @type = "number", @id = "PHONE", @name = "PHONE", @class = "form-control", @required = "required ", @placeholder = "Phone", @min = "0" })
+                                                                <label for="PHONE">PHONE</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.DropDownListFor(m => m.main.COUNTRY, new SelectList(Model.main.Countries, "COUNTRY_CODE", "COUNTRY_NAME"), "Select Country", new { @class = "form-control", @id = "ddl_Country", @name = "ddl_Country", @required = "required " })
+                                                                <label for="ddl_Country">Country</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.DropDownListFor(m => m.main.CITY, new SelectList(Model.main.Cities, "CITY_CODE", "CITY_NAME"), "Select City", new { @class = "form-control", @id = "ddl_City", @name = "ddl_City", @required = "required" })
+                                                                <label for="ddl_City">City</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-12 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.main.ADDRESS, new { @type = "text", @id = "ADDRESS", @name = "ADDRESS", @class = "form-control", @placeholder = "Address" })
+                                                                <label for="ADDRESS">ADDRESS</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.DropDownListFor(m => m.main.ID_TYPE, new SelectList(Model.main.IdTypes, "Value", "Text"), "Select Id Type", new { @class = "form-control", @id = "ddl_ID_TYPE", @name = "ddl_ID_TYPE" })
+                                                                <label for="ddl_ID_TYPE">ID TYPE</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.main.ID_NO, new { @type = "text", @id = "ID_NO", @name = "ID_NO", @class = "form-control", @placeholder = "ID NO" })
+                                                                <label for="ID_NO">ID NO</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.main.E_MAIL, new { @type = "text", @id = "E_MAIL", @name = "E_MAIL", @class = "form-control", @placeholder = "EMAIL" })
+                                                                <label for="E_MAIL">E-MAIL</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.main.DOB, new { @type = "text", @id = "DOB", @name = "DOB", @class = "form-control", placeholder = "Date of Birth", onfocus = "(this.type='date')" })
+                                                                <label for="DOB">DOB</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        @*<div class="col-lg-3 col-md-6 col-sm-12">
+                                                                @Html.TextBoxFor(m => m.main.PER_DAY, new { @type = "number", @id = "PER_DAY", @name = "PER_DAY", @class = "form-control", @placeholder = "Per Day" })
+                                                            </div>*@
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.main.DISCOUNT, new { @type = "number", @id = "DISCOUNT", @name = "DISCOUNT", @class = "form-control", @placeholder = "Discount", @min = "0", @onkeyup = "calculateTotal()" })
+                                                                <label for="DISCOUNT">DISCOUNT</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.main.AMOUNT_PAID, new { @type = "number", @id = "AMOUNT_PAID", @name = "AMOUNT_PAID", @class = "form-control", @placeholder = "Amount Paid", @min = "0", @onkeyup = "calculateTotal()" })
+                                                                <label for="AMOUNT_PAID">AMOUNT PAID</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.main.TOTAL_AMT, new { @type = "number", @id = "TOTAL_AMT_MAIN", @name = "TOTAL_AMT_MAIN", @class = "form-control", @placeholder = "Total Amount", @readonly = "readonly", @min = "0" })
+                                                                <label for="TOTAL_AMT_MAIN">TOTAL AMOUNT</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.main.BALANCE, new { @type = "number", @id = "BALANCE", @name = "BALANCE", @class = "form-control", @placeholder = "Balance", @readonly = "readonly", @min = "0" })
+                                                                <label for="BALANCE">BALANCE</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- /.card-body -->
+                                            </div>
+                                            <!-- Personal End -->
+                                            <!-- Detail Start -->
+                                            <div class="card card-primary collapsed-card">
+                                                <span data-card-widget="collapse" style="background-color:#3498DB">
+                                                    <div class="card-header">
+                                                        <a href="#" data-card-widget="collapse"><h5 class="card-title" style="color:white;">Detail</h5></a>
+                                                        <div class="card-tools">
+                                                            <button type="button" id="Detail" class="btn btn-tool" data-card-widget="collapse">
+                                                                <i class="fas fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                        <!-- /.card-tools -->
+                                                    </div>
+                                                </span>
+                                                <!-- /.card-header -->
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.DropDownListFor(m => m.detail.ROOM_TYPE, new SelectList(Model.detail.RoomTypeList, "ROOM_TYPE_CODE", "NAME"), "Select Room Type", new { @class = "form-control", @id = "ddl_ROOM_TYPE", @name = "ddl_ROOM_TYPE", @required = "required ", @onchange = "LoadRooms()" })
+                                                                <label for="ddl_ROOM_TYPE"> ROOM TYPE</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.DropDownListFor(m => m.detail.ROOM_CATEGORY, new SelectList(Model.detail.RoomCategoryList, "ROOM_CATEGORY_CODE", "NAME"), "Select Room Category", new { @class = "form-control", @id = "ddl_ROOM_CATEGORY", @name = "ddl_ROOM_CATEGORY", @required = "required ", @onchange = "LoadRooms()" })
+                                                                <label for="ROOM CATEGORY">ROOM CATEGORY</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                
+                                                                @Html.TextBoxFor(m => m.detail.CHECKIN_DATETIME, new { @type = "datetime-local", @name = "CHECKIN_DATETIME", @class = "form-control", placeholder = "CHECK IN DATETIME", @id = "CHECKIN_DATETIME", @required = "required", @onchange = "LoadRooms()" })
+                                                                <label for="CHECKIN_DATETIME">CHECK IN DATE TIME</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.detail.ESTIMATED_CHECKOUT_DATETIME, new { @type = "datetime-local", @name = "ESTIMATED_CHECKOUT_DATETIME", @class = "form-control", placeholder = "ESTIMATED CHECKOUT DATETIME", @id = "ESTIMATED_CHECKOUT_DATETIME" })
+                                                                <label for="AmountESTIMATED_CHECKOUT_DATETIME">ESTIMATED CHECKOUT</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                               @Html.TextBoxFor(m => m.detail.CHECKOUT_DATETIME, new { @type = "datetime-local", @name = "CHECKOUT_DATETIME", @class = "form-control", placeholder = "CHECK OUT DATETIME", @id = "CHECKOUT_DATETIME", @required = "required", @onchange = "LoadRooms()" })
+                                                            <label for="CHECKOUT_DATETIME">CHECKOUT DATETIME</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.DropDownListFor(m => m.detail.ROOM_CODE, new SelectList(Model.detail.RoomList, "ROOM_CODE", "ROOM_NAME"), "Select Room", new { @class = "form-control", @id = "ddl_ROOM", @name = "ddl_ROOM", @required = "required" })
+                                                                <label for="ddl_ROOM">ROOM</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.detail.ADULTS, new { @type = "number", @id = "ADULTS", @name = "ADULTS", @class = "form-control", @placeholder = "ADULTS", @required = "required ", @min = "0" })
+                                                                <label for="ADULTS">ADULTS</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.detail.CHILDREN, new { @type = "number", @id = "CHILDREN", @name = "CHILDREN", @class = "form-control", @placeholder = "CHILDREN", @required = "required", @min = "0" })
+                                                                <label for="CHILDREN">CHILDREN</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.detail.RATE_PER_DAY, new { @type = "number", @id = "RATE_PER_DAY", @name = "RATE_PER_DAY", @class = "form-control", @placeholder = "RATE PER DAY", @required = "required ", @onkeyup = "calculateDetailTotal()", @min = "0" })
+                                                                <label for="RATE_PER_DAY">RATE PER DAY</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.detail.SERVICES_CHARGES, new { @type = "number", @id = "SERVICES_CHARGES", @name = "SERVICES_CHARGES", @class = "form-control", @placeholder = "SERVICES CHARGES", @onkeyup = "calculateDetailTotal()", @min = "0" })
+                                                                <label for="SERVICES_CHARGES">SERVICES CHARGES</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.detail.OTHER_CHARGES, new { @type = "number", @id = "OTHER_CHARGES", @name = "OTHER_CHARGES", @class = "form-control", @placeholder = "OTHER CHARGES", @onkeyup = "calculateDetailTotal()", @min = "0" })
+                                                                <label for="OTHER_CHARGES">OTHER CHARGES</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.detail.GST, new { @type = "number", @id = "GST", @name = "GST", @class = "form-control", @placeholder = "GST", @onkeyup = "calculateDetailTotal()", @min = "0" })
+                                                                <label for="GST">GST</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <div class="form-group has-float-label">
+                                                                @Html.TextBoxFor(m => m.detail.TOTAL_AMT, new { @type = "number", @id = "TOTAL_AMT_DETAIL", @name = "TOTAL_AMT_DETAIL", @class = "form-control", @placeholder = "AMOUNT", @readonly = "readonly", @min = "0" })
+                                                                <label for="TOTAL_AMT_DETAIL">TOTAL AMOUNT</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                        </div>
+                                                        <div class="col-lg-3 col-md-6 col-sm-12">
+                                                            <input value="ADD TO TABLE" id="add_btn" onclick="showTable()" class="form-control btn btn-outline-primary btn-block" style="margin:5px;height:2.25rem" type="button" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-12 col-sm-12 col-md-12">
+                                                            <div style="display:block;overflow:auto;overflow-y:scroll">
+                                                                <div class="table-responsive">
+                                                                    <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="reservationDetail_Table">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th style="display:none">ROOM_TYPE</th>
+                                                                                <th style="display:none">ROOM_CATEGORY</th>
+                                                                                <th style="display:none">ROOM_CODE</th>
+                                                                                <th>ROOM</th>
+                                                                                <th>CI</th>
+                                                                                <th>EST. CO</th>
+                                                                                <th>CO</th>
+                                                                                <th>ADULT</th>
+                                                                                <th>CHILD</th>
+                                                                                <th>RPD</th>
+                                                                                <th>SC</th>
+                                                                                <th>OC</th>
+                                                                                <th>GST</th>
+                                                                                <th>AMOUNT</th>
+                                                                                <th style="display:none">STATUS</th>
+                                                                                <th>ACTION</th>
+                                                                                @*<th>Edit</th>*@
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody id="tblbody">
+                                                                            @{int i = 1;}
+                                                                            @if (true)
+                                                                            {
+                                                                                foreach (var item in Model.detailList)
+                                                                                {
+                                                                                    <tr id="trrr@(i)">
+                                                                                        <td style="display:none">@item.ROOM_TYPE</td>
+                                                                                        <td style="display:none">@item.ROOM_CATEGORY</td>
+                                                                                        <td style="display:none">@item.ROOM_CODE</td>
+                                                                                        <td>@item.ROOM_NAME</td>
+                                                                                        <td>@item.CHECKIN_DATETIME</td>
+                                                                                        <td>@item.ESTIMATED_CHECKOUT_DATETIME</td>
+                                                                                        <td>@item.CHECKOUT_DATETIME</td>
+                                                                                        <td>@item.ADULTS</td>
+                                                                                        <td>@item.CHILDREN</td>
+                                                                                        <td>@item.RATE_PER_DAY</td>
+                                                                                        <td>@item.SERVICES_CHARGES</td>
+                                                                                        <td>@item.OTHER_CHARGES</td>
+                                                                                        <td>@item.GST</td>
+                                                                                        <td>@item.TOTAL_AMT</td>
+                                                                                        <td style="display:none">@item.STATUS</td>
+                                                                                        @if (item.STATUS == "3")
+                                                                                        {
+                                                                                            <td><a onclick='AlertAuthorizeDocument()' class='fa fa-trash'></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick='AlertAuthorizeDocument()' class='fa fa-edit'></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick='AlertAuthorizeDocument()' class="fa fa-check-circle"></a></td>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <td><a onclick='RemoveRow("tr#trrr@(i)","@(i)")' class='fa fa-trash' style='color:red'></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick='EditRow("tr#trrr@(i)","@(i)")' class='fa fa-edit' style='color:blue'></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick='AuthorizeSingleReservation("tr#trrr@(i)")' class="fa fa-check-circle" style="color:green"></a></td>
+                                                                                        }
+                                                                                        @*<td><a onclick='EditRow("tr#trrr@(i)","@(i)")' class='fa fa-edit'></a></td>*@
+                                                                                    </tr>
+                                                                                    i = i + 1;
+                                                                                }
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-12">
+                                            <input value="ADD ITEMS" id="add_Items" onclick="showItemsModel()" class="btn btn-block btn-outline-primary" style="margin-bottom:10px" type="button" />
+                                        </div>
+                                        <div class="col-12">
+                                            <div style="display:block; overflow:auto; overflow-y:scroll">
+                                                <div class="table-responsive">
+                                                    <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="InventoryDetail_Table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="display:none">RES_ID</th>
+                                                                <th style="display:none">ROOM_CODE</th>
+                                                                <th style="display:none">BARCODE</th>
+                                                                <th style="width:15%">ROOM</th>
+                                                                <th style="width:20%">ITEM</th>
+                                                                <th style="width:35%">COMMENTS</th>
+                                                                <th style="width:5%">QTY</th>
+                                                                <th style="width:10%">AMOUNT</th>
+                                                                <th style="display:none">RETAIL</th>
+                                                                <th style="display:none">STATUS</th>
+                                                                <th style="width:15%">ACTION</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="Inventory_tblbody">
+                                                            @{int r = 1;}
+                                                            @if (Model.reservationItems != null)
+                                                            {
+                                                                foreach (var item in Model.reservationItems)
+                                                                {
+                                                                    <tr id="trrrr@(r)">
+                                                                        <td style="display:none">@item.RES_ID</td>
+                                                                        <td style="display:none">@item.ROOM_CODE</td>
+                                                                        <td style="display:none">@item.BARCODE</td>
+                                                                        <td>@item.ROOM_NAME</td>
+                                                                        <td>@item.DESCRIPTION</td>
+                                                                        <td>@item.COMMENTS</td>
+                                                                        <td>@item.QUANTITY</td>
+                                                                        <td>@item.AMOUNT</td>
+                                                                        <td style="display:none">@item.UNIT_RETAIL</td>
+                                                                        <td style="display:none">@item.STATUS</td>
+                                                                        @if (item.STATUS == Inventory.Constants.DocumentStatus.AuthorizedDocument)
+                                                                        {
+                                                                            <td align='center'><a onclick='AlertAuthorizeDocument()' class='fa fa-trash'></a> &nbsp;&nbsp;|&nbsp;&nbsp;<a onclick='AlertAuthorizeDocument()' class='fa fa-edit'></a></td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td align='center'><a onclick='RemoveRow("tr#trrrr@(r)","@(r)")' class='fa fa-trash' style='color:red'></a> &nbsp;&nbsp;|&nbsp;&nbsp;<a onclick='EditItemsRow("tr#trrrr@(r)","@(r)")' class='fa fa-edit' style='color:blue'></a></td>
+                                                                        }
+                                                                    </tr>
+                                                                    r = r + 1;
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-12">
+                                            <input value="ADD AMENITIES" id="add_amenities" onclick="showAmenitiesModel()" class="btn btn-block btn-outline-primary" style="margin-bottom:10px" type="button" />
+                                        </div>
+                                        <div class="col-12">
+                                            <div style="display:block; overflow:auto; overflow-y:scroll">
+                                                <div class="table-responsive">
+                                                    <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="AmenityDetail_Table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="display:none">RES_ID</th>
+                                                                <th style="display:none">ROOM_CODE</th>
+                                                                <th style="display:none">BARCODE</th>
+                                                                <th style="width:15%">ROOM</th>
+                                                                <th style="width:20%">ITEM</th>
+                                                                <th style="width:35%">COMMENTS</th>
+                                                                <th style="width:15%">DATE TIME</th>
+                                                                <th style="display:none">AMOUNT</th>
+                                                                <th style="display:none">RETAIL</th>
+                                                                <th style="display:none">STATUS</th>
+                                                                <th style="width:15%">ACTION</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="Amenity_tblbody">
+                                                            @{int p = 1;}
+                                                            @if (Model.reservationAmenities != null)
+                                                            {
+                                                                foreach (var item in Model.reservationAmenities)
+                                                                {
+                                                                    <tr id="trami@(p)">
+                                                                        <td style="display:none">@item.RES_ID</td>
+                                                                        <td style="display:none">@item.ROOM_CODE</td>
+                                                                        <td style="display:none">@item.BARCODE</td>
+                                                                        <td>@item.ROOM_NAME</td>
+                                                                        <td>@item.DESCRIPTION</td>
+                                                                        <td>@item.COMMENTS</td>
+                                                                        <td>@item.DATETIME</td>
+                                                                        <td style="display:none">@item.AMOUNT</td>
+                                                                        <td style="display:none">@item.UNIT_RETAIL</td>
+                                                                        <td style="display:none">@item.STATUS</td>
+                                                                        @if (item.STATUS == Inventory.Constants.DocumentStatus.AuthorizedDocument)
+                                                                        {
+                                                                            <td align='center'><a onclick='AlertAuthorizeDocument()' class='fa fa-trash'></a> &nbsp;&nbsp;|&nbsp;&nbsp;<a onclick='AlertAuthorizeDocument()' class='fa fa-edit'></a></td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td align='center'><a onclick='RemoveRow("tr#trami@(p)","@(p)")' class='fa fa-trash' style='color:red'></a> &nbsp;&nbsp;|&nbsp;&nbsp;<a onclick='EditAmenityRow("tr#trami@(p)","@(p)")' class='fa fa-edit' style='color:blue'></a></td>
+                                                                        }
+
+                                                                    </tr>
+                                                                    p = p + 1;
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="AddNewItem" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header btn-primary">
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <h4 class="modal-title">Add Item</h4>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <input type="number" id="ItemsQty" class="form-control" placeholder="Quantity" />
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    @Html.DropDownList("AddItems", new SelectList(Model.detail.RoomList, "ROOM_CODE", "ROOM_NAME"), "Select Room", new { @class = "form-control", @id = "ddl_AddItems", @name = "ddl_AddItems", @required = "required" })
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="text" id="iComment" placeholder="Comments" value="" class="form-control" />
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div style="display:block;overflow:auto;overflow-y:scroll">
+                            <div class="table-responsive">
+                                <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="Items_Table">
+                                    <thead>
+                                        <tr>
+                                            <th style="display:none">BARCODE</th>
+                                            <th width="80%">Item Name</th>
+                                            <th>AMOUNT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="itemList_tblbody">
+                                        @{int q = 1;}
+                                        @if (true)
+                                        {
+                                            foreach (var item in Model.itemList)
+                                            {
+                                        <tr onclick=showItemTable(this) id="trrr@(q)">
+                                            <td style="display:none">@item.BARCODE</td>
+                                            <td>@item.DESCRIPTION</td>
+                                            <td>@item.UNIT_RETAIL</td>
+                                        </tr>
+                                                q = q + 1;
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="AddNewAmenity" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header btn-primary">
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <h4 class="modal-title">Add Amenity </h4>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <input type="datetime-local" id="aminityDateTime" class="form-control" placeholder="Date" />
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    @Html.DropDownList("AddAmanities", new SelectList(Model.detail.RoomList, "ROOM_CODE", "ROOM_NAME"), "Select Room", new { @class = "form-control", @id = "ddl_AddAmanities", @name = "ddl_AddAmanities", @required = "required" })
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="text" id="aComment" placeholder="Comments" value="" class="form-control" />
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div style="display:block;overflow:auto;overflow-y:scroll">
+                            <div class="table-responsive">
+                                <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="Amenity_Table">
+                                    <thead>
+                                        <tr>
+                                            <th style="display:none">BARCODE</th>
+                                            <th width="80%">Item Name</th>
+                                            <th>AMOUNT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="amenityList_tblbody">
+                                        @{int e = 1;}
+                                        @if (true)
+                                        {
+                                            foreach (var item in Model.amenityList)
+                                            {
+                                        <tr onclick=showAmenityTable(this) id="trrr@(e)">
+                                            <td style="display:none">@item.BARCODE</td>
+                                            <td>@item.DESCRIPTION</td>
+                                            <td>@item.UNIT_RETAIL</td>
+                                        </tr>
+                                                e = e + 1;
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="myReportModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header btn-primary">
+            </div>
+            <div class="modal-body">
+                <iframe name="ReportModal" id="ReportModal" src="about:blank" frameborder="0" scrolling="no"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/AdminLte/plugins/moment/moment.min.js"></script>
+    <script src="~/Scripts/fullcalendar.min.js"></script>
+    <script src="~/content/js/Reservation.js"></script>
+    <script type="text/javascript">
+        @if (ViewBag.Update != null)
+                {
+                    @:$('#myModal').modal();
+                                }
+        $('#ddl_ROOM').empty();
+        $('#ddl_ROOM').append(new Option('Select Room', ''));
+
+        $(document).ready(function () {
+            if ($("#RES_ID").val() == "" || $("#RES_ID").val() == 0) {
+                $("#btn_cancel").attr('disabled', 'disabled');
+                $('#btn_authorize').attr('disabled', 'disabled');
+                $('#btn_journal').attr('disabled', 'disabled');
+                $('#btn_print').attr('disabled', 'disabled');
+            }
+            if ($("#STATUS").val() == 3) {
+                $('#btn_authorize').attr('disabled', 'disabled');
+                $("#add_btn").attr('disabled', 'disabled');
+                $('#btn_save').attr('disabled', 'disabled');
+                $("#btn_cancel").attr('disabled', 'disabled');
+            }
+            if ($("#STATUS").val() == 1) {
+                $('#btn_authorize').removeAttr('disabled');
+                $('#add_btn').removeAttr('disabled');
+                $('#btn_save').removeAttr('disabled');
+            }
+
+            //var today = moment().format('YYYY-MM-DD');
+            //fetchevents();
+            Events();
+        });
+        var events = [];
+        function Events() {
+            $.ajax({
+                url: "/Reservation/GetEvents",
+                method: "GET",
+            }).done(function (obj) {
+                if (obj != null) {
+                    var obj = JSON.parse(obj);
+                    $.each(obj, function (i, v) {
+                        events.push({
+                            title: v.Name,
+                            //start: moment(v.CheckIn).format("YYYY-DD-MM"),
+                            start: moment(v.CheckIn),
+                            //end: v.CheckOut,
+                            eventId: v.Id,
+                            Status: v.Status,
+                            Room: v.Room
+                        });
+                    });
+                    GenerateCalender(events);
+                }
+                else {
+                    toastr.error("No Event Is Registred Yet");
+                }
+            }).fail(function (obj) {
+                toastr.error("User Suggesstion is Not Working");
+            });
+        }
+        function GenerateCalender(events) {
+            $('#calender').fullCalendar('destroy');
+            $('#calender').fullCalendar({
+                contentHeight: 1000,
+                defaultDate: new Date(),
+                timeFormat: 'hh(:mm)a',
+                buttonText: {
+                    month: 'Month',
+                    week: 'Week',
+                    day: 'Day'
+                },
+                customButtons: {
+                    btnList: {
+                        text: 'List',
+                        click: function () {
+                            window.location.href = "/Reservation/List"
+                        }
+                    }
+                },
+                header: {
+                    left: 'prev,next',
+                    center: 'title',
+                    right: 'btnList,month,basicWeek,basicDay'
+                },
+                eventLimit: true,
+                eventColor: '#378006',
+                events: events,
+                eventRender: function (event, element) {
+                    if (event.Status == "1") {
+                        element.css('background-color', '#d43f3a');
+                    }
+                    //if (event.Doctype == "3") {
+                    //    element.css('background-color', '#337ab7');
+                    //}
+                    //else {
+
+                    //}
+                },
+                eventClick: function (calEvent, jsEvent, view) {
+                    if (calEvent.eventId != "") {
+                        window.location.replace("/Reservation/Edit?id=" + calEvent.eventId);
+                    }
+                    else {
+                        $('#myModal').modal();
+                        $('#myModal').removeAttr('style');
+                    }
+                },
+                dayClick: function (date, jsEvent, view) {
+                    $('#myModal').modal();
+                    $('#myModal').removeAttr('style');
+                    ClearForm();
+                }
+            })
+        }
+
+        function Print_Report() {
+            var RES_ID = $("#RES_ID").val();
+            if (RES_ID != "" && RES_ID != null && RES_ID > 0) {
+                var DetailUrl = "/Reports/ReservationForm?resId=" + RES_ID;
+                window.open(DetailUrl, '_blank');
+                //$('#ReportModal').attr('src', DetailUrl);
+                //$('#myReportModal').modal();
+            }
+            else {
+                toastr.error("Nothing Selected");
+            }
+        }
+
+        function showItemsModel() {
+            $('#AddNewItem').modal();
+        }
+        function showAmenitiesModel() {
+            $('#AddNewAmenity').modal();
+        }
+
+        function Journal() {
+            var RES_ID = $("#RES_ID").val();
+            if (RES_ID != "" && RES_ID != null && RES_ID > 0) {
+                var DetailUrl = "/Reports/Journal?resId=" + RES_ID;
+                window.open(DetailUrl, '_blank');
+                //$('#ReportModal').attr('src', DetailUrl);
+                //$('#myReportModal').modal();
+            }
+            else {
+                toastr.error("Nothing Selected");
+            }
+        }
+
+    </script>
+}
+
+
+

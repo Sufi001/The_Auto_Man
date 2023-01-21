@@ -1,0 +1,125 @@
+﻿@model Inventory.ViewModels.LoginViewModel
+@{
+    ViewBag.Title = "LoginForm";
+    Layout = "~/Views/Shared/_Login.cshtml";
+}
+<br />
+<style>
+    body {
+        background: radial-gradient(circle, rgba(235,247,252,1) 0%, rgba(143,185,255,1) 76%);
+        /*background-color: lightblue;*/
+    }
+
+    .login-form {
+        margin: 70px;
+        background-color: white;
+        padding-top: 50px;
+        padding-bottom: 10px;
+    }
+
+    @@media screen And (max-width:430px) {
+        body, html {
+            overflow-x: hidden;
+        }
+
+        .desktopon {
+            display: none;
+        }
+
+        .login-form {
+            margin: 0px;
+            height: 520px;
+        }
+    }
+</style>
+
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        @*<div class="img-responsive" style="background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(125,158,198,1) 76%) no-repeat; height:640px; margin-top: 15px; background-size: 100% 100%; overflow-y: hidden;">*@
+        @*<div class="img-responsive" style="background: url('../../images/loginImage.png') no-repeat; height:640px; margin-top: 15px; background-size: 100% 100%; overflow-y: hidden;">*@
+
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+            {
+            @Html.AntiForgeryToken()
+            <div style="" class="col-lg-4 col-md-4 col-sm-12 col-xl-12 login-form">
+                <div style="margin-bottom: 15px;" class="input-group">
+                    <span class="input-group-addon" style="background-color: #8fb9ff;"><i class="glyphicon glyphicon-user" style="color: #ffffff;"></i></span>
+                    @Html.TextBoxFor(m => m.UserName, new
+                   {
+                       @class = "form-control input-lg",
+                       @id = "txt_loginusername",
+                       @placeholder = "User Name or Email"@*, oninput = "checkdata(this)"*@ })
+                </div>
+                <div style="margin-bottom: 15px;" class="input-group">
+                    <span class="input-group-addon" style="background-color: #8fb9ff;"><i class="glyphicon glyphicon-map-marker" style="color: #ffffff;"></i></span>
+                    @Html.DropDownListFor(m => m.Location, new SelectList(ViewBag.Locations, "LOC_ID", "NAME"), null,
+                       new { @class = "form-control input-lg", @id = "ddl_location", @placeholder = "Enter Location" })
+                </div>
+                <div style="margin-bottom: 50px;">
+                    <div class="input-group">
+                        <span class="input-group-addon" style="background-color: #8fb9ff;"><i class="glyphicon glyphicon-lock" style="color: #ffffff;"></i></span>
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control input-lg", @placeholder = "Password" })
+                    </div>
+                </div>
+                <div class="form-group" style="margin-left:0px">
+                    <div class="input-group">
+                        <div class="checkbox">
+                            <label style="margin-left:5px">
+                                @Html.CheckBoxFor(m => m.remember, new { @style = "width: 15px; height: 15px;" })
+                                <label>Remember Me</label>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <input type="submit" value="Log In" class="btn btn-default btn-block" style="background-color: #4285f4; color: #ffffff; height:40px; margin-left:0px;margin-bottom:10px" />
+                </div>
+                @*<div class="col-12" style="text-align:center; margin-bottom:10px">
+                    <a style="color: red;">Forgot Password?</a>
+                </div>
+                <div class="col-12" style="text-align:center">
+                    Don't have an Account? <a style="color: red;">Create Account</a>
+                </div>*@
+            </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 desktopon" style="padding-top:70px; padding-bottom:10px; float:right">
+                    <img src="~/images/Logo/LoginPageImg.png" style="height:435px; width:600px;" />
+
+                </div>
+        }
+
+    </div>
+
+
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <script src="~/AdminLte/plugins/toastr/toastr.min.js"></script>
+    <script>
+
+        function toUpper(str) {
+            return str
+                .toLowerCase()
+                .split(' ')
+                .map(function (word) {
+                    //          console.log("First capital letter: " + word[0]);
+                    //           console.log("remain letters: " + word.substr(1));
+                    return word[0].toUpperCase() + word.substr(1);
+                })
+                .join(' ');
+        }
+
+        function checkdata(id) {
+            // alert(id);
+            var data = toUpper($(id).val());
+            $(id).val(data);
+            // alert(data);
+
+        }
+        @if (ViewBag.Message != null)
+    {
+        @:toastr.error('@ViewBag.Message');
+            }
+
+    </script>
+}

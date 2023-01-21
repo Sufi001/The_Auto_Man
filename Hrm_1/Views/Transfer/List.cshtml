@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Inventory.ViewModels.TransferListViewModel>
+@{
+    ViewBag.Title = "List";
+    var docType = "";
+}
+@section CSS{
+   
+<style>
+    #list {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #booking {
+        width: 90px;
+        margin-left: 3px;
+    }
+</style>
+}
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header" style="background-color:#3498DB;color:white;height:55px">
+                            <div class="row">
+                                <div class="col-6 pt-1">
+                                    <h2 class="card-title">
+                                        <b>
+                                            @if (Model.Any())
+                                            {
+                                                if (Model.FirstOrDefault() != null)
+                                                {
+                                                    docType = Model.FirstOrDefault().DocType == "I" ? "In" : "Out";
+                                                    <b>Transfer @docType Document</b>
+                                                }
+                                            }
+                                        </b>
+                                    </h2>
+                                </div>
+                                <div class="col-6">
+                                    @if (docType == "In")
+                                    {
+                                        <button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="booking" class="btn btn-default fa-pull-right" onclick="location.href='@Url.Action("TransferPage", "Transfer")'">Stock</button>
+                                    }
+                                    else
+                                    {
+                                        <button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="booking" class="btn btn-default fa-pull-right" onclick="location.href='@Url.Action("TransferPageOut", "Transfer")'">Stock</button>
+                                    }
+                                    <p></p>
+                                </div>
+                            </div>
+                        </div>
+                        @{int i = 0;}
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                    <thead style="background-color:#3498DB;color:white;">
+                                        <tr>
+                                            <th class="">No</th>
+                                            <th class="">Doc No</th>
+                                            <th class="">Date</th>
+                                            <th class="">Location</th>
+                                            <th class="">From</th>
+                                            <th class="">To</th>
+                                            <th class="">Amount</th>
+                                            <th class="">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var item in Model)
+                                        {
+                                            i = i + 1;
+                                            <tr>
+                                                <td class="">@i</td>
+                                                <td class="">@Html.ActionLink(item.DocNo, "Edit", new { docno = item.DocNo })</td>
+                                                <td class="">@item.Doc.ToString("dd-MM-yyyy")</td>
+                                                <td class="">@item.Location</td>
+                                                <td class="">@item.BranchFrom</td>
+                                                <td class="">@item.BranchTo</td>
+                                                <td class="">@item.Amount</td>
+                                                <td class="">@item.Status</td>
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+@section scripts
+   {
+    <script src="~/AdminLte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/AdminLte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script>
+    $("#example1").DataTable({
+                "pageLength": 50
+            });
+    </script>
+}

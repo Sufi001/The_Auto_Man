@@ -1,0 +1,275 @@
+﻿@model Inventory.ViewModel.CustomerSupplierViewModel
+@{
+    ViewBag.Title = "Staff";
+}
+@section CSS{
+    <style>
+        #list, #btn_submit, #btn_cancel, #btn_close {
+            width: 90px;
+            margin-left: 10px;
+        }
+    </style>
+}
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header" style="background-color:#3498DB;color:white">
+                            <h2 class="card-title"><b>Staff Member List</b></h2>
+                            <button type="button" class="btn btn-default fa-pull-right" id="btn_custAddRecord" onclick="ClearForm()" name="btn_custAddRecord" data-toggle="modal" data-target="#AddNewSupplier">Add Record</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="StaffTable" class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                    <thead style="background-color:#3498DB;color:white">
+                                        <tr id="theader">
+                                            <th class="col-xs-1">No</th>
+                                            <th>Code</th>
+                                            <th>Staff  Name</th>
+                                            <th>Phone Number</th>
+                                            <th>Address</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{int i = 0;}
+                                        @foreach (var item in Model.CustomerSupplierList)
+                                        {
+                                            i = i + 1;
+                                            <tr>
+                                                <td class="col-xs-1">@i</td>
+                                                <td>@item.SUPL_CODE</td>
+                                                <td>@item.SUPL_NAME</td>
+                                                <td>@item.Phone</td>
+                                                <td>@item.ADDRESS</td>
+                                                <td><span onclick="GetData('@item.SUPL_CODE')"><i style="color:#3498DB" class='fa fa-edit'></i></span></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+@using (Html.BeginForm("Save", "StaffMembers", FormMethod.Post, new { enctype = "multipart/form-data", @id = "Supplierform", onkeydown = "return event.keyCode!=13", Class = "was-validated" }))
+{
+    @Html.HiddenFor(m => m.SUPL_CODE, new {@id = "txt_SuplCode", @name = "txt_SuplCode",})
+    <div id="AddNewSupplier" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header btn-primary">
+                    <h4 class="modal-title">Add Staff Member</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.TextBoxFor(m => m.NAME, new { @class = "form-control", @id = "txt_customerName", @name = "txt_CustomerName", @maxlength = 50, @placeholder = "Name", @required = "required"})
+                                        <label for="txt_customerName">Name</label>
+                                    </div>
+                                    <div class="form-group has-float-label">
+                                        @Html.TextBoxFor(m => m.ADDRESS, new { @class = "form-control", @id = "txt_customerAddress", @name = "txt_customerAddress", @placeholder = "Address", @required = "required" })
+                                        <label for="txt_customerAddress">Address</label>
+                                    </div>
+                                    <div class="form-group has-float-label">
+                                        @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control", @minlength = 11, @MaxLength = "11", @id = "txt_phoneno", @name = "txt_phoneno", @placeholder = "Mobile No", @required = "required" })
+                                        <label for="txt_phoneno">Phone No</label>
+                                    </div>
+                                    <div class="form-group has-float-label">
+                                        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", @minlength = 11, @MaxLength = "11", @id = "txt_mobileno", @name = "txt_mobileno", @placeholder = "Phone No" })
+                                        <label for="txt_mobileno">Mobile No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.TextBoxFor(m => m.EMAIL, new { @class = "form-control", @id = "txt_email", @placeholder = "Email", @type = "email"})
+                                        <label for="txt_email">E-Mail</label>
+                                    </div>
+                                    <div class="form-group has-float-label" style="display:none">
+                                        @Html.DropDownListFor(m => m.LOCATION, new SelectList(Model.LocationList, "LOC_ID", "NAME"), "Select location", new { @id = "ddl_location", @class = "form-control", @placeholder = "Enter Location", @onchange = "AddTextBox()", @readonly = "readonly" })
+                                        <label for="ddl_location">Location</label>
+                                        <form method="post" name="locform" id="locform">
+                                            <div class="form-group" id="txt_locdiv">
+                                                <div>
+                                                    <input type="text" class="form-control" id="txt_loc" name="txt_loc" placeholder="New Location" />
+                                                </div>
+                                                <input type="button" class="btn btn-default" onclick="SaveLoc()" style="margin-left:135px;margin-top:8px" value="Save" />
+                                                <input type="button" id="btn_cancel" class="btn btn-danger pull-right" onclick="HideMe()" style="margin-right:155px;margin-top:8px" value="Clear">
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="form-group has-float-label">
+                                        @Html.DropDownListFor(m => m.StaffRole, new SelectList(Model.StaffStatusRoles, "Roll_Id", "Roll_Name"), "Select Status", new { @id = "ddl_Status", @class = "form-control", @placeholder = "Enter Status" })
+                                        <label for="ddl_Status">Status</label>
+                                    </div>
+                                    <div class="form-group has-float-label">
+                                        @Html.TextBoxFor(m => m.Phone2, new { @class = "form-control", @id = "txt_mobileno2", @minlength = 11, @MaxLength = "11", @name = "txt_mobileno2", @placeholder = "Contact Person Mob" })
+                                        <label for="txt_mobileno2">Contact Person Mobile </label>
+                                    </div>
+                                    <div class="form-group has-float-label">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                @Html.TextBoxFor(m => m.Balance, new { @class = "form-control", @id = "txt_Balance", @name = "txt_Balance", @Value = "0", @required = "required", @placeholder = "Balance", @type = "number", @disabled = "disabled" })
+                                                <label for="txt_Balance">Balance</label>
+                                            </div>
+                                            <div class="col-6">
+                                                @Html.TextBoxFor(m => m.OpeningBalance, new { @class = "form-control", @id = "txt_openingBalance", @name = "txt_openingBalance", @placeholder = "Opening Balance", @Value = "0", @required = "required", @type = "number" })
+                                                <label for="txt_openingBalance">Opening Balance</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <button type="submit" id="btn_submit" name="btn_submit" class="btn btn-primary fa-pull-right">Submit</button>
+                                            <button type="button" id="btn_cancel" onclick="ClearForm()" class="btn btn-primary fa-pull-right" data-toggle="modal" data-target="#AddNewSupplier">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+
+@section scripts
+{
+    <script src="~/AdminLte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/AdminLte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script>
+        $("#StaffTable").DataTable({
+            "pageLength": 50
+        });
+
+         @if (TempData["message"] != null)
+        {
+            var message = TempData["message"].ToString();
+            if (message == "success")
+            {
+                @:toastr.success('Data save successfully');
+            }
+            else if (message == "fail")
+            {
+                @:toastr.error('Something went wrong! Data not Saved.');
+                @:$("#AddNewSupplier").modal('show');
+            }
+            else
+            {
+                @:toastr.error('@message');
+                @:$("#AddNewSupplier").modal('show');
+            }
+        }
+        var GetData = function (e) {
+            var id = e;
+            $.ajax({
+                url: "/StaffMembers/Edit/?id=" + id,
+                type: "GET",
+                dataType: "JSON"
+            }).done(function (obj) {
+                var obj = JSON.parse(obj);
+                $("#txt_SuplCode").val(obj.SUPL_CODE);
+                $("#txt_customerName").val(obj.NAME);
+                $("#txt_customerAddress").val(obj.ADDRESS);
+                $("#txt_phoneno").val(obj.Mobile);
+                // PHONE StaffRole
+                $("#ddl_Status").val(obj.StaffRole);
+                $("#txt_mobileno").val(obj.Phone);
+                $("#txt_mobileno2").val(obj.Phone2);
+                $("#txt_email").val(obj.EMAIL);
+                //$("#ddl_terms").val(obj.Terms);
+                //$("#ddl_location").val(obj.LOCATION);
+                $("#txt_openingBalance").val(obj.OpeningBalance);
+                $("#txt_Balance").val(obj.Balance);
+                $("#txt_contactPerson").val(obj.Contact_Person);
+                $(".modal").modal();
+            }).fail(function (xhr) {
+                alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+            })
+        };
+        AddNewLoc();
+        function AddNewLoc() {
+            $('#ddl_location').append(new Option('Add New', ''));
+            $('#ddl_location option:last-child').css("color", "blue");
+        }
+        function SaveLoc() {
+            var vm = {
+
+            };
+            vm.LOC_ID = '';
+            var uppervalue = toUpper($("#txt_loc").val());
+            $("#txt_loc").val(uppervalue);
+            vm.NAME = $("#txt_loc").val();
+            $.ajax({
+                url: "/api/Location",
+                method: "post",
+                data: vm
+            })
+            .done(function (obj) {
+                var lastind;
+                $('#ddl_location').empty();
+                $('#ddl_location').append(new Option('Select location', ''));
+                $.each(obj, function (index, element) {
+                    $('#ddl_location').append(new Option(obj[index].NAME, obj[index].LOC_ID));
+                    lastind = obj[index].LOC_ID;
+                });
+                $('#ddl_location').val(lastind);
+                toastr.success('Location saved successfully.');
+                HideMe();
+                $('#btn_submit').removeAttr('disabled');
+                AddNewLoc();
+                $("#ddl_location").show();
+                $("#txt_loc").val("");
+            })
+            .fail(function () {
+                toastr.error('Data not saved.');
+            });
+        }
+        function AddTextBox() {
+            var v = jQuery("#ddl_location option:selected").text();
+            if (v == 'Add New') {
+                $("#txt_locdiv").show();
+                $("#ddl_location").hide();
+                $('#btn_submit').attr('disabled', 'disabled');
+
+            }
+            else {
+                $("#txt_locdiv").hide();
+                $("#ddl_location").show();
+                $('#btn_submit').removeAttr('disabled');
+            }
+
+        }
+        function ClearForm() {
+            $("#txt_SuplCode").val('');
+            $("#txt_nameValidation").val('');
+            $("#txt_openingBalance").val('0');
+            $("#txt_phoneno").val('');
+            $("#txt_customerAddress").val('');
+            $("#txt_mobileno").val('');
+            $("#txt_email").val('');
+            $("#txt_contactPerson").val('');
+            $("#txt_mobileno2").val('');
+            $("#txt_customerName").val('');
+            $("#txt_customerName").focus();
+        }
+    </script>
+
+}

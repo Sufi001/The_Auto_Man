@@ -1,0 +1,1556 @@
+﻿@using Inventory;
+@using Inventory.Controllers;
+@model Inventory.ViewModels.Item.ItemRegistration
+@{
+    ViewBag.Title = "Index";
+    var MethodName = "";
+    if (!ViewBag.UpdateMode)
+    {
+        MethodName = "Save";
+    }
+    else
+    {
+        MethodName = "Edit";
+    }
+    var next = (Convert.ToInt32(ViewBag.Barcode ?? "000000") + 1).ToString().PadLeft(6, '0');
+    var prev = (Convert.ToInt32(ViewBag.Barcode ?? "000000") - 1).ToString().PadLeft(6, '0');
+    }
+<style>
+    .callout, .card, .info-box, .mb-3, .my-3, .small-box {
+        margin-bottom: 0.2rem !important;
+    }
+
+    .card-header {
+        padding: .50rem 1.0rem;
+        padding-top: 0.25rem;
+        padding-right: 1.0rem;
+        padding-bottom: 0.0rem;
+        padding-left: 1.25rem;
+    }
+
+    select:focus, input:focus {
+        outline: none !important;
+        border-color: #719ECE !important;
+        box-shadow: 0 0 20px #719ECE !important;
+    }
+
+    .prev,.next,#list, #Sumbit {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+      #CancelPhoto {
+        margin-top: -155px;
+        margin-left: 140px;
+    }
+
+    #CancelPhoto1 {
+        margin-top: -155px;
+        margin-left: 140px;
+    }
+
+    #CancelPhoto2 {
+        margin-top: -155px;
+        margin-left: 140px;
+    }
+
+    #CancelPhoto3 {
+        margin-top: -155px;
+        margin-left: 140px;
+    }
+
+    .pic-name {
+        width: 151px;
+    }
+</style> 
+
+@using (Html.BeginForm(MethodName, "Items", FormMethod.Post, new { enctype = "multipart/form-data", id = "Form", Class = "was-validated" }))
+{
+    @Html.EditorFor(model => model.Barcode, new { htmlAttributes = new { @type = "hidden", @class = "form-control", @readonly = "readonly", @placeholder = "Bar Code" } })
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="row" id="_form">
+                <div class="col-12">
+                    <!-- Custom Tabs -->
+                    <div class="card">
+                        <div class="card-header d-flex p-0" style="background-color:#3498DB">
+                            @if (!ViewBag.UpdateMode)
+                            {
+                                <h2 class="card-title p-3"><b style="color:white">Register Your Product</b></h2>
+                            }
+                            @if (ViewBag.UpdateMode)
+                            {
+                                <h2 class="card-title p-3"><b style="color:white">Editing Your Product</b></h2>
+                            }
+
+                            <ul class="nav nav-pills ml-auto p-2">
+                                <li><button style="border:1px solid; background-color:#3985d2;color:white" type="button" class="btn btn-default fa-pull-right prev" onclick="location.href='@Url.Action("Edit", "Items", new {id = prev ,target="_blank" })'">Prev</button></li>
+                                <li><button style="border:1px solid; background-color:#3985d2;color:white" type="button" class="btn btn-default fa-pull-right next" onclick="location.href='@Url.Action("Edit", "Items", new {id = next ,target="_blank" })'">Next</button></li>
+                                @if (!ViewBag.UpdateMode)
+                                {
+                                    <li><input style="border:1px solid; background-color:#3985d2;color:white" type="button" value="Save" id="Sumbit" class="btn fa-pull-right" /></li>
+                                    <li><button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="list" class="btn  fa-pull-right" onclick="location.href='@Url.Action("List", "Items", new { target="_blank" })'">List</button></li>
+                                }
+                                @if (ViewBag.UpdateMode)
+                                {
+                                    <li><input style="border:1px solid; background-color:#3985d2;color:white" type="button" value="Save" id="Sumbit" class="btn btn-default fa-pull-right" /></li>
+                                    <li><button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="list" class="btn btn-default fa-pull-right" onclick="location.href='@Url.Action("List", "Items", new { target="_blank" })'">List</button></li>
+                                }
+
+                            </ul>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.DropDownListFor(m => m.DeptCode, new SelectList(ViewBag.Department, "DEPT_CODE", "DEPT_NAME"), "Department", new { @class = "form-control", @id = "ddl_Department", @name = "ddl_Department", @onchange = "FillGroup()", required = "required" })
+                                        <label for="ddl_Department">Department</label>
+                                    </div>
+                                </div>
+
+                                @if (!ViewBag.UpdateMode)
+                                {
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
+                                        <div class="form-group has-float-label">
+                                            @Html.DropDownListFor(m => m.GroupCode, new SelectList(ViewBag.SelectedGroup, "GROUP_CODE", "GROUP_NAME"), "Group", new { @class = "form-control", @id = "ddl_Group", @name = "ddl_Group", @onchange = "FillSubGroup()", required = "required" })
+                                            <label for="ddl_Group">Group</label>
+                                        </div>
+
+                                    </div>
+                                }
+
+
+                                @if (ViewBag.UpdateMode)
+                                {
+                                    <div class="col-lg-4 col-md-6 col-sm-12">
+                                        <div class="form-group has-float-label">
+                                            @Html.DropDownListFor(m => m.GroupCode, new SelectList(ViewBag.SelectedGroup, "GROUP_CODE", "GROUP_NAME"), null, new { @class = "form-control", @id = "ddl_Group", @name = "ddl_Group", @onchange = "FillSubGroup()", required = "required" })
+                                            <label for="ddl_Group">Group</label>
+                                        </div>
+
+                                    </div>
+
+                                }
+                                @if (!ViewBag.UpdateMode)
+                                {
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
+                                        <div class="form-group has-float-label">
+                                            @Html.DropDownListFor(m => m.SubGroupCode, new SelectList(ViewBag.SelectedSubGroup, "SGROUP_CODE", "SGROUP_NAME"), "SubGroup", new { @class = "form-control", @id = "ddl_SubGroup", @name = "ddl_SubGroup", required = "required" })
+                                            <label for="ddl_SubGroup">Sub Group</label>
+                                        </div>
+                                    </div>
+                                }
+                                @if (ViewBag.UpdateMode)
+                                {
+                                    <div class="col-lg-4 col-md-6 col-sm-12">
+                                        <div class="form-group has-float-label">
+                                            @Html.DropDownListFor(m => m.SubGroupCode, new SelectList(ViewBag.SelectedSubGroup, "SGROUP_CODE", "SGROUP_NAME"), null, new { @class = "form-control", @id = "ddl_SubGroup", @name = "ddl_SubGroup", required = "required" })
+                                            <label for="ddl_SubGroup">Sub Group</label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control myCustomfocus", @required = "required", @placeholder = "Product Name", @type = "text", maxlength = "100", autocomplete = "off" } })
+                                        <label for="Description">Product Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.UrduName, new { htmlAttributes = new { @class = "form-control myCustomfocus", @placeholder = "Product Name In Urdu", @type = "text", maxlength = "70", autocomplete = "off" } })
+                                        <label for="UrduName">Product Name In Urdu</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.UanNo, new { htmlAttributes = new { @class = "form-control", @placeholder = "UAN No", maxlength = "16", autocomplete = "off" } })
+                                        <label for="UanNo">UAN No</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.UnitCost, new { htmlAttributes = new { @class = "form-control", @id = "UnitCost", @placeholder = "Unit Cost", @type = "number", @min = "0", @step = "0.01", autocomplete = "off" } })
+                                                <label for="UnitCost">Unit Cost</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.CtnPcs, new { htmlAttributes = new { @class = "form-control", @id = "CtnPcs", @name = "CtnPcs", @placeholder = "CTN Size"} })
+                                                <label for="CtnPcs">CTN Size</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.UnitRetail, new { htmlAttributes = new { @class = "form-control", @id = "UnitRetail", @placeholder = "Unit Retail", @type = "number", @step = "0.01", required = "required", @min = "1", autocomplete = "off" } })
+                                                <label for="UnitRetail">Unit Retail</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.DropDownListFor(m => m.SupplierCode, new SelectList(ViewBag.Supplier, "SUPL_CODE", "SUPL_NAME"), null, new { @class = "form-control", @id = "SupplierCode", @name = "SupplierCode", required = "required", onDblClick = "$('#supplierList').click()" })
+                                                <label for="SupplierCode">Supplier</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.DropDownListFor(model => model.UanNoList, new SelectList("", "", ""), null, new
+                                   {
+                                       @class = "form-control",
+                                       @id = "UanNoList", @*@style = "height:95px;",*@ @name = "UanNoList",
+                                       @multiple = "multiple",
+                                       //@disabled = "true",
+                                       @placeholder = "UAN List",
+                                       onclick = "ModalConfirmation()"
+                                   })
+                                        <label for="UanNoList">Uan List</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group  has-float-label">
+                                        <select class="form-control" id="Type" name="Type" , required="required">
+                                            @*<option value="">Product Type</option>*@
+                                            <option value="P">Product</option>
+                                            <option value="S">Services</option>
+                                        </select>
+                                        <label for="Type">Type</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.DropDownListFor(m => m.GSTType, ItemsController.GSTTypes, new { @class = "form-control", @id = "GSTType", @name = "GSTType" })
+                                        <label for="GSTType">GST Type</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.GST_Percentage, new { htmlAttributes = new { @class = "form-control", @id = "GST_Percentage", @placeholder = "GST Percentage", @type = "number", @step = "0.01", @min = "0", value = "0", autocomplete = "off" } })
+                                        <label for="GST_Percentage">GST Percentage</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-8 col-md-8 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.PackQuantity, new { htmlAttributes = new { @class = "form-control", @placeholder = "Pack Qty", @type = "number", @step = "0.01", @min = "0" } })
+                                                <label for="PackQuantity">Pack Quantity</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.PackRetail, new { htmlAttributes = new { @class = "form-control", @placeholder = "Pack Retail", @type = "number", @step = "0.01", @min = "0" } })
+                                                <label for="PackRetail">Pack Retail</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.BulkQty, new { htmlAttributes = new { @class = "form-control", @placeholder = "Bulk Qty", @type = "number", @step = "0.01", @min = "0" } })
+                                                <label for="PackQuantity">Bulk Quantity</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.BulkRetail, new { htmlAttributes = new { @class = "form-control", @placeholder = "Bulk Retail", @type = "number", @step = "0.01", @min = "0" } })
+                                                <label for="BulkRetail">Bulk Retail</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.MarketRetail, new { htmlAttributes = new { @class = "form-control", @placeholder = "Market Retail", @type = "number", @step = "0.01", @min = "0" } })
+                                                <label for="MarketRetail">Market Retail</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.MinRetail, new { htmlAttributes = new { @class = "form-control", @placeholder = "Min Retail", @type = "number", @step = "0.01", @min = "0" } })
+                                                <label for="MinRetail">Minimum Retail</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    
+                                        <div class="form-group has-float-label">
+                                            @Html.DropDownListFor(m => m.Status, new SelectList(Model.StatusDDL, "Value", "Text"), null, new { @class = "form-control", @id = "ddl_Status", @name = "ddl_Status" })
+                                            <label for="Active">Active/Deactive</label>
+                                        </div>
+                                    
+                                        <div class="form-group has-float-label">
+                                            @Html.DropDownListFor(m => m.Brand, new SelectList(Model.BrandList, "Value", "Text"), "Brand", new { @class = "form-control", @id = "ddl_Brand", @name = "ddl_Brand" })
+                                            <label for="ddl_Brand">Brand</label>
+                                        </div>
+                                    
+                                        <div class="form-group has-float-label">
+                                            @Html.EditorFor(model => model.ImgDesc2, new { htmlAttributes = new { @class = "form-control", @placeholder = "Image Description Size" } })
+                                            <label for="Comments">Image Description Size</label>
+                                        </div>
+                                    
+                                    @*<div class="row">
+                                        <div class="col-6">
+                                            @if (!ViewBag.UpdateMode)
+                                            {
+                                            <img id="showImage" src="" alt="" class="form-control" style="width:150px;height:150px" />
+                                            }
+                                            @if (ViewBag.UpdateMode)
+                                            {
+                                                var img = Model.Barcode + ".jpg";
+                                            <img id="showImage" src="~/images/ProductImages/@img" alt="" class="form-control" style="width:150px;height:150px" />
+                                            @Html.HiddenFor(model => model.Image)
+                                            }
+                                            @Html.TextBoxFor(model => model.Picture, new { type = "file", accept = ".jpg" })
+                                            @Html.TextBoxFor(model => model.Picture2, new { type = "file", accept = ".jpg" })
+                                            @Html.TextBoxFor(model => model.Picture3, new { type = "file", accept = ".jpg" })
+                                            @Html.TextBoxFor(model => model.Picture4, new { type = "file", accept = ".jpg" })
+                                        </div>
+                                        <div class="col-6">
+                                            <div id="CancelPhoto">
+                                                x
+                                                <br />
+                                            </div>
+                                        </div>
+                                    </div>*@
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-6">
+                                    <div class="form-group has-float-label">
+                                        @if (Model.IsRfCodeRequired == "1")
+                                        {
+                                            @Html.EditorFor(model => model.ReferenceCode, new { htmlAttributes = new { @class = "form-control", @placeholder = "Reference Code", minlength = "0", maxlength = "6" , @readonly = "readonly" } })
+                                        }
+                                        else
+                                        {
+                                            @Html.EditorFor(model => model.ReferenceCode, new { htmlAttributes = new { @class = "form-control", @placeholder = "Reference Code", minlength = "0", maxlength = "6" } })
+                                        }
+                                        <label for="ReferenceCode">Reference Code</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-6">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.ImgDesc, new { htmlAttributes = new { @class = "form-control", @placeholder = "Image Description"} })
+                                        <label for="ImgDesc">Image Description</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-6">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.SearchingKeywords, new { htmlAttributes = new { @class = "form-control", @placeholder = "Searching Keywords" } })
+                                        <label for="SearchingKeywords">SearchingKeywords</label>
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control", @placeholder = "Comments", @type = "textarea" } })
+                                        <label for="Comments">Comments</label>
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+
+                            <div class="row">
+                                
+                                
+                            </div>
+
+                            <div class="card card-primary collapsed-card">
+                                <span data-card-widget="collapse" style="background-color:#3498DB">
+                                    <div class="card-header">
+                                        <a href="#" data-card-widget="collapse"><h5 class="card-title" style="color:white">Select Image</h5></a>
+                                        <div class="card-tools">
+                                            <button type="button" id="PromoCollapse" class="btn btn-tool" data-card-widget="collapse">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <!-- /.card-tools -->
+                                    </div>
+                                </span>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <div class="row" style="margin-bottom: 140px;">
+                                        <div class="col-3">
+                                            @if (!ViewBag.UpdateMode)
+                                            {
+                                                <img id="showImage" src="~/images/UploadImageIcon.jpg" alt="" class="form-control" style="width:150px;height:150px" onclick="OnFirstPicClick()" />
+                                            }
+                                            @if (ViewBag.UpdateMode)
+                                            {
+                                                if (Model.Image == "true")
+                                                {
+                                                    var img = Model.Barcode + ".jpg";
+                                                    <img id="showImage" src="~/images/ProductImages/@img" alt="" class="form-control" style="width:150px;height:150px" onclick="OnFirstPicClick()" />
+                                                }
+                                                else
+                                                {
+                                                    <img id="showImage" src="~/images/UploadImageIcon.jpg" alt="" class="form-control" style="width:150px;height:150px" onclick="OnFirstPicClick()" />
+                                                }
+                                                @Html.HiddenFor(model => model.Image)
+                                            }
+                                            @Html.TextBoxFor(model => model.Picture, new { type = "file", @class = "pic-name", @style = "display:none;" })
+                                            @*@Html.TextBoxFor(model => model.Picture2, new { type = "file", accept = ".jpg" })
+                        @Html.TextBoxFor(model => model.Picture3, new { type = "file", accept = ".jpg" })
+                        @Html.TextBoxFor(model => model.Picture4, new { type = "file", accept = ".jpg" })*@
+                                            <div id="CancelPhoto">
+                                                x
+                                                <br />
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            @if (!ViewBag.UpdateMode)
+                                            {
+                                                <img id="showImage1" src="~/images/UploadImageIcon.jpg" alt="" class="form-control" style="width:150px;height:150px" onclick="OnSecondPicClick()" />
+                                            }
+                                            @if (ViewBag.UpdateMode)
+                                            {
+                                                if (Model.Image1 == "true")
+                                                {
+                                                    var img = Model.Barcode + "-A.jpg";
+                                                    <img id="showImage1" src="~/images/ProductImages/@img" alt="" class="form-control" style="width:150px;height:150px" onclick="OnSecondPicClick()" />
+                                                }
+                                                else
+                                                {
+                                                    <img id="showImage1" src="~/images/UploadImageIcon.jpg" alt="" class="form-control" style="width:150px;height:150px" onclick="OnSecondPicClick()" />
+                                                }
+                                                @Html.HiddenFor(model => model.Image1)
+                                            }
+                                            @*@Html.TextBoxFor(model => model.Picture, new { type = "file", accept = ".jpg" })*@
+                                            @Html.TextBoxFor(model => model.Picture2, new { type = "file", @class = "pic-name", @style = "display:none;" })
+                                            @*@Html.TextBoxFor(model => model.Picture3, new { type = "file", accept = ".jpg" })
+                        @Html.TextBoxFor(model => model.Picture4, new { type = "file", accept = ".jpg" })*@
+                                            <div id="CancelPhoto1">
+                                                x
+                                                <br />
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            @if (!ViewBag.UpdateMode)
+                                            {
+                                                <img id="showImage2" src="~/images/UploadImageIcon.jpg" alt="" class="form-control" style="width:150px;height:150px" onclick="OnThirdPicClick()" />
+                                            }
+                                            @if (ViewBag.UpdateMode)
+                                            {
+                                                if (Model.Image2 == "true")
+                                                {
+                                                    var img = Model.Barcode + "-B.jpg";
+                                                    <img id="showImage2" src="~/images/ProductImages/@img" alt="" class="form-control" style="width:150px;height:150px" onclick="OnThirdPicClick()" />
+
+                                                }
+                                                else
+                                                {
+                                                    <img id="showImage2" src="~/images/UploadImageIcon.jpg" alt="" class="form-control" style="width:150px;height:150px" onclick="OnThirdPicClick()" />
+                                                }
+                                                @Html.HiddenFor(model => model.Image2)
+                                            }
+                                            @*@Html.TextBoxFor(model => model.Picture, new { type = "file", accept = ".jpg" })
+                        @Html.TextBoxFor(model => model.Picture2, new { type = "file", accept = ".jpg" })*@
+                                            @Html.TextBoxFor(model => model.Picture3, new { type = "file", @class = "pic-name", @style = "display:none;" })
+                        @*@Html.TextBoxFor(model => model.Picture4, new { type = "file", accept = ".jpg" })*@
+                        <div id="CancelPhoto2">
+                            x
+                            <br />
+                        </div>
+                        </div>
+                        <div class="col-3">
+                            @if (!ViewBag.UpdateMode)
+                            {
+                                <img id="showImage3" src="~/images/UploadImageIcon.jpg" alt="" class="form-control" style="width:150px;height:150px" onclick="OnFourthPicClick()" />
+                            }
+                            @if (ViewBag.UpdateMode)
+                            {
+                                if (Model.Image3 == "true")
+                                {
+                                    var img = Model.Barcode + "-C.jpg";
+                                    <img id="showImage3" src="~/images/ProductImages/@img" alt="" class="form-control" style="width:150px;height:150px" onclick="OnFourthPicClick()" />
+
+                                }
+                                else
+                                {
+                                    <img id="showImage3" src="~/images/UploadImageIcon.jpg" alt="" class="form-control" style="width:150px;height:150px" onclick="OnFourthPicClick()" />
+
+                                }
+                                @Html.HiddenFor(model => model.Image3)
+                            }
+                            @*@Html.TextBoxFor(model => model.Picture, new { type = "file", accept = ".jpg" })
+
+        @Html.TextBoxFor(model => model.Picture2, new { type = "file", accept = ".jpg" })
+                          @Html.TextBoxFor(model => model.Picture3, new { type = "file", accept = ".jpg" })*@
+                            @Html.TextBoxFor(model => model.Picture4, new { type = "file", @class = "pic-name", @style = "display:none;" })
+                            <div id="CancelPhoto3">
+                                x
+                                <br />
+                            </div>
+                        </div>
+
+                        </div>
+
+
+
+
+
+
+
+                        </div>
+                        </div>
+
+
+
+                            <div class="card card-primary collapsed-card">
+                                <span data-card-widget="collapse" style="background-color:#3498DB">
+                                    <div class="card-header">
+                                        <a href="#" data-card-widget="collapse"><h5 class="card-title" style="color:white">Promo</h5></a>
+                                        <div class="card-tools">
+                                            <button type="button" id="PromoCollapse" class="btn btn-tool" data-card-widget="collapse">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <!-- /.card-tools -->
+                                    </div>
+                                </span>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <label>Promotion:</label>
+                                                </div>
+                                                <div class="col-3">
+                                                    <div class="form-group">
+                                                        <div class="custom-control custom-switch">
+                                                            <input type="checkbox" name="Active" class="custom-control-input" value="true" id="customSwitch2" checked>
+                                                            <label class="custom-control-label" for="customSwitch2"></label>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-5">
+                                                    <div class="form-group has-float-label">
+                                                        @Html.EditorFor(model => model.PromoPercentage, new { htmlAttributes = new { @class = "form-control", @placeholder = "Promo %", @type = "number", @step = "0.01", @min = "0" } })
+                                                        <label for="PromoPercentage">Promo %</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="form-group has-float-label">
+                                                        @Html.EditorFor(model => model.StartOn, new { htmlAttributes = new { @class = "form-control", @placeholder = "StartOn", @type = "date" } })
+                                                        <label for="StartOn">Start On</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="form-group has-float-label">
+                                                        @Html.EditorFor(model => model.EndOn, new { htmlAttributes = new { @class = "form-control", @placeholder = "EndOn", @type = "date" } })
+                                                        <label for="EndOn">End On</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <label>New Arrival:</label>
+                                                </div>
+                                                <div class="col-8">
+                                                    <div class="form-group">
+                                                        <div class="custom-control custom-switch">
+                                                            <input type="checkbox" name="Offer" class="custom-control-input" value="true" id="customSwitch1">
+                                                            <label class="custom-control-label" for="customSwitch1"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card card-primary collapsed-card">
+                                <span data-card-widget="collapse" style="background-color:#3498DB">
+                                    <div class="card-header">
+                                        <a href="#" data-card-widget="collapse"><h5 class="card-title" style="color:white;">Order</h5></a>
+                                        <div class="card-tools">
+                                            <button type="button" id="OrderCollapse" class="btn btn-tool" data-card-widget="collapse">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <!-- /.card-tools -->
+                                    </div>
+                                </span>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.MinQuantity, new { htmlAttributes = new { @class = "form-control", @placeholder = "Min Qty", @type = "number", @step = "0.01", @min = "0" } })
+                                                <label for="MinQuantity">Minimum Quantity</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.ReorderLevel, new { htmlAttributes = new { @class = "form-control", @placeholder = "Reorder Level", @type = "number", @step = "0.01", @min = "0" } })
+                                                <label for="ReorderLevel">Reorder Level</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.OnHandQty, new { htmlAttributes = new { @class = "form-control", @placeholder = "On Hand Qty", @type = "number", @step = "0.01", @readonly = "readonly", @min = "0" } })
+                                                <label for="OnHandQty">On Hand Quantity</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.MaxQuantity, new { htmlAttributes = new { @class = "form-control", @placeholder = "Max Qty", @type = "number", @step = "0.01", @min = "0" } })
+                                                <label for="MaxQuantity">Maximum Quantity</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.AvgCost, new { htmlAttributes = new { @class = "form-control", @placeholder = "Avg Cost", @type = "number", @step = "0.01", @readonly = "readonly", @min = "0" } })
+                                                <label for="AvgCost">Average Cost</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-12">
+                                            <div class="form-group has-float-label">
+                                                @Html.EditorFor(model => model.OnHandAmt, new { htmlAttributes = new { @class = "form-control", @placeholder = "OnHandAmt", @type = "number", @step = "0.01", @readonly = "readonly", @min = "0" } })
+                                                <label for="OnHandAmt">On Hand Amount</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="AddNewDepartment" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header btn-primary">
+                    <h4 class="modal-title">Add Department</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="DeptName" class="form-control" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" id="SaveDept" onclick="SaveDepartment()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="AddNewGroup" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header btn-primary">
+                    <h4 class="modal-title">Add Group</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="GroupName" class="form-control" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" id="SaveGroup" onclick="AddGroup()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="AddNewSubGroup" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header btn-primary">
+                    <h4 class="modal-title">Add SubGroup</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="SubGroupName" class="form-control" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" id="SaveSubGroup" onclick="AddSubGroup()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="AlertModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header btn-primary">
+                    <h4 class="modal-title">Are you sure want to delete this uan no?</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                    <button type="button" onclick="DeleteUanNo()" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+@section scripts{
+    <script>
+
+        var offer = '@Model.Offer' == ("False" || 'false') ? false : true;
+        var active = '@Model.Active' == ("False" || 'false') ? false : true;
+
+        if (offer != true || offer == null) {
+            $('#customSwitch1').attr('checked',false);
+        }
+        else {
+            $('#customSwitch1').attr('checked', 'checked');
+        }
+        if (active != true || active == null) {
+            $('#customSwitch2').attr('checked',false);
+        }
+        else {
+            $('#customSwitch2').attr('checked', 'checked');
+        }
+
+        $(document).ready(function () {
+            $('#ddl_Department').append("<option style='color:blue' value='Add New'>Add New</option>");
+            @if (!ViewBag.UpdateMode)
+            {
+                 @:$('#ddl_Group').empty();
+                                                     @:$('#ddl_SubGroup').empty();
+                                                     @:$('#ddl_Group').append("<option value=''>Group</option>");
+                                                     @:$('#ddl_SubGroup').append("<option value=''>Sub  Group</option>");
+                                                }
+
+            @if(ViewBag.UpdateMode)
+            {
+               @:$('#ddl_Department').find('option[value="' + '@Model.DeptCode' + '"]').attr("selected", true);
+                                                               @:$('#supplier').find('option[value="' + @Model.SupplierCode + '"]').attr("selected", true);
+                                                               @:$("#Type").find("option[value='" + '@Model.Type' + "']").attr("selected", true);
+                                                               foreach (var item in Model.UanNoList)
+                {
+                    @:var uanNo = '@item';
+                                                                    @:$('#UanNoList').append(new Option(uanNo, uanNo));
+                                                                    @:$('#UanNoList').find('option[value="' + uanNo + '"]').attr("selected", true);
+                                                                }
+            }
+
+            $('input[type="text"]').keyup(function (evt) {
+                var txt = $(this).val();
+                $(this).val(txt.replace(/^(.)|\s(.)/g, function ($1) { return $1.toUpperCase(); }));
+            });
+        });
+
+        document.onkeydown = PresTab;
+        function PresTab(e) {
+            var keycode = (window.event) ? event.keyCode : e.keyCode;
+            if (e.shiftKey) {
+                if (keycode == 9) {
+                    var srcElementId = e.srcElement.id;
+                    if (srcElementId == "ddl_Department") {
+                        $("#Sumbit").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "ddl_Group") {
+                        $("#ddl_Department").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "ddl_SubGroup") {
+                        $("#ddl_Group").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "Description") {
+                        $("#ddl_SubGroup").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "UrduName") {
+                        $("#Description").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "UanNo") {
+                        $("#UrduName").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "UnitCost") {
+                        $("#UanNo").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "UnitRetail") {
+                        $("#UnitCost").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "CtnPcs") {
+                        $("#UnitRetail").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "SupplierCode") {
+                        $("#CtnPcs").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "Type") {
+                        $("#SupplierCode").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "GSTType") {
+                        $("#Type").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "GST_Percentage") {
+                        $("#GSTType").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "PackQuantity") {
+                        $("#GST_Percentage").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "PackRetail") {
+                        $("#PackQuantity").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "BulkQty") {
+                        $("#PackRetail").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "BulkRetail") {
+                        $("#BulkQty").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "MarketRetail") {
+                        $("#BulkRetail").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "MinRetail") {
+                        $("#MarketRetail").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "Picture") {
+                        $("#MinRetail").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "MinQuantity") {
+                        $("#OrderCollapse").click();
+                        $("#Picture").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "ReorderLevel") {
+                        $("#MinQuantity").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "MaxQuantity") {
+                        $("#ReorderLevel").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "customSwitch1") {
+                        $("#OrderCollapse").click();
+                        $("#PromoCollapse").click();
+                        $("#MaxQuantity").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "StartOn") {
+                        $("#customSwitch1").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "customSwitch2") {
+                        $("#StartOn").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "EndOn") {
+                        $("#customSwitch2").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                    else if (srcElementId === "Sumbit") {
+                        $("#PromoCollapse").click();
+                        $("#EndOn").focus();
+                        srcElementId = "";
+                        e.preventDefault();
+                    }
+                }
+            }
+            else if (keycode == 9) {
+                var srcElementId = e.srcElement.id;
+                if (srcElementId == "ddl_Department") {
+                    $("#ddl_Group").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "ddl_Group") {
+                    $("#ddl_SubGroup").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "ddl_SubGroup") {
+                    $("#Description").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "Description") {
+                    $("#UrduName").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "UrduName") {
+                    $("#UanNo").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "UanNo") {
+                    $("#UnitCost").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "UnitCost") {
+                    $("#UnitRetail").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "UnitRetail") {
+                    $("#CtnPcs").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "CtnPcs") {
+                    $("#SupplierCode").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "SupplierCode") {
+                    $("#Type").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "Type") {
+                    $("#GSTType").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "GSTType") {
+                    $("#GST_Percentage").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "GST_Percentage") {
+                    $("#PackQuantity").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "PackQuantity") {
+                    $("#PackRetail").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "PackRetail") {
+                    $("#BulkQty").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "BulkQty") {
+                    $("#BulkRetail").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "BulkRetail") {
+                    $("#MarketRetail").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "MarketRetail") {
+                    $("#MinRetail").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "MinRetail") {
+                    $("#Picture").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "Picture") {
+                    $("#OrderCollapse").click();
+                    $("#MinQuantity").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "MinQuantity") {
+                    $("#ReorderLevel").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "ReorderLevel") {
+                    $("#MaxQuantity").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "MaxQuantity") {
+                    $("#OrderCollapse").click();
+                    $("#PromoCollapse").click();
+                    $("#customSwitch1").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "customSwitch1") {
+                    $("#StartOn").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "StartOn") {
+                    $("#customSwitch2").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "customSwitch2") {
+                    $("#EndOn").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "EndOn") {
+                    $("#PromoCollapse").click();
+                    $("#Sumbit").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+                else if (srcElementId === "Sumbit") {
+                    $("#PromoCollapse").click();
+                    $("#ddl_Department").focus();
+                    srcElementId = "";
+                    e.preventDefault();
+                }
+            }
+        }
+
+        @if(ViewBag.Message != null) {
+            if (ViewData["Message"].ToString() == "Product Updated Successfully" || ViewData["Message"].ToString() == "Product Added Successfully")
+            {
+                @:toastr.success('@ViewData["Message"].ToString()');
+                                                                                                                                    }
+            else
+            {
+                @:toastr.error('@ViewData["Message"].ToString()');
+                                                                                                                      }
+         }
+
+        var selectedUan;
+        var Confirmation;
+        function ModalConfirmation() {
+            selectedUan = $("#UanNoList").val();
+            if (selectedUan == "" || selectedUan == null) {
+                return;
+            }
+
+            Confirmation = false;
+            $("#AlertModal").modal();
+        }
+        function DeleteUanNo() {
+            Confirmation = true;
+            if (Confirmation) {
+                $("#UanNoList option[value='" + selectedUan + "']").remove();
+                Confirmation = false;
+            }
+        }
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#showImage').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        $("#Picture").change(function () {
+            readURL(this);
+        });
+        $("#CancelPhoto").click(function () {
+            $('#showImage').attr('src', "");
+            $('#Picture').val("");
+            $('#Image').val("false");
+
+        });
+        function FillGroup() {
+            var deptCode = $('#ddl_Department').val();
+            if (deptCode == 'Add New') {
+                $('#AddNewDepartment').modal('show');
+                setTimeout(function () {
+                    $("#DeptName").focus();
+                }, 500);
+            }
+            else {
+                $('#ddl_Group').empty();
+                $('#ddl_SubGroup').empty();
+                $.ajax({
+                    url: "/Items/FillGroup/" + deptCode,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (_data) {
+                        var obj = JSON.parse(_data);
+                        $('#ddl_Group').empty();
+                        $('#ddl_Group').append(new Option('Group', ''));
+                        $.each(obj, function (index, element) {
+                            $('#ddl_Group').append(new Option(obj[index].GROUP_NAME, obj[index].GROUP_CODE));
+                        });
+                        $('#ddl_Group').append("<option style='color:blue' value='Add New'>Add New</option>");
+                    },
+                    error: function (xhr) {
+                        alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                    }
+                }
+                );
+            }
+        }
+        function FillSubGroup() {
+            var DeptId = $('#ddl_Department').val();
+            var GroupId = $('#ddl_Group').val();
+            if (GroupId == 'Add New') {
+                $('#AddNewGroup').modal('show');
+                setTimeout(function () {
+                    $("#GroupName").focus();
+                }, 500);
+
+            }
+            else {
+                $('#ddl_SubGroup').empty();
+                $.ajax({
+                    url: "/Items/FillSubGroup/" + DeptId + GroupId,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (_data) {
+                        var obj = JSON.parse(_data);
+                        var items = "";
+                        $('#ddl_SubGroup').append(new Option('Sub Group', ''));
+                        $.each(obj, function (index, element) {
+                            $('#ddl_SubGroup').append(new Option(obj[index].SGROUP_NAME, obj[index].SGROUP_CODE));
+                        });
+                        $('#ddl_SubGroup').append("<option style='color:blue' value='Add New'>Add New</option>");
+                    },
+                    error: function (xhr) {
+                        alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                    }
+                }
+                );
+            }
+        }
+        $("#ddl_SubGroup").change(function () {
+            var GroupId = $('#ddl_SubGroup').val();
+            if (GroupId == 'Add New') {
+                $('#AddNewSubGroup').modal('show');
+                setTimeout(function () {
+                    $("#SubGroupName").focus();
+                }, 500);
+
+            }
+        });
+        function SaveDepartment() {
+            var DeptName = $("#DeptName").val().trim();
+            department = {};
+            department.DEPT_NAME = DeptName.toUpperCase();
+            $.ajax({
+                url: "/api/Department",
+                method: "post",
+                data: department
+            })
+            .done(function (obj) {
+                if (obj == "exist") {
+                    toastr.error('Department with this name is already exist.');
+                }
+                else if (obj == "ex") {
+                    toastr.error('Something Went Wrong');
+                }
+                else {
+                    //$('#ddl_Department').empty();
+                    //$('#ddl_Department').append(new Option('Department', ''));
+                    //$.each(obj, function (index, element) {
+                    //    $('#ddl_Department').append(new Option(obj[index].DEPT_NAME, obj[index].DEPT_CODE));
+                    //});
+
+                    $("#ddl_Department option[value='Add New']").remove();
+                    $('#ddl_Department').append(new Option(department.DEPT_NAME, obj));
+                    $('#ddl_Department').append("<option style='color:blue' value='Add New'>Add New</option>");
+
+                    $('#ddl_Department').val(obj);
+                    toastr.success('Department saved successfully.');
+                    $("#DeptName").val("")
+                    FillGroup();
+                }
+            })
+            .fail(function () {
+                toastr.error('Data not saved.');
+            });
+
+        }
+        function AddGroup() {
+            var group = {};
+            group.DEPT_CODE = $('#ddl_Department').val();
+            group.GROUP_NAME = $("#GroupName").val().trim().toUpperCase();
+            if (group.GROUP_NAME == "" || group.DEPT_CODE == "") {
+                toastr.error("First Select Corresponding Department and Enter Correct Group Name");
+                return;
+            }
+            else {
+                $.ajax({
+                    url: "/api/Group",
+                    method: "post",
+                    data: group
+                }).done(function (obj) {
+                    if (obj == "exist") {
+                        toastr.error('Group with this name is already exist.');
+                    }
+                    else if (obj == "ex") {
+                        toastr.error('Something Went Wrong');
+                    }
+                    else {
+                        //$('#ddl_Group').empty();
+                        //$('#ddl_Group').append(new Option('Group', ''));
+                        //$.each(obj, function (index, element) {
+                        //    $('#ddl_Group').append(new Option(obj[index].GROUP_NAME, obj[index].GROUP_CODE));
+                        //});
+
+                        $("#ddl_Group option[value='Add New']").remove();
+                        $('#ddl_Group').append(new Option(group.GROUP_NAME, obj));
+                        $('#ddl_Group').append("<option style='color:blue' value='Add New'>Add New</option>");
+                        $('#ddl_Group').val(obj);
+                        toastr.success('Group saved successfully.');
+                        $("#GroupName").val("")
+                        FillSubGroup();
+                    }
+                }).fail(function () {
+                    toastr.error('Data not saved.');
+                });
+            }
+        }
+        function AddSubGroup() {
+            var SubGroup = {};
+            SubGroup.DEPT_CODE = $('#ddl_Department').val();
+            SubGroup.GROUP_CODE = $("#ddl_Group").val();
+            SubGroup.SGROUP_NAME = $("#SubGroupName").val().trim().toUpperCase();
+            if (SubGroup.DEPT_CODE == "" || SubGroup.GROUP_CODE == "" || SubGroup.SGROUP_NAME == "") {
+                toastr.error("First Select Corresponding Department,Group and Enter Correct Sub Group Name");
+                return;
+            }
+            else {
+                $.ajax({
+                    url: "/api/SubGroup",
+                    method: "post",
+                    data: SubGroup
+                })
+                .done(function (obj) {
+                    if (obj == "exist") {
+                        toastr.error('Group with this name is already exist.');
+                    }
+                    else if (obj == "ex") {
+                        toastr.error('Something Went Wrong');
+                    }
+                    else {
+                        //$('#ddl_SubGroup').empty();
+                        //$('#ddl_SubGroup').append(new Option('Sub Group', ''));
+                        //$.each(obj, function (index, element) {
+                        //    $('#ddl_SubGroup').append(new Option(obj[index].SGROUP_NAME, obj[index].SGROUP_CODE));
+                        //});
+
+                        $("#ddl_SubGroup option[value='Add New']").remove();
+                        $('#ddl_SubGroup').append(new Option(SubGroup.SGROUP_NAME, obj));
+                        $('#ddl_SubGroup').append("<option style='color:blue' value='Add New'>Add New</option>");
+                        $('#ddl_SubGroup').val(obj);
+                        toastr.success('SubGroup saved successfully.');
+                        $('#SubGroupName').val('');
+                        FillSubGroup();
+                    }
+                })
+                .fail(function () {
+                    toastr.error('Data not saved.');
+                });
+            }
+        }
+
+        $("#UnitCost, #UnitRetail").focusout(function (e) {
+            var unitCost = parseInt($('#UnitCost').val());
+            var unitRetail = parseInt($('#UnitRetail').val());
+            if (unitCost > unitRetail) {
+                toastr.error("Unit cost Cannot be Grater than Retail cost");
+            }
+        });
+
+        $("#UanNo").keypress(function (e) {
+            var code = e.keyCode;
+            if (code == 13) {
+                var uanNo = $("#UanNo").val();
+                uanNo = $.trim(uanNo)
+                $.ajax({
+                    url: "/Items/CkeckUanExist?id=" + uanNo,
+                    method: "GET",
+                }).done(function (obj) {
+                    if (obj === "True") {
+                        toastr.error("Uan Is Already Exist, Please Select Another");
+                    }
+                    else {
+                        var hasOption = $('#UanNoList option[value="' + uanNo + '"]');
+                        if (hasOption.length == 0) {
+                            $('#UanNoList').append(new Option(uanNo, uanNo));
+                            $('#UanNoList').find('option[value="' + uanNo + '"]').attr("selected", true);
+                        }
+                        else {
+                            toastr.error('Uan Already Added');
+                        }
+                    }
+                    $('#UanNo').val("");
+                }).fail(function (obj) {
+                    toastr.error("User Suggesstion is Not Working");
+                });
+            }
+        });
+
+        //function CheckRfCode(str){
+        //    var rfCode = $.trim(str)
+        //        $.ajax({
+        //            url: "/Items/CkeckRefCodeExist?id=" + rfCode,
+        //            method: "GET",
+        //        }).done(function (obj) {
+        //            debugger;
+        //            if (obj === "True") {
+        //                return true;
+        //            }
+        //            else {
+        //                 return false
+        //            }
+        //        }).fail(function (obj) {
+        //            toastr.error("Reference Code Suggesstion is Not Working");
+        //        });
+        //}
+
+        $("#Sumbit").click(function () {
+            $('#UanNoList').attr('disabled', false);
+            $('#UanNoList option').prop('selected', true);
+            var deptCode = $('#ddl_Department').val();
+            var groupCode = $('#ddl_Group').val();
+            var subGroupCode = $('#ddl_SubGroup').val();
+            var type = $('#Type').val();
+            var name = $('#Description').val();
+            var unitCost = parseInt($('#UnitCost').val());
+            var unitRetail = parseInt($('#UnitRetail').val());
+            var supplierCode = $('#SupplierCode').val();
+            var GSTType = $('#GSTType').val();
+            var GST_Percentage = $('#GST_Percentage').val();
+            var ReferenceCode = $('#ReferenceCode').val();
+
+            var isRfCodeEnterByUser = '@Model.IsRfCodeRequired' == "1" ? false : true;
+
+            //if (ReferenceCode != null && ReferenceCode != "") {
+            //    var len = ReferenceCode.length;
+            //    if (len > 6 || len < 6) {
+            //        toastr.error("Reference Code Length Should be 6 Character");
+            //        return;
+            //    }
+            //    else if (len == 6) {
+            //        var ret = CheckRfCode(ReferenceCode)
+            //        if (ret) {
+            //            toastr.error("Reference Code Is Already Exist, Please Select Another");
+            //            return;
+            //        }
+            //    }
+            //}
+
+            if (deptCode == null || deptCode == "") {
+                toastr.error("Select Department");
+                return;
+            }
+            if (groupCode == null || groupCode == "") {
+                toastr.error("Select Group");
+                return;
+            }
+            if (subGroupCode == null || subGroupCode == "") {
+                toastr.error("Select Sub Group");
+                return;
+            }
+            if (name == null || name == "") {
+                toastr.error("Enter Name");
+                return;
+            }
+            if (type == null || type == "") {
+                toastr.error("Select Product Type");
+                return;
+            }
+            if (unitCost > unitRetail) {
+                toastr.error("Unit cost Cannot be Grater than Retail cost");
+                return;
+            }
+            if (unitRetail == null || unitRetail == "") {
+                toastr.error("Retail Price is Required");
+                return;
+            }
+            if (supplierCode == null || supplierCode == "") {
+                toastr.error("Select Supplier");
+                return;
+            }
+            if (isRfCodeEnterByUser && (ReferenceCode == "" || ReferenceCode == null)) {
+                toastr.error("Reference Code Is Required.");
+                return;
+            }
+
+
+            //if (GSTType == null || GSTType == "") {
+            //    toastr.error("Select GST Type");
+            //    return;
+            //}
+            //if (GSTType == "G" || GSTType == "R") {
+            //    if (GST_Percentage == null || GST_Percentage == "") {
+            //        $('#GST_Percentage').val("17");
+            //    }
+            //}
+            //if (GSTType == "E") {
+            //    $('#GST_Percentage').val("0");
+            //}
+
+            $("#Form").submit();
+        });
+
+
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#showImage').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+
+                $('#Image').val("true");
+            }
+        }
+        function readURL2(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#showImage1').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+                $('#Image1').val("true");
+            }
+        }
+        function readURL3(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#showImage2').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+                $('#Image2').val("true");
+            }
+        }
+        function readURL4(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#showImage3').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+                $('#Image3').val("true");
+            }
+        }
+        $("#Picture").change(function () {
+            readURL(this);
+        });
+        $("#Picture2").change(function () {
+            readURL2(this);
+        });
+        $("#Picture3").change(function () {
+            readURL3(this);
+        });
+        $("#Picture4").change(function () {
+            readURL4(this);
+        });
+
+        function OnFirstPicClick() {
+            $('#Picture').click();
+        }
+
+        function OnSecondPicClick() {
+            $('#Picture2').click();
+        }
+        function OnThirdPicClick() {
+            $('#Picture3').click();
+        }
+        function OnFourthPicClick() {
+            $('#Picture4').click();
+        }
+        $("#CancelPhoto").click(function () {
+            $('#showImage').attr('src', "/images/UploadImageIcon.jpg");
+            $('#Picture').val("");
+            $('#Image').val("false");
+
+        });
+        $("#CancelPhoto1").click(function () {
+            $('#showImage1').attr('src', "/images/UploadImageIcon.jpg");
+            $('#Picture2').val("");
+            $('#Image1').val("false");
+
+        });
+        $("#CancelPhoto2").click(function () {
+            $('#showImage2').attr('src', "/images/UploadImageIcon.jpg");
+            $('#Picture3').val("");
+            $('#Image2').val("false");
+
+        });
+        $("#CancelPhoto3").click(function () {
+            $('#showImage3').attr('src', "/images/UploadImageIcon.jpg");
+            $('#Picture4').val("");
+            $('#Image3').val("false");
+
+        });
+
+    </script>
+}

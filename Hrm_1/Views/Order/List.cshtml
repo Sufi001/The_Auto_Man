@@ -1,0 +1,200 @@
+﻿@model Inventory.ViewModels.Order.OrderProcessingViewModel
+@{
+    ViewBag.Title = "Order Log List";
+}
+<style>
+    #UpdateProduct {
+        width: 200px;
+        margin-left: 3px;
+    }
+
+    #Product {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    table thead tr th {
+        color: white;
+    }
+    .mybtn {
+        width:90px;
+        margin:5px;
+        left:0
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header" style="background-color:#3498DB;height:55px">
+                            <div class="row">
+                                <div class="col-6 pt-1">
+                                    <h2 class="card-title"><b style="color:white">Order Log List</b></h2>
+                                </div>
+                                @*<div class="col-6">
+                                    <button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="UpdateProduct" class="btn  fa-pull-right" onclick="UpdateTable()">Update Product Table</button>
+                                </div>*@
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">&nbsp;&nbsp;All(@Model.OC.AllCount)&nbsp;|&nbsp;&nbsp;Trash(@Model.OC.TrashCount)&nbsp;|&nbsp;&nbsp;Processing(@Model.OC.ProcessingCount)&nbsp;|&nbsp;&nbsp;On Hold(@Model.OC.OnholdCount)&nbsp;|&nbsp;Completed(@Model.OC.CompletedCount)&nbsp;|&nbsp;Canceled(@Model.OC.CancelledCount)</div>
+                            <br />
+                            @*<div class="row">
+                                <select>
+                                    <option value="">Bulk Action</option>
+                                    <option value="">Move to Trash</option>
+                                    <option value="">Mark On Hold</option>
+                                    <option value="">Mark Processing</option>
+                                    <option value="">Mark Complete</option>
+                                </select>
+                            </div>
+                            <br />*@
+
+                            <div class="table-responsive">
+                                <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="ProductTable">
+                                    <thead style="background-color:#3498DB">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Order Status</th>
+                                            <th>Order Number</th>
+                                            @*<th width="">Purchased</th>*@
+                                            <th>Ship To Address</th>
+                                            <th>Delivery Comments</th>
+                                            <th>Order Date</th>
+                                            <th>Delivery On</th>
+                                            <th>Invoice Total</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{int n = 0;}
+                                        @foreach (var item in Model.list)
+                                        {
+                                            n = n + 1;
+                                            decimal? total = 0m;
+                                            <tr>
+                                                <td align="center">@n</td>
+                                                <td>@item.Status</td>
+                                                <td>@item.OrderNo</td>
+                                                @*<td>
+                                                    @foreach (var pro in item.PurchasedItems)
+                                                    {
+                                                        <p>@pro.Qty (x) @pro.Description</p>
+                                                        total += pro.Qty * pro.Retail;
+                                                    }
+                                                </td>*@
+                                                <td align="center">@item.ShipTo</td>
+                                                <td>@item.CustomerMessage</td>
+                                                <td align="center">@item.Date</td>
+                                                <td align="center">@item.DeliveryDate</td>
+                                                <td align="center">@item.Total.Value.ToString("0.00")</td>
+                                                <td align="center">
+                                                    <button class="mybtn" onclick="Dispatch('@item.OrderNo')">Dispatch</button>
+                                                    <br />
+                                                    @*<button class="mybtn" onclick="Complete('@item.OrderNo')">Completed</button>*@
+                                                    @*&nbsp;|&nbsp;*@
+                                                    <span title="View"><a href="/Sales/Edit?docno=@item.OrderNo&requestPage=WebStore" target="_blank"><i class="fa fa-eye"></i></a></span>
+                                                    &nbsp;|&nbsp;
+                                                    @*<button class="mybtn"  onclick="Process('@item.OrderNo')">Process</button>
+                                                    &nbsp;|&nbsp;*@
+                                                    <span title="Shipping Address"><a href="/Reports/ShippindAddress?OrderNo=@item.OrderNo" target="_blank"><i class="fa fa-address-book"></i></a></span>
+                                                    &nbsp;|&nbsp;
+                                                    <span title="Invoice"><a href="/Reports/SalesInvoice?Doc_Number=@item.OrderNo&Doc_Type=IN"><i class="fa fa-file-invoice-dollar"></i></a></span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/AdminLte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/AdminLte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script>
+  $(function () {
+      $("#ProductTable").DataTable({
+          "pageLength": 50
+      });
+  });
+
+
+  function Complete(str) {
+      debugger;
+      var Url = "/Sales/Complete?bCode=" + str;
+      Aja(Url);
+  }
+  function Process(str) {
+      var Url = "/Sales/Process?bCode=" + str;
+      Aja(Url);
+  }
+  function Dispatch(str) {
+      var Url = "/Sales/Dispatch?bCode=" + str;
+      Aja(Url);
+  }
+
+
+  function Aja(URL) {
+      $.ajax({
+          url: URL,
+          method: "get",
+      }).done(function (obj) {
+          if (obj == "Ok") {
+              toastr.success('Successfully Updated');
+              window.location.reload();
+          }
+          else if (obj == "NotFound") {
+              toastr.error('Sales Not Found');
+          }
+          else if (obj == "Invalid") {
+              toastr.error('Invalid Query');
+          }
+      }).fail(function (xhr) {
+          alert('Request Status: \n ' +
+              xhr.status +
+              ' Status Text: ' +
+              xhr.statusText +
+              ' ' +
+              xhr.responseText);
+          $('#btn_save').removeAttr("disabled");
+          toastr.error('Data not saved');
+      });
+  }
+
+  //function UpdateTable(){
+  //    $.ajax({
+  //        url: "/DashBoard/datamig",
+  //        method: "get"
+  //    }).done(function (obj) {
+  //        if (obj == "OK") {
+  //            toastr.success('Products Updated!');
+  //        }
+  //        else{
+  //            toastr.error('Products Updation Failed');
+  //        }
+  //    }).fail(function (xhr) {
+  //        alert('Request Status: \n ' +
+  //            xhr.status +
+  //            ' Status Text: ' +
+  //            xhr.statusText +
+  //            ' ' +
+  //            xhr.responseText);
+  //        $('#btn_save').removeAttr("disabled");
+  //        toastr.error('Call Fail');
+  //    });
+  //}
+    </script>
+}
+
+
+
+

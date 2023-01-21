@@ -1,0 +1,224 @@
+﻿@model Inventory.ViewModels.Room.RoomViewModel
+@{
+    ViewBag.Title = "Room Management";
+}
+<style>
+    .callout, .card, .info-box, .mb-3, .my-3, .small-box {
+        margin-bottom: 0.2rem !important;
+    }
+
+    .card-header {
+        padding: .50rem 1.0rem;
+        padding-top: 0.25rem;
+        padding-right: 1.0rem;
+        padding-bottom: 0.0rem;
+        padding-left: 1.25rem;
+    }
+
+    select:focus, input:focus {
+        outline: none !important;
+        border-color: #719ECE !important;
+        box-shadow: 0 0 20px #719ECE !important;
+    }
+
+    #list, #Sumbit {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+           #list {
+            width: 90px;
+            margin-left: 3px;
+        }
+
+        #Product {
+            width: 90px;
+            margin-left: 3px;
+        }
+
+        table thead tr th {
+            color: white;
+        }
+</style>
+    <div class="content-wrapper">
+        <input type="hidden" id="ROOM_CODE" value="@Model.ROOM_CODE" />
+        <div class="container-fluid">
+            <div class="row was-validated" id="form">
+                <div class="col-12">
+                    <!-- Custom Tabs -->
+                    <div class="card">
+                        <div class="card-header d-flex p-0" style="background-color:#3498DB">
+                            <h2 class="card-title p-3"><b style="color:white">Room Management</b></h2>
+                            <ul class="nav nav-pills ml-auto p-2">
+                                @*<li><input style="border:1px solid; background-color:#3985d2;color:white" type="button" value="Save" id="Sumbit" class="btn fa-pull-right" /></li>*@
+                                @*<li><button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="list" class="btn  fa-pull-right" onclick="location.href='@Url.Action("List", "Room", new { target="_blank" })'">List</button></li>*@
+                            </ul>
+                        </div><!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.DropDownListFor(m => m.TYPE, new SelectList(Model.RoomTypes, "ROOM_TYPE_CODE", "NAME"), "Select Room Type", new { @class = "form-control", @id = "ddl_ROOM_TYPE", @name = "ddl_ROOM_TYPE", required = "required" })
+                                        <label for="ddl_ROOM_TYPE"> ROOM TYPE</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.DropDownListFor(m => m.CATEGORY, new SelectList(Model.RoomCategories, "ROOM_CATEGORY_CODE", "NAME"), "Select Room Category", new { @class = "form-control", @id = "ddl_ROOM_CATEGORY", @name = "ddl_ROOM_CATEGORY", required = "required" })
+                                        <label for="ddl_ROOM_CATEGORY"> ROOM CATEGORY</label>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.DropDownListFor(model => model.STATUS, new SelectList(Model.RoomStatus, "Value", "Text"), "Room Status", new { @class = "form-control", @id = "ddl_RoomStatus", @name = "ddl_RoomStatus", required = "required" })
+                                        <label for="ddl_RoomStatus">ROOM STATUS</label>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.ROOM_NAME, new { htmlAttributes = new { @class = "form-control myCustomfocus", @id = "ROOM_NAME", @required = "required", @placeholder = "Name", @type = "text", autocomplete = "off" } })
+                                        <label for="ROOM_NAME">ROOM NAME</label>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.RATE, new { htmlAttributes = new { @class = "form-control myCustomfocus", @id = "RATE", @required = "required", @placeholder = "RATE", @type = "number", autocomplete = "off" } })
+                                        <label for="RATE">RATE</label>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <input style="border:1px solid; background-color:#3985d2;color:white" type="button" value="Save" id="Sumbit" class="btn fa-pull-right" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="table-responsive">
+                <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="ProductTable">
+                    <thead style="background-color:#3498DB">
+                        <tr>
+                            <th width="5%">NO</th>
+                            <th width="5%">CODE</th>
+                            <th width="25%">NAME</th>
+                            <th width="15%">TYPE</th>
+                            <th width="15%">CATEGORY</th>
+                            <th width="10%">RATE</th>
+                            <th width="15%">STATUS</th>
+                            <th width="10%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{int n = 0;}
+                    @foreach (var item in Model.roomsList)
+                    {
+                        n = n + 1;
+                        <tr>
+                            <td>@n</td>
+                            <td>@item.ROOM_CODE</td>
+                            <td>@item.ROOM_NAME</td>
+                            <td>@item.ROOM_TYPE.NAME</td>
+                            <td>@item.ROOM_CATEGORY.NAME</td>
+                            <td>@item.RATE</td>
+                            @if (item.STATUS == "O")
+                            {
+                                <td>Occupied</td>
+                            }
+                            @if (item.STATUS == "V")
+                            {
+                                <td>Vacant</td>
+                            }
+                            @if (item.STATUS == "S")
+                            {
+                                <td>Under Service</td>
+                            }
+                            
+                            <td><a href="/Room/Edit/@item.ROOM_CODE"><span><i class='fa fa-edit'></i></span></a></td>
+                        </tr>
+                    }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+@section scripts{
+<script src="~/AdminLte/plugins/datatables/jquery.dataTables.js"></script>
+<script src="~/AdminLte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script>
+        
+        $("#ProductTable").DataTable({
+            "pageLength": 50
+        });
+        $("#Sumbit").click(function () {
+            var roomType = $('#ddl_ROOM_TYPE').val();
+            var roomCategory = $('#ddl_ROOM_CATEGORY').val();
+            var roomStatus = $('#ddl_RoomStatus').val(); 
+            var name = $('#ROOM_NAME').val();
+            var rate = $('#RATE').val();
+
+            if (roomType == null || roomType == "") {
+                toastr.error("Select Room Type");
+                return;
+            }
+            else if (roomCategory == null || roomCategory == "") {
+                toastr.error("Select Room Category");
+                return;
+            }
+            else if (roomStatus == null || roomStatus == "") {
+                toastr.error("Select Room Status");
+                return;
+            }
+            else if (name == null || name == "") {
+                toastr.error("Enter Room Name");
+                return;
+            }
+            else if (rate == null || rate == "") {
+                toastr.error("Enter Room Rate");
+                return;
+            }
+            else {
+                VM = {};
+                VM.ROOM_CODE = $('#ROOM_CODE').val();
+                VM.TYPE = $('#ddl_ROOM_TYPE').val();
+                VM.CATEGORY = $('#ddl_ROOM_CATEGORY').val();
+                VM.STATUS = $('#ddl_RoomStatus').val();
+                VM.ROOM_NAME = $('#ROOM_NAME').val();
+                VM.RATE = $('#RATE').val();
+                $.ajax({
+                    url: "/Room/Save",
+                    method: "post",
+                    data: VM
+                }).done(function (obj) {
+                    if (obj == "OK") {
+                        toastr.success('Data Save Successfully');
+                        setTimeout(function () { window.location.href = "/Room/Index"; }, 1500);
+                    }
+                    else if (obj == "Exist") {
+                        toastr.error('Type with this name is already exist.');
+                    }
+                    else if (obj == "Ex") {
+                        toastr.error('Invalid Query');
+                    }
+                    else if (obj == "Wrong") {
+                        toastr.error('Invalid Query');
+                    }
+                    else {
+                        toastr.error('Data not saved.');
+                    }
+                }).fail(function () {
+                    toastr.error('Data not saved.');
+                });
+            }
+        });
+    </script>
+}

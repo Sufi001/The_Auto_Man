@@ -1,0 +1,335 @@
+﻿@{
+    ViewBag.Title = "Type_Categories";
+}
+@section Css{
+    <style>
+        a {
+            cursor: pointer;
+        }
+            a:not([href]):not([tabindex]) {
+                color: #007bff;
+            }
+        #list {
+            width: 90px;
+            margin-left: 3px;
+        }
+        #Product {
+            width: 90px;
+            margin-left: 3px;
+        }
+    </style>
+}
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <!-- /.card -->
+                    <div class="card">
+                        <div class="card-header" style="background-color:#3498DB;height:55px">
+                            <div class="row">
+                                <div class="col-6 pt-1">
+                                    <h2 class="card-title"><b style="color:white">Room Types And Categories</b></h2>
+                                </div>
+                                <div class="col-6">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="display:none">Edit</th>
+                                                            <th style="background-color:#3498DB;color:white">Categories<i style="float:right" class="fas fa-plus" onclick="AddNew('C')"></i></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tbldepartmentBody">
+                                                        @{int i = 1;}
+                                                        @if (ViewBag.Categories != null)
+                                                        {
+                                                            foreach (var item in ViewBag.Categories)
+                                                            {
+                                                                <tr id="R@(i)">
+                                                                    <td style="display:none" id="RC_ID@(i)">@item.ROOM_CATEGORY_CODE</td>
+                                                                    <td contenteditable="true" onfocus="Checklength(this)" id="CID@(i)" style="height:30px"><a id="RN@(i)">@item.NAME</a><a onclick="updateCategory('@(i)')" style=float:right class='fa fa-edit'></a></td>
+                                                                </tr>
+                                                                i = i + 1;
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="row" id="tableGroupDetail">
+                                        <div class="col-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                                    <thead>
+
+                                                        <tr>
+                                                            <th style="display:none">Type Code</th>
+                                                            <th style="background-color:#3498DB;color:white">Types<i style="float:right" class="fas fa-plus" onclick="AddNew('T')"></i></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tblgroupBody">
+                                                        @{int j = 1;}
+                                                        @if (ViewBag.Types != null)
+                                                        {
+                                                            foreach (var item in ViewBag.Types)
+                                                            {
+                                                                <tr id="TDRR@(j)">
+                                                                    <td style="display:none" id="RTC@(j)">@item.ROOM_TYPE_CODE</td>
+                                                                    <td contenteditable="true" onfocus="Checklength(this)" id="RTCC@(j)" style="height:30px"><a id="RTN@(j)">@item.NAME</a><a onclick="updateType('@(j)')" style=float:right class='fa fa-edit'></a></td>
+                                                                </tr>
+                                                                j = j + 1;
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="AddCategory" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header btn-primary">
+                        <h4 class="modal-title">Add Room Category</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="CategoryName" class="form-control" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button"  onclick="SaveCategory()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="AddType" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header btn-primary">
+                        <h4 class="modal-title">Add Room Type</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="TypeName" class="form-control" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button"  onclick="SaveType()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+        })
+
+        function toUpper(str) {
+            return str
+                .toLowerCase()
+                .split(' ')
+                .map(function (word) {
+
+                    return word[0].toUpperCase() + word.substr(1);
+                })
+                .join(' ');
+        }
+        function AddStyle() {
+            var length = $("#tbldepartmentBody").find('tr');
+            length = length.length;
+            for (i = 1; i <= length; i++) {
+                if (i % 2 != 0) {
+                    $("#TDN" + i).css("background-color", "#f8f8f8");
+                }
+                else {
+                    $("#TDN" + i).css("background-color", "#ffffff");
+                }
+            }
+        }
+
+        function updateCategory(id) {
+            category = {};
+            category.ROOM_CATEGORY_CODE = $("#RC_ID" + id).text();
+            var uppervalue = toUpper($("#RN" + id).text());
+            $("#RN" + id).text(uppervalue);
+            category.NAME = $("#RN" + id).text();
+            $.ajax({
+                url: "/Room/SaveCategory",
+                method: "post",
+                data: category
+            }).done(function (obj) {
+                debugger;
+                if (obj == "OK") {
+                    toastr.success('Category Updated successfully.');
+                }
+                else if (obj == "Exist") {
+                    toastr.error('Category with this name is already exist.');
+                }
+                else if (obj == "Invalid") {
+                    toastr.error('Invalid Query');
+                }
+                else {
+                    toastr.error('Data not saved.');
+                }
+            }).fail(function () {
+                toastr.error('Category Update Fail');
+            });
+        }
+        function updateType(id) {
+            type = {};
+            type.ROOM_TYPE_CODE = $("#RTC" + id).text();
+            var uppervalue = toUpper($("#RTN" + id).text());
+            $("#RTN" + id).text(uppervalue);
+            type.NAME = $("#RTN" + id).text();
+            $.ajax({
+                url: "/Room/SaveType",
+                method: "post",
+                data: type
+            }).done(function (obj) {
+                if (obj == "OK") {
+                    toastr.success('Type Updated successfully.');
+                }
+                else if (obj == "Exist") {
+                    toastr.error('Type with this name is already exist.');
+                }
+                else if (obj == "Invalid") {
+                    toastr.error('Invalid Query');
+                }
+                else {
+                    toastr.error('Data not saved.');
+                }
+            }).fail(function () {
+                toastr.error('Type Update Fail');
+            });
+        }
+
+        function Checklength(id) {
+            var id = "#" + id.id;
+            $(id).keypress(function (event) {
+                var keycode = event.which;
+                var regex = new RegExp("^[a-z A-Z]+$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                //if (!(event.shiftKey == false && (keycode == 46 || keycode == 8 || keycode == 37 || keycode == 39 || (keycode >= 48 && keycode <= 57)))) {
+                //    event.preventDefault();
+                //}
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+
+                var data = $(id).text();
+                var length = data.length;
+                // alert(length);
+                if (length >= 35) {
+
+                    event.preventDefault();
+                }
+
+            })
+        }
+        function AddNew(q) {
+            if (q == "C") {
+                $("#AddCategory").modal('show');
+            }
+            if (q == "T") {
+                $("#AddType").modal('show');
+            }
+        }
+
+        function SaveCategory() {
+            var CategoryName = $("#CategoryName").val().trim();
+            CategoryName = toUpper(CategoryName);
+            category = {};
+            category.NAME = CategoryName;
+            if (CategoryName != null || CategoryName != "") {
+            $.ajax({
+                url: "/Room/SaveCategory",
+                method: "post",
+                data: category
+            }).done(function (obj) {
+                if (obj == "OK") {
+                    $("#CategoryName").val("")
+                    window.location.reload();
+                }
+                else if (obj == "Exist") {
+                    toastr.error('Category with this name is already exist.');
+                }
+                else if (obj == "Invalid") {
+                    toastr.error('Invalid Query');
+                }
+                else {
+                    toastr.error('Data not saved.');
+                }
+            }).fail(function () {
+                toastr.error('Data not saved.');
+            });
+            }
+            else {
+                toastr.error('Name Cannot Be Empty');
+            }
+        }
+        function SaveType() {
+            var TypeName = $("#TypeName").val().trim();
+            TypeName = toUpper(TypeName);
+            type = {};
+            type.NAME = TypeName;
+            if (TypeName != null || TypeName != "") {
+                $.ajax({
+                    url: "/Room/SaveType",
+                    method: "post",
+                    data: type
+                }).done(function (obj) {
+                    if (obj == "OK") {
+                        $("#CategoryName").val("")
+                        window.location.reload();
+                    }
+                    else if (obj == "Exist") {
+                        toastr.error('Type with this name is already exist.');
+                    }
+                    else if (obj == "Invalid") {
+                        toastr.error('Invalid Query');
+                    }
+                    else {
+                        toastr.error('Data not saved.');
+                    }
+                }).fail(function () {
+                    toastr.error('Data not saved.');
+                });
+            }
+            else {
+                toastr.error('Name Cannot Be Empty');
+            }
+        }
+        
+    </script>
+}
+
+

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="29a4c38d4e234945b07947ef11ea6e15" Name="Diagram1" ZoomLevel="43">
+        <EntityTypeShape EntityType="Parler_Inventory.ADVANCE_LOG" Width="1.5" PointX="5.75" PointY="7.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.AMENITY_PRODUCT_DETAIL" Width="1.5" PointX="5.25" PointY="33.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.AMENITY_PRODUCT_DETAIL_HISTORY" Width="1.5" PointX="8.25" PointY="45.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.AREA" Width="1.5" PointX="3.75" PointY="20.625" />
+        <EntityTypeShape EntityType="Parler_Inventory.BRANCH" Width="1.5" PointX="6.75" PointY="14.5" />
+        <EntityTypeShape EntityType="Parler_Inventory.BRAND" Width="1.5" PointX="0.75" PointY="39.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.CITY" Width="1.5" PointX="1.5" PointY="20.625" />
+        <EntityTypeShape EntityType="Parler_Inventory.CLIENT_CONFIGURATION" Width="1.5" PointX="7.75" PointY="5.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.COLOUR" Width="1.5" PointX="9.75" PointY="5.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.COUNTRY" Width="1.5" PointX="0.75" PointY="51.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.CUST_DETAIL" Width="1.5" PointX="11.75" PointY="5.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.CUSTOMER" Width="1.5" PointX="11.75" PointY="10.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.CUSTOMER_DISCOUNT_CATEGORY" Width="1.5" PointX="5.75" PointY="11.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.DEAL" Width="1.5" PointX="13.75" PointY="5.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.DEPARTMENT" Width="1.5" PointX="7.75" PointY="1.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.DEVICE" Width="1.5" PointX="6.75" PointY="74.875" />
+        <EntityTypeShape EntityType="Parler_Inventory.DEVICE_FAULT" Width="1.5" PointX="14.25" PointY="64.875" />
+        <EntityTypeShape EntityType="Parler_Inventory.DN_DETAIL" Width="1.5" PointX="8.25" PointY="35.875" />
+        <EntityTypeShape EntityType="Parler_Inventory.DN_MAIN" Width="1.5" PointX="6" PointY="57.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.FAULT" Width="1.5" PointX="12" PointY="69.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.FAVOURITE" Width="1.5" PointX="13.75" PointY="12.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.FBR_DATA" Width="1.5" PointX="14.75" PointY="0.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.FBR_POS_ID" Width="1.5" PointX="15.75" PointY="3.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.GL_CHART" Width="1.5" PointX="3.75" PointY="24.375" />
+        <EntityTypeShape EntityType="Parler_Inventory.GRFS_DETAIL" Width="1.5" PointX="5.25" PointY="38.25" />
+        <EntityTypeShape EntityType="Parler_Inventory.GRFS_MAIN" Width="1.5" PointX="3" PointY="10.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.GRN_DETAIL" Width="1.5" PointX="11.25" PointY="36.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.GRN_MAIN" Width="1.5" PointX="9" PointY="23.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.GROUP" Width="1.5" PointX="10" PointY="1" />
+        <EntityTypeShape EntityType="Parler_Inventory.JOURNAL" Width="1.5" PointX="14.25" PointY="45.875" />
+        <EntityTypeShape EntityType="Parler_Inventory.LOCATION" Width="1.5" PointX="0.75" PointY="3.625" />
+        <EntityTypeShape EntityType="Parler_Inventory.MAIL_INFO" Width="1.5" PointX="15.75" PointY="8.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.MANUFACTURAR" Width="1.5" PointX="15.75" PointY="11.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.MEARSURING_UNITS" Width="1.5" PointX="16.75" PointY="0.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.NEWS_LETTERS_EMAIL" Width="1.5" PointX="17.75" PointY="3.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.PARTY_ADDRESS" Width="1.5" PointX="9.75" PointY="59.875" />
+        <EntityTypeShape EntityType="Parler_Inventory.PERMISSION" Width="1.5" PointX="3" PointY="76" />
+        <EntityTypeShape EntityType="Parler_Inventory.PO_MAIN" Width="1.5" PointX="17.75" PointY="6.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.PRICE_HISTORY" Width="1.5" PointX="17.75" PointY="10.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.PRICE_OVERRIDE_LOG" Width="1.5" PointX="11.75" PointY="17.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.PROD_BALANCE" Width="1.5" PointX="5.25" PointY="96.625" />
+        <EntityTypeShape EntityType="Parler_Inventory.PROD_LOC_REPORT" Width="1.5" PointX="9" PointY="8.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.PRODUCT_COLOUR" Width="1.5" PointX="17.75" PointY="15.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.PRODUCT_REVIEW" Width="1.5" PointX="5.25" PointY="93.5" />
+        <EntityTypeShape EntityType="Parler_Inventory.PRODUCT_UAN_LIST" Width="1.5" PointX="5.25" PointY="102.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.PRODUCT" Width="1.5" PointX="3" PointY="32.25" />
+        <EntityTypeShape EntityType="Parler_Inventory.RESERVATION_DETAIL" Width="1.5" PointX="11.25" PointY="27.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.RESERVATION_DETAIL_HISTORY" Width="1.5" PointX="14.25" PointY="29.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.RESERVATION_MAIN" Width="1.5" PointX="3" PointY="49" />
+        <EntityTypeShape EntityType="Parler_Inventory.ROOM" Width="1.5" PointX="3" PointY="15.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.ROOM_CATEGORY" Width="1.5" PointX="0.75" PointY="17.5" />
+        <EntityTypeShape EntityType="Parler_Inventory.ROOM_TYPE" Width="1.5" PointX="0.75" PointY="15.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.SEC_FUNCTIONS" Width="1.5" PointX="18.75" PointY="0.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.SEC_USER_FUNCTIONS" Width="1.5" PointX="8.75" PointY="18.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.SMS_REG" Width="1.5" PointX="17.75" PointY="18.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.STAFF_MEMBER" Width="1.5" PointX="3.75" PointY="58.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.STAFF_STATUS" Width="1.5" PointX="19.75" PointY="3.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.STATE" Width="1.5" PointX="6.75" PointY="72.5" />
+        <EntityTypeShape EntityType="Parler_Inventory.STOCK_DETAIL" Width="1.5" PointX="11.25" PointY="45.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.STOCK_MAIN" Width="1.5" PointX="9" PointY="49.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.SUB_GROUPS" Width="1.5" PointX="12.25" PointY="1" />
+        <EntityTypeShape EntityType="Parler_Inventory.SUPPLIER" Width="1.5" PointX="6" PointY="19.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.SUPPLIER_PRODUCTS" Width="1.5" PointX="8.25" PointY="31.375" />
+        <EntityTypeShape EntityType="Parler_Inventory.TICKET_DETAIL" Width="1.5" PointX="9" PointY="63.5" />
+        <EntityTypeShape EntityType="Parler_Inventory.TICKET_MAIN" Width="1.5" PointX="6.75" PointY="53" />
+        <EntityTypeShape EntityType="Parler_Inventory.TILL_USERS" Width="1.5" PointX="19.75" PointY="6.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.TotalCountHit" Width="1.5" PointX="19.75" PointY="10.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.TRANS_DT" Width="1.5" PointX="14.25" PointY="35.375" />
+        <EntityTypeShape EntityType="Parler_Inventory.TRANS_MN" Width="1.5" PointX="12" PointY="53.625" />
+        <EntityTypeShape EntityType="Parler_Inventory.TRANSFER_DETAIL" Width="1.5" PointX="5.25" PointY="43.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.TRANSFER_MAIN" Width="1.5" PointX="3" PointY="70.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.USER_PERMISSION" Width="1.5" PointX="5.25" PointY="4.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.USER" Width="1.5" PointX="3" PointY="3.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.WAREHOUSE" Width="1.5" PointX="3" PointY="1.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.WAST_DETAIL" Width="1.5" PointX="11.25" PointY="32.625" />
+        <EntityTypeShape EntityType="Parler_Inventory.WAST_MAIN" Width="1.5" PointX="9" PointY="14.125" />
+        <EntityTypeShape EntityType="Parler_Inventory.ACCOUNT_ENTRY" Width="1.5" PointX="19.75" PointY="13.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.ACCOUNT_LEVELS" Width="1.5" PointX="19.75" PointY="19.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.BOOKING_INFO" Width="1.5" PointX="21.75" PointY="0.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.DAILY_ATTENDANCE" Width="1.5" PointX="21.75" PointY="4.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.DATA_MIG_LOG" Width="1.5" PointX="21.75" PointY="9.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.DAYS_OF_WEEK" Width="1.5" PointX="21.75" PointY="12.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.DEAL_DETAIL" Width="1.5" PointX="13.75" PointY="21.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.DESIGNATION" Width="1.5" PointX="21.75" PointY="15.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.DIST_AREA" Width="1.5" PointX="15.75" PointY="21.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.EMP_CATEGORY" Width="1.5" PointX="21.75" PointY="19.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.EMPLOYEE" Width="1.5" PointX="21.75" PointY="22.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.FISCALYEAR" Width="1.5" PointX="23.75" PointY="0.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.GL_CATEGORIES" Width="1.5" PointX="23.75" PointY="4.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.GLYEARLYBALANCE" Width="1.5" PointX="23.75" PointY="8.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.GZTTD_HOLIDAY" Width="1.5" PointX="23.75" PointY="11.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.INV_STOCK_TAKE_ENTRY" Width="1.5" PointX="23.75" PointY="14.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.ITEM_MOVEMENT" Width="1.5" PointX="17.75" PointY="23.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.LEAVE_REASONS" Width="1.5" PointX="23.75" PointY="18.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.LEAVES_BALANCES" Width="1.5" PointX="23.75" PointY="21.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.LEAVES_HISTORY" Width="1.5" PointX="0.75" PointY="24.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.MIGRATION_LOG" Width="1.5" PointX="23.75" PointY="24.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.OVERTIME" Width="1.5" PointX="25.75" PointY="0.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.PO_DETAIL" Width="1.5" PointX="25.75" PointY="3.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.PROD_SIZE" Width="1.5" PointX="25.75" PointY="7.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.PROMO_INFO" Width="1.5" PointX="25.75" PointY="11.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.QUALIFICATION_DETAIL" Width="1.5" PointX="13.75" PointY="25.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.QUALIFICATION_MAIN" Width="1.5" PointX="25.75" PointY="15.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.RELIGION" Width="1.5" PointX="25.75" PointY="18.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.SALE_TRANS" Width="1.5" PointX="25.75" PointY="21.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.SALESMAN" Width="1.5" PointX="25.75" PointY="25.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.SHIFTS_MAIN" Width="1.5" PointX="27.75" PointY="0.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.SHIFTS_ROASTER" Width="1.5" PointX="27.75" PointY="3.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.TIMESWIPE" Width="1.5" PointX="27.75" PointY="6.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.V_DETAIL" Width="1.5" PointX="27.75" PointY="10.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.V_MAIN" Width="1.5" PointX="27.75" PointY="14.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.V_TYPES" Width="1.5" PointX="27.75" PointY="19.75" />
+        <EntityTypeShape EntityType="Parler_Inventory.WORK_EXPERIENCE" Width="1.5" PointX="27.75" PointY="23.75" />
+        <AssociationConnector Association="Parler_Inventory.FK_AMENITY_PRODUCT_DETAIL_PRODUCTS" />
+        <AssociationConnector Association="Parler_Inventory.FK_AMENITY_PRODUCT_DETAIL_RESERVATION_MAIN" />
+        <AssociationConnector Association="Parler_Inventory.FK_AMENITY_PRODUCT_DETAIL_ROOM" />
+        <AssociationConnector Association="Parler_Inventory.FK_AMENITY_PRODUCT_DETAIL_HISTORY_PRODUCTS" />
+        <AssociationConnector Association="Parler_Inventory.FK_AMENITY_PRODUCT_DETAIL_HISTORY_RESERVATION_MAIN" />
+        <AssociationConnector Association="Parler_Inventory.FK_AMENITY_PRODUCT_DETAIL_HISTORY_ROOM" />
+        <AssociationConnector Association="Parler_Inventory.FK_AREA_CITY" />
+        <AssociationConnector Association="Parler_Inventory.FK_SUPPLIER_AREA" />
+        <AssociationConnector Association="Parler_Inventory.FK_PROD_LOC_REPORT_BRANCH" />
+        <AssociationConnector Association="Parler_Inventory.FK_TRANSFER_MAIN_BRANCH_FROM" />
+        <AssociationConnector Association="Parler_Inventory.FK_TRANSFER_MAIN_BRANCH_TO" />
+        <AssociationConnector Association="Parler_Inventory.FK_WAST_MAIN_BRANCH" />
+        <AssociationConnector Association="Parler_Inventory.FK_PRODUCTS_BRAND" />
+        <AssociationConnector Association="Parler_Inventory.FK_RESERVATION_MAIN_CITY" />
+        <AssociationConnector Association="Parler_Inventory.FK_SUPPLIER_CITY" />
+        <AssociationConnector Association="Parler_Inventory.FK_RESERVATION_MAIN_COUNTRY" />
+        <AssociationConnector Association="Parler_Inventory.FK_GROUPS_DEPARTMENT" />
+        <AssociationConnector Association="Parler_Inventory.FK_TICKET_DEVICE" />
+        <AssociationConnector Association="Parler_Inventory.FK_DEVICE_FAULT_FAULT" />
+        <AssociationConnector Association="Parler_Inventory.FK_DEVICE_FAULT_TICKET_DETAIL" />
+        <AssociationConnector Association="Parler_Inventory.FK_DN_DETAIL_DN_MAIN" />
+        <AssociationConnector Association="Parler_Inventory.FK_DN_DETAIL_PRODUCTS" />
+        <AssociationConnector Association="Parler_Inventory.FK_DN_MAIN_STAFF_MEMBER" />
+        <AssociationConnector Association="Parler_Inventory.FK_GL_CHART_GL_CHART" />
+        <AssociationConnector Association="Parler_Inventory.FK_SUPPLIER_GL_CHART" />
+        <AssociationConnector Association="Parler_Inventory.FK_GRFS_DETAIL_GRFS_MAIN" />
+        <AssociationConnector Association="Parler_Inventory.FK_GRFS_DETAIL_PRODUCTS" />
+        <AssociationConnector Association="Parler_Inventory.FK_GRFS_MAIN_SUPPLIER" />
+        <AssociationConnector Association="Parler_Inventory.FK_GRN_DETAIL_GRN_MAIN" />
+        <AssociationConnector Association="Parler_Inventory.FK_GRN_DETAILT_PRODUCTS" />
+        <AssociationConnector Association="Parler_Inventory.FK_GRN_MAIN_SUPPLIER" />
+        <AssociationConnector Association="Parler_Inventory.FK_SBG_SG_DEPT" />
+        <AssociationConnector Association="Parler_Inventory.FK_JOURNAL_STAFF_MEMBER" />
+        <AssociationConnector Association="Parler_Inventory.FK_JOURNAL_SUPPLIER" />
+        <AssociationConnector Association="Parler_Inventory.FK_USERS_LOCATION" />
+        <AssociationConnector Association="Parler_Inventory.FK_WAREHOUSE_LOCATION" />
+        <AssociationConnector Association="Parler_Inventory.FK_TRANS_MN_PARTY_ADDRESS" />
+        <AssociationConnector Association="Parler_Inventory.FK_USER_PERMISSION_PERMISSION" />
+        <AssociationConnector Association="Parler_Inventory.FK_PROD_BALANCE_BARCODE_PRODUCT_BARCODE" />
+        <AssociationConnector Association="Parler_Inventory.FK_PRODUCT_REVIEW_PRODUCTS" />
+        <AssociationConnector Association="Parler_Inventory.FK_PRODUCT_UAN_LIST_PRODUCT" />
+        <AssociationConnector Association="Parler_Inventory.FK_STOCK_DETAILT_PRODUCTS" />
+        <AssociationConnector Association="Parler_Inventory.FK_SUPPLIER_PRODUCTS_PRODUCTS" />
+        <AssociationConnector Association="Parler_Inventory.FK_TRANS_DT_PRODUCT" />
+        <AssociationConnector Association="Parler_Inventory.FK_TRANSFER_DETAIL_PRODUCTS" />
+        <AssociationConnector Association="Parler_Inventory.FK_WD_BARCODE_PRODUCT_BARCODE" />
+        <AssociationConnector Association="Parler_Inventory.FK_RESERVATION_DETAIL_RESERVATION_MAIN" />
+        <AssociationConnector Association="Parler_Inventory.FK_RESERVATION_DETAIL_ROOM" />
+        <AssociationConnector Association="Parler_Inventory.FK_RESERVATION_DETAIL_HISTORY_RESERVATION_MAIN" />
+        <AssociationConnector Association="Parler_Inventory.FK_RESERVATION_DETAIL_HISTORY_ROOM" />
+        <AssociationConnector Association="Parler_Inventory.FK_RESERVATION_MAIN_SUPPLIER" />
+        <AssociationConnector Association="Parler_Inventory.FK_ROOM_ROOM_CATEGORY" />
+        <AssociationConnector Association="Parler_Inventory.FK_ROOM_ROOM_TYPE" />
+        <AssociationConnector Association="Parler_Inventory.FK_TICKET_DETAIL_STAFF_MEMBER" />
+        <AssociationConnector Association="Parler_Inventory.FK_TRANS_MN_STAFF_MEMBER" />
+        <AssociationConnector Association="Parler_Inventory.FK_TICKET_STATE" />
+        <AssociationConnector Association="Parler_Inventory.FK_STOCK_DETAIL_STOCK_MAIN" />
+        <AssociationConnector Association="Parler_Inventory.FK_STOCK_MAIN_SUPPLIER" />
+        <AssociationConnector Association="Parler_Inventory.FK_SUPPLIER_PRODUCTS_SUPPLIER" />
+        <AssociationConnector Association="Parler_Inventory.FK_TICKET_MAIN_SUPPLIER" />
+        <AssociationConnector Association="Parler_Inventory.FK_TRANS_MN_SUPPLIER" />
+        <AssociationConnector Association="Parler_Inventory.FK_TICKET_DETAIL_TICKET_MAIN" />
+        <AssociationConnector Association="Parler_Inventory.FK_TRANS_DT_TRANS_MN" />
+        <AssociationConnector Association="Parler_Inventory.FK_TRANSFER_MAIN_TRANSFER_DETAIL" />
+        <AssociationConnector Association="Parler_Inventory.FK_USER_PERMISSION_USERS" />
+        <AssociationConnector Association="Parler_Inventory.FK_WD_DOCNO_WM_DOCNO" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

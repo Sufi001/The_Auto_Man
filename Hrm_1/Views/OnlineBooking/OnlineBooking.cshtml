@@ -1,0 +1,643 @@
+﻿@model Inventory.ViewModels.OnlineBookingViewModel
+@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="~/content/toastr.css" rel="stylesheet" />
+
+    <title>OnlineBooking</title>
+    <style>
+        .top-bar {
+    font-size: 1.5em;
+    font-weight: 300;
+    text-align: center;
+    position: relative;
+    top: 0;
+    border-bottom: 1px solid #ccc;
+    width: 100%;
+    background: #fff;
+    z-index: 5;
+    max-width: 991px;
+    height: 10%;
+    min-height: 78px;
+    max-height: 78px;
+}
+        .top-bar .title {
+    padding: 1em;
+}
+        .footer {
+   position: fixed;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: darkblue;
+   color: white;
+   text-align: center;
+}
+    </style>
+</head>
+<body>
+    <div class="container-fluid" id="item_Entry">
+        <div class="row">
+            <div class="col-lg-2" style="margin-top:40px;padding-left:55px">
+               
+            </div>
+            <div class="col-lg-8">
+                <div class="top-bar">
+                    <input type="hidden" name="previous_step" id="previous_step" value="services">
+
+                    <div class="title"> Choose Services</div>
+                </div>
+            </div>
+            <div class="col-lg-2" style="margin-top:40px" >
+                @*<a class="glyphicon glyphicon-arrow-right" style="display:none" onclick="setUser()"></a>*@
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-offset-2 col-lg-8">
+                @*<div class="top-bar">
+                    <input type="hidden" name="previous_step" id="previous_step" value="services">
+                    <div class="title">Book Services</div>
+                </div>*@
+                <table class="table">
+                    <thead class="thead-dark">
+                        <tr></tr>
+                    </thead>
+                    <tbody id="tbl_ServiceBody">
+                        @*<tr id="tr1" onclick="getdata(this)">
+                            <td></td>
+                            <td id="tdin1" class="col-lg-11" style="padding-top:15px;padding-bottom:15px"><input id="tdic1" type="checkbox" value="12" /> Mark</td>
+                            <td id="tdip1" style="padding-top:15px;padding-bottom:15px">Rs:25000</td>
+                        </tr>*@
+                        @{ int itemid = 0;}
+                            @if (Model.ItemList != null)
+                            {
+                                foreach (var item in Model.ItemList)
+                                {
+                                    itemid = itemid + 1;
+                                    <tr id="tr@(itemid)" onclick="getdata(this)">
+                                        <td id="tdicode@(itemid)" style="display:none">@item.Barcode</td>
+                                        <td id="tdin@(itemid)" class="col-lg-11" style="padding-top:15px;padding-bottom:15px">
+                                        <input id="tdic@(itemid)" type="checkbox" value="1" />@item.Description</td>
+                                        <td id="tdip@(itemid)" style="padding-top:15px;padding-bottom:15px">Rs:@item.Cost</td>
+                                    </tr>
+                                }
+                            }
+                        @*<tr id="tr2" onclick="getdata(this)">
+                            <td></td>
+                            <td id="tdin2" class="col-lg-11" style="padding-top:15px;padding-bottom:15px"><input id="tdic2" type="checkbox" value="12" /> Mark</td>
+                            <td id="tdip2" style="padding-top:15px;padding-bottom:15px">Rs:25000</td>
+                        </tr>
+                        <tr id="tr3" onclick="getdata(this)">
+                            <td></td>
+                            <td id="tdin3" class="col-lg-11" style="padding-top:15px;padding-bottom:15px"><input id="tdic3" type="checkbox" value="12" /> Mark</td>
+                            <td id="tdip3" style="padding-top:15px;padding-bottom:15px">Rs:25000</td>
+                        </tr>*@
+
+                    </tbody>
+                </table>
+            </div>
+        </div>  
+        <div class="footer" id="footerid" style="display:none">
+            <div class="row">
+                <div class="col-lg-6">
+                    Selected Items
+                    <div id="ttl_Items">
+                        0
+                    </div>
+                    <div>
+                        Rs:<div id="ttl_Price">0</div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <button type="button" class="btn btn-primary" onclick="setUser()" style="margin-top:20px">Booking Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid" id="supplier_Entry" style="display:none">
+        <div class="row">
+            <div class="col-lg-offset-2 col-lg-8">
+                @*<div style="margin-top:20px">Back</div>*@
+                <div class="row">
+                    <div class="col-lg-2" style="margin-top:40px;padding-left:55px">
+                        <a class="glyphicon glyphicon-arrow-left" onclick="BackonitemEntry()"></a>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="top-bar">
+                            <input type="hidden" name="previous_step" id="previous_step" value="services">
+
+                            <div class="title"> Choose Provider</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2" style="margin-top:40px;padding-left:75px">
+                        <a class="glyphicon glyphicon-arrow-right" id="IconItemEntry" style="display:none" onclick="settimecontainer()"></a>
+                    </div>
+                </div>
+                @{int providerid = 0; }
+                <table class="table">
+                    <thead class="thead-dark">
+                        <tr></tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var item in Model.Providerlists)
+                                {
+                                    providerid = providerid + 1;
+                        <tr id="providerrow@(providerid)" onclick="settime(this)">
+                            <td id="Providerid@(providerid)" style="display:none">@item.providercode</td>
+                            <td id="Providernname@(providerid)" class="col-lg-11" style="padding-top:15px;padding-bottom:15px">@item.providerName</td>
+                            <td style="padding-top:15px;padding-bottom:15px"><a class="glyphicon glyphicon-plus"></a></td>
+                        </tr>
+                        }
+                        @*<tr id="providerrow2" onclick="settime(this)">
+                            <td id="Providerid2" style="display:none">2</td>
+                            <td id="Providernname2" class="col-lg-11" style="padding-top:15px;padding-bottom:15px">Abdul Rehman</td>
+                            <td id="tdip1" style="padding-top:15px;padding-bottom:15px"><a class="glyphicon glyphicon-plus"></a></td>
+                        </tr>
+                        <tr id="providerrow3" onclick="settime(this)">
+                            <td id="Providerid3" style="display:none">3</td>
+                            <td id="Providernname3" class="col-lg-11" style="padding-top:15px;padding-bottom:15px">Sir Shahzad</td>
+                            <td id="tdip3" style="padding-top:15px;padding-bottom:15px"><a class="glyphicon glyphicon-plus"></a></td>
+                        </tr>*@
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid" id="BookingEntry" style="display:none">
+        <div class="row">
+            <div class="col-lg-offset-2 col-lg-8">
+                @*<div style="margin-top:20px">Back</div>*@
+                 <div class="row">
+                    <div class="col-lg-2" style="margin-top:40px;padding-left:55px">
+                        @*<a class="glyphicon glyphicon-arrow-left" onclick="setonlycontainer()"></a>*@
+                    </div>
+                </div>
+                <form id="pform" onkeydown="return event.keyCode!=13">
+                  <div class="row" id="_form">
+                                        <div class="col-lg-12">
+                                            <div class="panel panel-primary">
+                                                <div class="panel-heading" style="height: 50px; font-size: 15px">
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-xs-12">
+                                                            Booking  Invoice
+                                                        </div>
+                                                        <div class="col-lg-9 col-xs-12">
+                                                            <div class="pull-right">
+                                                                <button type="submit" id="btn_submit" name="btn_submit" class="btn btn-default js-save "> Save</button>
+                                                                @*<button type="button" onclick="PrintReport()" class="btn btn-primary" id="btn_print1" name="btn_print1" data-toggle="modal" data-target="#myReportModal" disabled>Print</button>*@
+                                                                <button type="button" class="btn btn-default"  onclick="setonlycontainer()">Back</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="clearfix">
+                                                        <div class="col-lg-5">
+                                                            <div class="row">
+                                                                <div class="col-lg-5" style="padding-left: 1px;display:none">
+                                                                    @Html.TextBoxFor(m => m.DocNo, new { @type = "hidden", @Value = Model.DocNo, @readonly = "true", @class = "form-control", @id = "txt_docNo" })
+                                                                    <br />
+                                                                </div>
+                                                                <div class="col-lg-6" style="padding-left:1px">
+                                                                    <label class="control-label">Customer Name</label>
+                                                                    @Html.TextBoxFor(m => m.DocNo, new
+                                                                                    { @type = "hidden", @Value = Model.DocNo,
+                                                                                        @readonly = "true",
+                                                                                        @class = "form-control",
+                                                                                        @id = "txt_docNo"
+                                                                                    })
+                                                                    @Html.TextBoxFor(m => m.FirstName, new { @id = "txt_CustomerName", @name = "txt_CustomerName", @class = "form-control", @required = "required ",@maxlength="40" })
+                                                                    <br />
+                                                                </div>
+                                                                <div class="col-lg-6" style="padding-left: 1px">
+                                                                    <label class="control-label">  Date </label>
+                                                                    @Html.TextBoxFor(m => m.DocDate, new { @Value = Model.DocDate.ToString("yyyy-MM-dd"), @type = "date", @id = "txt_docDate", @name = "txt_docDate", @class = "form-control", @required = "required " })
+                                                                    @Html.ValidationMessageFor(m => m.DocDate)
+                                                                    <br />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-7">
+                                                            <div class="row">
+                                                                <div class="col-lg-4" style="padding-left: 1px">
+                                                                    <div>
+                                                                        <label class="control-label">Phone</label>
+                                                                        @Html.TextBoxFor(m => m.Phone, new { @id = "txt_phone", @maxlength  = 11, @minlength = 11, @placeholder = "Phone No", @name = "txt_phone", @class = "form-control", @required = "required" })
+                                                                        <br />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-4" style="padding-left: 1px">
+                                                                    <label class="control-label">Time</label>
+                                                                    @Html.TextBoxFor(m => m.Time,"",new
+                                                                    {
+                                                                        @id = "txt_time",
+                                                                        @type = "time",
+                                                                        @name = "txt_time",
+                                                                        @class = "form-control"
+                                                                    })
+                                                                    <br />
+                                                                </div>
+                                                                <div class="col-lg-4 col-xs-12" style="margin-top:25px">
+                                                                    @*<label>Provider Name</label>
+                                                                    @Html.TextBoxFor(m => m.providerName, new { @id = "txt_providername", @placeholder = "Provider Name",@readonly=true,@name = "txt_providername", @class = "form-control", @required = "required" })*@
+                                                                    @*Total Amount*@
+                                                                    <input type="text" class="form-control" id="TotalPrice" readonly value="0" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group pull-right" style="font-size: 15px;margin-bottom: 20px">
+                                                    </div>
+                                                    <hr />
+                                                    <div class="row" id="tablePurchaseDetail">
+
+                                                                <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="tbl_bookingDetail">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            @*<th class="col-xs-1">No</th>*@
+                                                                            <th style="display:none">Barcode</th>
+                                                                            <th>Service Name</th>
+                                                                            <th>Provider Name</th>
+                                                                            <th class="col-lg-5">At</th>
+                                                                            <th>Amount</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody id="tbl_Bookingbody">
+                                                                        @{int i = 1;}
+                                                                        @*@if (Model.DocumentDetailList != null)
+                                                                        {
+                                                                            foreach (var item in Model.DocumentDetailList)
+                                                                            {
+                                                                                <tr id="trrr@(i)">
+                                                                                    <td style="display:none">@item.Uanno</td>
+                                                                                    <td style='display:none;'>@item.Barcode</td>
+                                                                                    <td>@item.Description</td>
+                                                                                    @{int qty = Convert.ToInt32(item.Qty);}
+                                                                                    <td>@qty</td>
+                                                                                    @{int retail = Convert.ToInt32(item.Retail);}
+                                                                                    <td>@retail</td>
+                                                                                    <td style='display:none;'>@item.Cost</td>
+                                                                                    @{int Discount = Convert.ToInt32(item.Discount);}
+                                                                                    <td>@Discount</td>
+                                                                                    @{int Amount = Convert.ToInt32(item.Amount);}
+                                                                                    <td>@Amount</td>
+                                                                                    <td style='display:none;'>@item.Warehouse</td>
+                                                                                    <td style='display:none;'>@item.WarehouseName</td>
+                                                                                    <td style='display:none;'>@item.Colour</td>
+                                                                                    <td style='display:none;'>@item.ColourName</td>
+                                                                                    <td><a onclick='RemoveRow("tr#trrr@(i)","@(i)")' class='glyphicon glyphicon-minus'></a></td>
+                                                                                    <td><a onclick='EditRow("tr#trrr@(i)","@(i)")' class='glyphicon glyphicon-edit'></a></td>
+                                                                                </tr>
+                                                                                                i = i + 1;
+                                                                                            }
+                                                                                        }*@
+                                                                    </tbody>
+                                                                </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+               </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid" id="Complete_Entry" style="display:none">
+        <div class="row">
+            <div class="col-lg-2" style="margin-top:40px;padding-left:55px">
+
+            </div>
+            <div class="col-lg-8">
+                <div class="top-bar">
+                    <input type="hidden" name="previous_step" id="previous_step" value="services">
+
+                    <div class="title">Congrates! Your Booking is Confirmed</div>
+                </div>
+            </div>
+            <div class="col-lg-2" style="margin-top:40px">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-offset-2 col-lg-8">
+               <div class="row" style="margin-top:60px">
+                   <div class="col-lg-5"></div>
+                   <div class="col-lg-4">
+                       
+                       <button type="button" class="btn btn-primary btn-lg" onclick="NewEntry()">New Booking</button>
+                   </div>
+                   <div class="col-lg-3"></div>
+                  
+               </div>
+             
+            </div>
+        </div>
+        
+    </div>
+
+
+
+        <script src="~/content/vendor/jquery/jquery.min.js"></script>
+        <script src="~/content/vendor/bootstrap/js/bootstrap.min.js"></script>
+        <script src="~/Scripts/toastr.js"></script>
+    <script>
+
+            $(document).ready(function () {
+                var today = moment().format('YYYY-MM-DD');
+                $("#txt_time").val(today);
+            })
+        function getdata(id)
+        {
+            $("#IconItemEntry").hide();
+          var id = id.id;
+          id = id.substr(2, 7);
+          var totalprice = $("#ttl_Price").html();
+          var totalitems = parseInt($("#ttl_Items").html());
+          var price;
+       var tr=   $("#tbl_Bookingbody").find("tr");
+       if (tr.length > 0)
+       {
+           $("#tbl_Bookingbody tr").remove();
+       }
+          if($("#tdic"+id). prop("checked") == false)
+          {
+              $("#tdic" + id).prop("checked", true);
+              var itemprice = $("#tdip" + id).text().substr(3, 10);
+              if (itemprice == "") {
+                  itemprice = 0;
+              }
+              if (totalprice == "")
+              {
+                  price =  parseInt(itemprice);
+              }
+              else
+              {
+                price   = parseInt(totalprice) + parseInt(itemprice);
+              }// ttl_Price
+              $("#ttl_Price").html(price);
+              if (totalitems > 0) {
+                  var item = totalitems + 1;
+                  $("#ttl_Items").html(item);
+              }
+              else {
+                  $("#footerid").show();
+                  $("#ttl_Items").html(1);
+              }
+
+          }
+        else  if ($("#tdic" + id).prop("checked") == true)
+          {
+            $("#tdic" + id).prop("checked", false);
+            var itemprice = $("#tdip" + id).text().substr(3, 10);
+            if (itemprice == "") {
+                itemprice = 0;
+            }
+            if (totalprice == "")
+            {
+                price = parseInt(itemprice);
+            }
+            else
+            {
+                if (itemprice == "")
+                    {
+                    itemprice = 0;
+                }
+                price = parseInt(totalprice) - parseInt(itemprice);
+            }
+            $("#ttl_Price").html(price);
+            if (totalitems > 1)
+            {
+                var item = totalitems - 1;
+                $("#ttl_Items").html(item);
+            }
+            else
+            if(totalitems==1)
+            {
+                    var item = totalitems - 1;
+                    $("#ttl_Items").html(item);
+                    $("#footerid").hide();
+            }
+            else {
+                $("#footerid").hide();
+            }
+          }
+        }
+        //function checkbox()   
+        //{
+        //    var tr = $("#tbl_ServiceBody").find('tr');
+        //    for (i = 0; i < tr.length; i++)
+        //    {
+        //    }
+        //}
+        function setUser()
+        {
+            $("#item_Entry").hide();
+            $("#supplier_Entry").show();
+        }
+        function settime(id)
+        {
+            $("#IconItemEntry").hide();
+            createtable(id.id);
+            $("#supplier_Entry").hide();
+            $("#BookingEntry").show();
+            $("#IconItemEntry").show();
+        }
+        function settimecontainer()
+        {
+            $("#supplier_Entry").hide();
+            $("#BookingEntry").show();
+        }
+        function createtable(id)
+        {
+            var tr = $("#tbl_Bookingbody").find("tr");
+            if (tr.length > 0) {
+                $("#tbl_Bookingbody tr").remove();
+            }
+            var Id = id.substr(11, 15);
+            var Prid = "#Providerid" + Id;
+            var PrName = "#Providernname"+Id ;
+            var Providerid = $(Prid).text();
+            var ProviderName = $(PrName).text();
+            if (Providerid != "" && ProviderName != "")
+            {
+                var tr = $("#tbl_ServiceBody").find('tr');
+                for (i = 1; i <= tr.length; i++)
+                {
+                    var checkboxid = "#tdic" + i;
+                    if ($(checkboxid).prop("checked") == true)
+                    {
+                        var itemnameid = "#tdin" + i;
+                        var itemcostid = "#tdip" + i;
+                        var itemcodeid = "#tdicode" + i;
+                        var itemcode = $(itemcodeid).text();
+                        var itemname = $(itemnameid).text();
+                        var itemcost = $(itemcostid).text();
+                        itemcost = parseInt(itemcost.substr(3, 8));
+                        $("#tbl_Bookingbody").append(
+                            "<tr id=bookinrow" + i + "><td id=bookservicecode" + i + " style=display:none>" + itemcode + "</td><td id=bookservicename" + i + ">" +
+                            itemname + "</td><td id=bookprovidecode" + i + " style=display:none>" + Providerid + "</td><td id=bookprovidername" + i + ">" +
+                            ProviderName+"</td><td id=bookat"+i+">SoftValley Retail Solution</td><td id=itemamount"+i+">"+itemcost+"</td></tr>"
+                                 );
+                        var totalitemcost = $("#ttl_Price").html();
+                        $("#TotalPrice").val(totalitemcost);
+                    }
+                }
+            }
+            //alert("ID= " + Id + " Providerid= " + Providerid + "ProviderName= " + ProviderName);
+
+        }
+        function BackonitemEntry()
+        {
+            $("#item_Entry").show();
+            $("#supplier_Entry").hide();
+        }
+        function setonlycontainer()
+        {
+            $("#supplier_Entry").show();
+            $("#BookingEntry").hide();
+        }
+
+
+        $('#pform').submit(function (e) {
+            e.preventDefault();
+            $('#btn_submit').attr('disabled', 'disabled');
+            //var DocumentMain = {};
+            //var PurchaseDetailList = {};
+            var OnlineBookingViewModel = {};
+            var PurchaseDetailList = {};
+            var vm = {
+                OnlineBookingViewModel,
+                DetailBooking: []
+            };
+            //vm.OnlineBookingViewModel.DocNo = $("#txt_docNo").val();
+            //vm.OnlineBookingViewModel.DocDate = $("#txt_docDate").val();
+            //vm.OnlineBookingViewModel.Phone = $("#txt_phone").val();
+            //vm.OnlineBookingViewModel.FirstName = $("#txt_CustomerName").val();
+            //vm.OnlineBookingViewModel.Time = $("#txt_time").val();
+            //vm.OnlineBookingViewModel.TotalPrice = $("#TotalPrice").val();
+            vm.DocNo = $("#txt_docNo").val();
+            vm.DocDate = $("#txt_docDate").val();
+            vm.Phone = $("#txt_phone").val();
+            vm.FirstName = $("#txt_CustomerName").val();
+            vm.Time =$("#txt_time").val();
+            vm.TotalPrice = $("#TotalPrice").val();
+            //if (vm.OnlineBookingViewModel.FirstName == "" || vm.OnlineBookingViewModel.Phone=="")
+            //{
+            if (vm.FirstName == "" || vm.Phone == "") {
+                toastr.error('Please Enter Name and Phone Number to Confirm Booking.');
+                $('#btn_submit').removeAttr("disabled");
+                return;
+            }
+            var tr = $("#tbl_Bookingbody").find('tr');
+            for (var ind = 0; ind < tr.length; ind++)
+            {
+                var BookingDetail = {};
+                var td = $(tr[ind]).find('td');
+
+                BookingDetail.ItemCode = td.eq(0).text();
+                BookingDetail.ItemName = td.eq(1).text();
+                BookingDetail.providercode = td.eq(2).text();
+                BookingDetail.providerName = td.eq(3).text();
+                BookingDetail.ItemPrice = td.eq(5).text();
+                vm.DetailBooking.push(BookingDetail);
+            }
+            if (vm.DetailBooking.length == 0) {
+                toastr.error('Select min one item to save.');
+                $('#btn_submit').removeAttr("disabled");
+                return;
+            }
+            $.ajax({
+                url: "/OnlineBooking/OnlineBookingSave",
+                    method: "post",
+                data: vm
+            })
+                .done(function (obj) {
+                    $('#btn_submit').removeAttr("disabled");
+                    if (obj == "Null")
+                    {
+                        toastr.error('Booking Not Confirmed');
+                    }
+                    else
+                    {
+                        toastr.success('Booking Confirmed successfully.');
+                        //$("#txt_docNo").val(obj);
+                        //$("#new_DocNo").val("");
+                        //$("#btn_print1").removeAttr("disabled");
+                        $("#Complete_Entry").show();
+                        $("#BookingEntry").hide();
+                        $("#txt_phone").val("");
+                       $("#txt_CustomerName").val("");
+                    }
+                    // $("#btn_print1").attr('disabled', 'disabled');
+
+                })
+                .fail(function (xhr) {
+                    alert('Request Status: \n ' +
+                        xhr.status +
+                        ' Status Text: ' +
+                        xhr.statusText +
+                        ' ' +
+                        xhr.responseText);
+                    $('#btn_submit').removeAttr("disabled");
+                    toastr.error('Booking not confirmed');
+                });
+        });
+        $("#txt_phone").keypress(function (event) {
+            var keycode = event.which;
+            $("#txt_phone").val($("#txt_phone").val().replace(/[^\d].+/, ""));
+            if (!(event.shiftKey == false && (keycode == 46 ||keycode==190|| keycode == 8 || keycode == 37 || keycode == 39 || (keycode >= 48 && keycode <= 57)))) {
+                event.preventDefault();
+            }
+
+            var data = $("#txt_Phone").val();
+            var length = data.length;
+            // alert(length);
+            if (length >= 11) {
+
+                event.preventDefault();
+            }
+
+        });
+
+        $("#txt_CustomerName").keypress(function (event) {
+                 var inputValue = event.which;
+                 // allow letters and whitespaces only.
+                 if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0))
+                 {
+                     event.preventDefault();
+                 }
+            //var regex = new RegExp("/^[a-zA-Z ]*$/");
+            //     var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            //     if (!regex.test(key)) {
+            //         event.preventDefault();
+            //         return false;
+            //     }
+
+        });
+
+        function NewEntry()
+        {
+            $("#Complete_Entry").hide();
+            $("#item_Entry").show();
+            $("#tbl_Bookingbody tr").remove();
+            var tr = $("#tbl_ServiceBody").find('tr');
+            for (i = 1; i <= tr.length; i++)
+            {
+                $("#tdic" + i).prop('checked', false);
+            }
+            $("#ttl_Price").html("0");
+            $("#ttl_Items").html("0");
+            //$('tbl_ServiceBody tr td input[type="checkbox"]').each(function () {
+            //    $(this).prop('checked', false);
+            //});
+        }
+    </script>
+</body>
+</html>

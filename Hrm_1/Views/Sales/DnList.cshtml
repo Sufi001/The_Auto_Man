@@ -1,0 +1,77 @@
+﻿@using Inventory.Constants;
+@model IEnumerable<Inventory.ViewModels.DocumentListViewModel>
+@{
+    ViewBag.Title = "List";
+}
+@section CSS{
+    <style>
+        #list {
+            width: 90px;
+            margin-left: 3px;
+        }
+        #booking{
+             width: 90px;
+            margin-left: 3px;
+        }
+    </style>
+    }
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header" style="background-color:#3498DB" >
+                            <div class="row">
+                                <div class="col-6 pt-1">
+                                    <h2 class="card-title"><b style="color:white">D Note List</b></h2>
+                                </div>
+                                <div class="col-6">
+                                    <button style="background-color:#3498DB;color:white" type="button" id="booking" class="btn btn-default fa-pull-right" onclick="location.href='@Url.Action("Index", "Sales",new {docType = Constants.SalesDocument,requestPage = SalesPage.OrderBooking})'">DN Page</button>
+                                </div>
+                            </div>
+                        </div>
+                        @{int i = 0;}
+                        <div class="card-body">
+                            <div class="table table-responsive">
+                                <table id="example1" class="table table-bordered" width="100%" cellspacing="0">
+                                    <thead style="background-color:#3498DB;color:white;">
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Doc No</th>
+                                            <th>Name</th>
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            i = i + 1;
+                                            <tr>
+                                                <td>@i</td>
+                                                <td><a href="/Sales/DnEdit?docno=@item.DocNo">@item.DocNo</a></td>
+                                                <td>@item.Supplier</td>
+                                                <td>@item.Doc.ToString("dd-MM-yyyy")</td>
+                                                <td>@item.Amount</td>
+                                            </tr>
+                                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+@section scripts{
+    <script src="~/AdminLte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/AdminLte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script>
+        $("#example1").DataTable({
+            "pageLength": 50
+        });
+    </script>
+}

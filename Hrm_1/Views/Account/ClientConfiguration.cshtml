@@ -1,0 +1,139 @@
+﻿@model Inventory.Models.ClientConfiguration
+@{
+    ViewBag.Title = "Client Configuration";
+}
+@using (Html.BeginForm("ClientConfiguration", "Account", FormMethod.Post, new { enctype = "multipart/form-data", id = "Form", Class = "was-validated", @role = "Form" }))
+{
+    <div class="content-wrapper" style="margin-top:20px">
+        <div class="container-fluid">
+            <div class="row" id="_form">
+                <div class="col-12">
+                    <!-- Custom Tabs -->
+                    <div class="card">
+                        <div class="card-header d-flex p-0" style="background-color:#3498DB">
+                            <h2 class="card-title p-3"><b style="color:white">Client Configuration</b></h2>
+                            <ul class="nav nav-pills ml-auto p-2">
+                                <li>
+                                    <input style="border:1px solid; background-color:#3985d2;color:white" type="button" value="Save" id="Sumbit" onclick="DataSubmit()" class="btn fa-pull-right" />
+                                    <input type="hidden" id="ClientId" value="@Model.ClientId" />
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            @*<div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" id="SendDataFbr" type="checkbox">
+                                                    <label for="SendDataFbr" class="form-check-label" style="color:black">Can Send Invoice To FBR</label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" id="SendSMS" type="checkbox">
+                                                    <label for="SendSMS" class="form-check-label" style="color:black">Can Send SMS</label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" id="SendWhatsApp" type="checkbox">
+                                                    <label for="SendWhatsApp" class="form-check-label" style="color:black">Can Send WhatsApp</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" id="SendEmail" type="checkbox">
+                                                    <label for="SendEmail" class="form-check-label" style="color:black">Can Send Email</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section scripts{
+    <script>
+        @if (Model.SendInvoiceDataToFBR) {
+            @:$("#SendDataFbr").prop("checked", true);
+        }
+        @if (Model.SendSMS) {
+            @:$("#SendSMS").prop("checked", true);
+        }
+        @if (Model.SendWhatsApp) {
+            @:$("#SendWhatsApp").prop("checked", true);
+        }
+        @if (Model.SendEmail) {
+            @:$("#SendEmail").prop("checked", true);
+        }
+
+
+
+        function DataSubmit() {
+               //$('#Sumbit').attr("disabled", "disabled");
+            var SendDataFbr = $('#SendDataFbr').is(":checked");
+            var SendSMS = $('#SendSMS').is(":checked");
+            var SendWhatsApp = $('#SendWhatsApp').is(":checked");
+            var SendEmail = $('#SendEmail').is(":checked");
+            var config = {};
+            config.SendInvoiceDataToFBR = SendDataFbr;
+            config.SendSMS = SendSMS;
+            config.SendWhatsApp = SendWhatsApp;
+            config.SendEmail = SendEmail;
+            config.ClientId = $('#ClientId').val();
+            $.ajax({
+                url: "/Account/ClientConfiguration",
+                method: "post",
+                data: config
+            }).done(function (obj) {
+                $('#Sumbit').removeAttr("disabled");
+                if (obj == "Data saved successfully") {
+                    toastr.success(obj);
+                }
+                else {
+                    toastr.error(obj);
+                }
+            }).fail(function () {
+                $('#Sumbit').removeAttr("disabled");
+                toastr.error('Request Fail');
+            });
+        };
+        $("#Sumbit").click(function () {
+
+        });
+
+    </script>
+}

@@ -1,0 +1,232 @@
+﻿@model Inventory.Models.NewUserViewModel
+@{
+    ViewBag.Title = "Register";
+}
+<style>
+      @@media only screen and (max-width:400px) {
+        .p-5{
+            padding:0.5rem !important;
+        }
+    }
+</style>
+<div class="container">
+    <!-- Outer Row -->
+    <div class="row justify-content-center">
+        @*<div class="col-xl-10 col-lg-12 col-md-9">*@
+        <div class="col-xl-6 col-lg-6 col-md-9">
+            @Html.HiddenFor(m => m.UserCode, new { @id = "UserId" })
+            <div class="card o-hidden border-0 shadow-lg my-4">
+                <div class="card-body p-0">
+                    <!-- Nested Row within Card Body -->
+                    <div class="row justify-content-center">
+                        @*<div class="col-lg-6 d-none d-lg-block bg-login-image"></div>*@
+                        <div class="col-md-12 col-sm-12">
+                            <div class="p-5">
+                                <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-4">Register a new member!</h1>
+                                </div>
+                                <form>
+                                    <div class="input-group mb-3">
+                                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @name = "UserName", id = "UserName", @placeholder = "User Name", @required = "required", @autocomplete = "off" })
+                                        @*<input type="text" class="form-control" placeholder="User name">*@
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">
+                                                <span class="fas fa-user"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @name = "Email", id = "Email", @placeholder = "Email", @required = "required", @autocomplete = "off" })
+                                        @*<input type="email" class="form-control" placeholder="Email">*@
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">
+                                                <span class="fas fa-envelope"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        @Html.TextBoxFor(m => m.Password, new { @class = "form-control", @name = "Password", id = "Password", @placeholder = "Password", @required = "required" })
+                                        @*<input type="password" class="form-control" placeholder="Password">*@
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">
+                                                <span class="fas fa-lock"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        @Html.TextBoxFor(m => m.ConfirmPassword, new { @class = "form-control", @name = "ConfirmPassword", id = "ConfirmPassword", @placeholder = "Confirm Password", @required = "required" })
+                                        @*<input type="password" class="form-control" placeholder="Retype password">*@
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">
+                                                <span class="fas fa-lock"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <input type="button" class="btn btn-outline-secondary  btn-block pull-right" data-toggle="modal" data-target="#modal-lg" value="Add Permissions" />
+                                        <input type="button" class="btn btn-outline-dark btn-block pull-right" onclick="window.location.href = '/Account/UserList'" value="User List" />
+                                        <input type="button" class="btn btn-primary btn-block pull-right" onclick="Saveuser()" value="Register" />
+                                    </div>
+                                </form>
+                                @*<div class="social-auth-links text-center">
+                                        <p>- OR -</p>
+                                        <a href="#" class="btn btn-block btn-primary">
+                                            <i class="fab fa-facebook mr-2"></i>
+                                            Sign up using Facebook
+                                        </a>
+                                        <a href="#" class="btn btn-block btn-danger">
+                                            <i class="fab fa-google-plus mr-2"></i>
+                                            Sign up using Google+
+                                        </a>
+                                    </div>*@
+                                @*<a href="login.html" class="text-center">I already have a membership</a>*@
+                            </div>
+                            <!-- /.form-box -->
+                        </div><!-- /.card -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-lg">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-blue">
+                <h4 class="modal-title ">Assign Permissions</h4>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="button" class="btn btn-outline-warning pull-right" onclick="grantAll()" value="Grant All" />
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 px-0">
+                        <div class="card shadow mb-4">
+                            <div class="card-body">
+                                <div class="table-responsive w-auto">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Permission</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{var counter = 1; }
+                                            @foreach (var item in Model.AllPermissions)
+                                            {
+                                                <tr>
+                                                    <th>@counter</th>
+                                                    <td><input type="checkbox" name="Permissions" value="@item.PERMISSION_ID" /> @item.NAME</td>
+                                                </tr>
+                                                counter++;
+                                            }
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between bg-gradient-blue">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <input type="button" class="btn btn-light" data-dismiss="modal" onclick="AssignPermissions()" value="Submit" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var Permissions = [];
+        var reSettingArray = function () {
+            Permissions = [];
+        }
+        var AssignPermissions = function () {
+            Permissions = [];
+            $.each($("input[name='Permissions']:checked"), function () {
+                Permissions.push($(this).val());
+            });
+        };
+
+                     @if (!String.IsNullOrEmpty(ViewBag.message))
+                     {
+                         @:toastr.error("Data Not Saved");
+                                         @:toastr.error(" @ViewBag.message ");
+                                     }
+
+        @if (!string.IsNullOrEmpty(ViewBag.Update))
+        {
+            foreach (var item in Model.SelectedPermissions)
+            {
+                @:$('input[name=Permissions][value=@item]').attr("checked", "checked");
+            }
+            @:AssignPermissions();
+        }
+
+        function UserSuggestion() {
+            var UserName = $('#UserName').val();
+            $.ajax({
+                url: "/Account/CheckUser?id=" + UserName,
+                method: "GET",
+            }).done(function (obj) {
+                if (obj === "UserExist") {
+                    toastr.error("User Name Already Exist, Please Select Another UserName");
+                }
+            }).fail(function (obj) {
+                toastr.error("User Suggesstion is Not Working");
+            });
+        }
+        var Saveuser = function () {
+            var user = {};
+            user.SelectedPermissions = [];
+            user.UserName = $("#UserName").val();
+            user.Password = $("#Password").val();
+            user.ConfirmPassword = $("#ConfirmPassword").val();
+            user.UserCode = $("#UserId").val();
+            //user.Location = $("#Location").val();
+            user.Email = $("#Email").val();
+            if (Permissions.length >= 1) {
+                user.SelectedPermissions = Permissions;
+                debugger;
+                $.ajax({
+                    url: "/Account/Save",
+                    method: "Post",
+                    data: { user }
+                }).done(function (obj) {
+                    debugger;
+                    if (obj === "success") {
+                        toastr.success("User Successfully added");
+                        setTimeout(function () { window.location.reload() }, 2000)
+                    }
+                    else if (obj === "Already Exist") {
+                        toastr.error("User Name Exist, Please Select Another");
+                    }
+                    else if (obj === "Invalid") {
+                        toastr.error("Invalid Object");
+                    }
+                    else if (obj === "pass") {
+                        toastr.error("Password and Confirm Password SHould be matched");
+                    }
+                    else if (obj === "Exception") {
+                        toastr.error("Something went wrong");
+                    }
+                }).fail(function (obj) {
+                    toastr.error("Data not Save");
+                });
+            }
+            else {
+                toastr.error("Select Atlest One Permission");
+            }
+        }
+        function grantAll() {
+            $('input[name=Permissions]').attr("checked", "checked");
+        }
+    </script>
+}

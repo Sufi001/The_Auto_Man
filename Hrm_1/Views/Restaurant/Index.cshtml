@@ -1,0 +1,620 @@
+﻿
+@model Inventory.ViewModels.DocumentViewModel
+@{
+    ViewBag.Title = "Sales Page";
+}
+<style>
+    /*.desc-line {
+        overflow: hidden;
+        line-height: 0px;
+        white-space: nowrap;
+    }*/
+
+    body {
+        overflow-x: hidden;
+        overflow-y: hidden;
+    }
+
+    .btn_search, #btn_new, #btn_save, #btn_authorize, #btn_print1 {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #add_btn {
+        width: 75px;
+    }
+
+    .btn-size {
+        height: 35px;
+        width: 75px;
+    }
+
+    .btn-width {
+        width: 75px;
+        height: 35px;
+    }
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        width: 100%;
+        border: 1px solid #ddd;
+    }
+
+    .table-responsive {
+        overflow-y: scroll;
+        height: 400px;
+        overflow-x: hidden;
+    }
+
+    .tab-height {
+        height: 600px;
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+
+    .btn-height {
+        height: 35px;
+    }
+
+    .height-dept {
+        height: 170px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+    .mobileview{
+        display:none;
+
+    }
+    .desktopview{
+        display:block;
+    }
+
+    @@media only screen and (max-width:500px) {
+        .mobileview{
+        display:block;
+
+    }
+    .desktopview{
+        display:none;
+    }
+        body {
+            overflow: auto;
+        }
+
+        .tab-height {
+            height: 110px;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+
+        .mob-ul {
+            position: absolute;
+            top: -120px;
+            right: 15px;
+        }
+
+        .manage-qty {
+            width: 49%;
+            position: absolute;
+            top: -54px;
+            right: 0;
+        }
+        .manage-shortkey{
+            width:50%;
+        }
+        .manage-discamt{
+            width: 49%;
+            position: absolute;
+            top: -116px;
+            right: 0;
+        }
+        .manage-mobserch{
+                position: absolute;
+    top: -143px;
+    width: 48%;
+        }
+        .manage-mobile{
+             position: absolute;
+    top: -168px;
+    width: 49%;
+    right:0
+        }
+        .manage-name{
+            top:40px;
+            width:50%;
+        }
+        .manage-add{
+                  width: 50%;
+    right: -177px;
+    top: -40px;
+        }
+        .manage-cust{
+                position: absolute;
+    top: -36px;
+        }
+    }
+</style>
+
+<form id="pform" onkeydown="return event.keyCode!=13" class="was-validated">
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-1">
+                    <div class="tab-height desktopview">
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table 1</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table 2</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table 3</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table 4</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table 5</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table 6</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table 7</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table 8</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table 9</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table10</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table11</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table12</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table13</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table14</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table15</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table16</button>
+                        <button class="btn btn-primary btn-width" style="margin-bottom:2px;" type="button">Table17</button>
+                    </div>
+                    <div class="mobileview">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Select Table
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="#">Table1</a>
+                                <a class="dropdown-item" href="#">Table2</a>
+                                <a class="dropdown-item" href="#">Table3</a>
+                                <a class="dropdown-item" href="#">Table4</a>
+                                <a class="dropdown-item" href="#">Table5</a>
+                                <a class="dropdown-item" href="#">Table6</a>
+                                <a class="dropdown-item" href="#">Table7</a>
+                                <a class="dropdown-item" href="#">Table8</a>
+                                <a class="dropdown-item" href="#">Table9</a>
+                                <a class="dropdown-item" href="#">Table10</a>
+                                <a class="dropdown-item" href="#">Table11</a>
+                                <a class="dropdown-item" href="#">Table12</a>
+                                <a class="dropdown-item" href="#">Table13</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="row" id="_form">
+                        @Html.TextBoxFor(m => m.DocumentMain.RequestPage, new { @type = "hidden", @Value = Model.DocumentMain.RequestPage, @class = "form-control", @id = "RequestPage" })
+                        @Html.TextBoxFor(m => m.DocumentMain.DocNo, new { @type = "hidden", @Value = Model.DocumentMain.DocNo, @class = "form-control", @id = "txt_docNo" })
+                        @Html.TextBoxFor(m => m.DocumentMain.Status, new { @type = "hidden", @Value = Model.DocumentMain.Status, @class = "form-control", @id = "txt_status" })
+                        @Html.TextBoxFor(m => m.DocumentMain.DocType, new { @type = "hidden", @id = "txt_doctype", @name = "txt_doctype", @class = "form-control", @readonly = "true" })
+                        <input id="txt_cost" name="txt_cost" class="form-control" type="hidden" />
+                        <input type="hidden" id="txt_TotalDiscountAmount" />
+                        <input type="hidden" id="txt_TotalQty" value="0" />
+                        <input type="hidden" id="txt_PackQty" value="0" />
+                        <input type="hidden" id="txt_PackRetail" value="0" />
+                        <input type="hidden" id="txt_UnitRetail" value="0" />
+
+                        <div class="col-12">
+                            <!-- Custom Tabs -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-2 col-sm-6">
+                                            <span style="list-style:none;">
+                                                <li style="color:black; align-self:center;"><input type="radio" />&nbsp;Dine In</li> &nbsp;&nbsp;&nbsp;&nbsp;
+                                                <li style="color:black; align-self:center;"><input type="radio" />&nbsp;Take Away</li>&nbsp;&nbsp;&nbsp;&nbsp;
+                                            </span>
+                                            <div class="form-group has-float-label manage-shortkey">
+                                                <input id="Short Key" name="Short Key" class="form-control" type="text" placeholder="Short Key" />
+                                                <label for="Short Key">Short Key</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 col-md-2 col-sm-6">
+                                            <span class="mob-ul" style="list-style:none;padding: 0;">
+                                                <li style="color:black; align-self:center;"><input type="radio" />&nbsp;Item Discount</li> &nbsp;&nbsp;&nbsp;&nbsp;
+                                                <li style="color:black; align-self:center;"><input type="radio" />&nbsp;Transction Dis</li>&nbsp;&nbsp;&nbsp;&nbsp;
+                                            </span>
+                                            <div class="form-group has-float-label manage-qty">
+                                                <input id="Qty" name="Qty" class="form-control" type="text" placeholder="Qty" />
+                                                <label for="Qty">QTY</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 col-md-2 col-sm-6">
+                                            <div class="form-group has-float-label manage-shortkey">
+                                                <input id="Disc" name="Disc" class="form-control" type="text" placeholder="Disc" />
+                                                <label for="Disc">Disc %</label>
+                                            </div>
+                                            <div class="form-group has-float-label manage-name" style="margin-top:25px;">
+                                                <input id="Name" name="Name" class="form-control" type="text" placeholder="Name" />
+                                                <label for="Name">Name</label>
+                                            </div>
+                                            @*<input type="date" value="@DateTime.Now" class="form-control" />*@
+                                        </div>
+                                        <div class="col-md-2 col-md-2 col-sm-6">
+                                            <div class="form-group has-float-label manage-discamt">
+                                                <input id="DiscAmt" name="DiscAmt" class="form-control" type="text" placeholder="Disc Amt" />
+                                                <label for="DiscAmt">Disc Amt</label>
+                                            </div>
+
+                                            <div class="form-group has-float-label manage-add" style="margin-top:25px;">
+                                                <input id="Address" name="Address" class="form-control" type="text" placeholder="Address" />
+                                                <label for="Address">Address</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-md-2 col-sm-6">
+                                            <div class="form-group has-float-label manage-mobserch">
+                                                <input id="MobileS" name="MobileS" class="form-control" type="text" placeholder="Mobile Search" />
+                                                <label for="MobileS">Mobile Search</label>
+                                            </div>
+
+                                            <div class="form-group has-float-label manage-mobile" style="margin-top:25px;">
+                                                <input id="Mobile" name="Mobile" class="form-control" type="text" placeholder="Mobile" />
+                                                <label for="Mobile">Mobile</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 col-md-2 col-sm-12">
+                                            <h5 class="manage-cust" style="color:blue">Customer: Test</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12" style="display:block;height:265px;overflow:auto;overflow-y:scroll">
+                            <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="purchaseDetail_Table">
+                                <thead style="background-color:#3498DB;color:white">
+                                    <tr>
+                                        <th>Barcode</th>
+                                        <th class="col-xs-2">Item Name</th>
+                                        <th class="col-xs-2">C.Size</th>
+                                        <th class="col-xs-2">CTN</th>
+                                        <th>Qty</th>
+                                        <th class="col-xs-2">Scheme</th>
+                                        <th>Retail</th>
+                                        <th>Discount</th>
+                                        <th>Amount</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblbody">
+                                    @if (Model.DocumentDetailList != null)
+                                    {
+                                        int i = 1;
+                                        foreach (var item in Model.DocumentDetailList)
+                                        {
+                                            string qty = String.Format("{0:0.00}", Convert.ToDecimal(item.Qty));
+                                            string retail = String.Format("{0:0.00}", Convert.ToDecimal(item.Retail));
+                                            string Discount = String.Format("{0:0.00}", Convert.ToDecimal(item.Discount));
+                                            string Amount = String.Format("{0:0.00}", Convert.ToDecimal(item.Amount));
+                                            string cost = String.Format("{0:0.00}", Convert.ToDecimal(item.Cost));
+                                            string ProductUnitRetail = String.Format("{0:0.00}", Convert.ToDecimal(item.ProductUnitRetail));
+                                            string ProductPackRetail = String.Format("{0:0.00}", Convert.ToDecimal(item.ProductPackRetail));
+                                            string ProductPackQty = String.Format("{0:0.00}", Convert.ToDecimal(item.ProductPackQty));
+
+                                            <tr id="trrr@(i)">
+                                                <td>@item.Uanno</td>
+                                                <td style='display:none;'>@item.Barcode</td>
+                                                <td>@item.Description</td>
+                                                <td>@item.CtnPcs</td>
+                                                <td>@item.CtnQty</td>
+                                                <td>@qty</td>
+                                                <td>@item.FreeQty</td>
+                                                <td>@retail</td>
+                                                <td style='display:none;'>@cost</td>
+                                                <td style='display:none;'>@ProductUnitRetail</td>
+                                                <td style='display:none;'>@ProductPackRetail</td>
+                                                <td style='display:none;'>@ProductPackQty</td>
+                                                <td>@Discount</td>
+                                                <td>@Amount</td>
+                                                <td>
+                                                    <a onclick='RemoveRow("tr#trrr@(i)","@(i)")' class='fa fa-trash' style='color:red'></a> &nbsp;&nbsp;|&nbsp;&nbsp;
+                                                    <a onclick='EditRow("tr#trrr@(i)","@(i)")' class='fa fa-edit' style='color:blue'></a>
+                                                </td>
+                                            </tr>
+                                            i = i + 1;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="height-dept desktopview">
+                        <div class="row" style="margin-bottom:2px;">
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">PARATHAS</span></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">SPECIAL</span></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">FRIES</span></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">COFFEE</span></button>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom:2px;">
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">PARATHAS</span></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">SPECIAL</span></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">FRIES</span></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">COFFEE</span></button>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom:2px;">
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">PARATHAS</span></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">SPECIAL</span></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">FRIES</span></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">COFFEE</span></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">PARATHAS</span></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">SPECIAL</span></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">FRIES</span></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-size"><span style="font-size:12px;">COFFEE</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mobileview">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Select Department
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="#">Parathas</a>
+                                <a class="dropdown-item" href="#">Special</a>
+                                <a class="dropdown-item" href="#">Fries</a>
+                                <a class="dropdown-item" href="#">Coffee</a>
+                                <a class="dropdown-item" href="#">Parathas</a>
+                                <a class="dropdown-item" href="#">Special</a>
+                                <a class="dropdown-item" href="#">Fries</a>
+                                <a class="dropdown-item" href="#">Coffee</a>
+                                <a class="dropdown-item" href="#">Parathas</a>
+                                <a class="dropdown-item" href="#">Special</a>
+                                <a class="dropdown-item" href="#">Fries</a>
+                                <a class="dropdown-item" href="#">Coffee</a>
+                                <a class="dropdown-item" href="#">Parathas</a>
+                                <a class="dropdown-item" href="#">Special</a>
+                                <a class="dropdown-item" href="#">Fries</a>
+                                <a class="dropdown-item" href="#">Coffee</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table class="table table-bordered table-responsive table-striped">
+                            <thead style="background-color:#3498DB;color:white">
+                                <tr>
+                                    <th style="font-size:12px">Barcode</th>
+                                    <th style="font-size:12px">Description</th>
+                                    <th style="font-size:12px">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody style="overflow:auto;">
+                                <tr>
+                                    <td>00001</td>
+                                    <td>Allu Paratha</td>
+                                    <td>60</td>
+                                </tr>
+                                <tr>
+                                    <td>00002</td>
+                                    <td>Sada Paratha</td>
+                                    <td>30</td>
+                                </tr>
+                                <tr>
+                                    <td>00003</td>
+                                    <td class="desc-line">Aegis Pod design new</td>
+                                    <td>2000</td>
+                                </tr>
+                                <tr>
+                                    <td>00004</td>
+                                    <td>COFFEE</td>
+                                    <td>60</td>
+                                </tr>
+                                <tr>
+                                    <td>00005</td>
+                                    <td>Tea</td>
+                                    <td>60</td>
+                                </tr>
+                                <tr>
+                                    <td>00006</td>
+                                    <td>Nan</td>
+                                    <td>60</td>
+                                </tr>
+                                <tr>
+                                    <td>00006</td>
+                                    <td>Nan</td>
+                                    <td>60</td>
+                                </tr>
+                                <tr>
+                                    <td>00006</td>
+                                    <td>Nan</td>
+                                    <td>60</td>
+                                </tr>
+                                <tr>
+                                    <td>00006</td>
+                                    <td>Nan</td>
+                                    <td>60</td>
+                                </tr>
+                                <tr>
+                                    <td>00006</td>
+                                    <td>Nan</td>
+                                    <td>60</td>
+                                </tr>
+                                <tr>
+                                    <td>00006</td>
+                                    <td>Nan</td>
+                                    <td>60</td>
+                                <tr>
+                                    <td>00006</td>
+                                    <td>Nan</td>
+                                    <td>60</td>
+                                </tr>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog" style="width: 1000px;height: 800px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Modal Header</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <iframe id="reportFrame" style="width: 900px; height: 600px; zoom: 1; box-sizing: content-box"></iframe>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="col-lg-12 col-xs-12">
+    <div class="modal fade" id="myReportModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            <div class="modal-content">
+                <iframe name="DetailFrame" id="DetailFrame" src="about:blank" class="col-xs-12" style="height:600px"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/content/js/Sales.js"></script>
+    <script type="text/javascript">
+        $('.selecttable').select2({
+            theme: 'bootstrap4',
+            dropdownAutoWidth: true
+        });
+        $('.select2bs4').select2({
+            theme: 'bootstrap4',
+            dropdownAutoWidth: true
+        });
+
+        $("#ddl_itemName").val('').trigger('change');
+
+        if ($("#txt_docNo").val() != null && $("#txt_docNo").val() != "") {
+            //$("#ddl_supplier").val('@Model.DocumentMain.SuplCode');
+            $("#ddl_supplier").val('@Model.DocumentMain.SuplCode').trigger('change');
+        }
+        else {
+            $("#ddl_supplier").val('000001').trigger('change');
+        }
+
+        function PrintReport() {
+
+            var RPT = $("input[name='Rpt']:checked").val();
+            debugger;
+            $('#DetailFrame').attr('src', "about:blank");
+            var docno = $("#txt_docNo").val();
+            var doctype = $("#txt_doctype").val();
+            var DetailUrl = "/Reports/SalesInvoice?Doc_Number=" + docno + "&Doc_Type=" + doctype + "&RptSize=" + RPT;
+            $('#DetailFrame').attr('src', DetailUrl);
+        }
+        function GetBalance() {
+            var customerCode = $("#ddl_supplier").val();
+            if (customerCode == null && customerCode == "") {
+                return;
+            }
+            $.ajax({
+                url: "/Customers/GetBalance/?id=" + customerCode,
+                type: "GET",
+            }).done(function (obj) {
+                $("#txt_Balance").val("");
+                $("#txt_Balance").val(obj.Balance);
+                $("#CustomerArea").text("");
+                $("#CustomerArea").text(obj.SupplierArea);
+            }).fail(function (ex) {
+                $("#txt_Balance").val("");
+                toastr.error('Balance Inquiry Fail');
+            });
+        }
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+        });
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

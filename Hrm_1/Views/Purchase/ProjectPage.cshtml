@@ -1,0 +1,451 @@
+﻿@model Inventory.ViewModels.DocumentViewModel
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = "Purchase";
+}
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .btn_search {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #btn_new {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #btn_save {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #add_btn {
+        width: 60px;
+    }
+
+    #btn_authorize {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #btn_print1 {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    table {
+        width: 100%;
+    }
+
+        table td {
+            white-space: nowrap;
+        }
+
+            table td:last-child {
+                width: 100%;
+            }
+
+
+    #ItemBody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .selected {
+        background-color: #808080;
+    }
+</style>
+<form id="pform" onkeydown="return event.keyCode!=13" Class="was-validated" style="margin-bottom:10px;">
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="row" id="_form">
+                @Html.TextBoxFor(m => m.DocumentMain.DocNo, new { @type = "hidden", @Value = Model.DocumentMain.DocNo, @readonly = "true", @class = "form-control", @id = "txt_docNo" })
+                @Html.TextBoxFor(m => m.DocumentMain.Status, new { @type = "hidden", @Value = Model.DocumentMain.Status, @readonly = "true", @class = "form-control", @id = "txt_status" })
+                <input type="hidden" value="" class="" id="txt_CtnPcs" />
+                <input type="text" id="new_DocNo" value="" style="display:none" />
+                <input type="hidden" id="txt_TotalDiscountAmount" />
+                <div class="col-12">
+                    <!-- Custom Tabs -->
+                    <div class="card">
+                        <div class="card-header d-flex p-0" style="background-color:#3498DB;color:white">
+                            <h3 class="card-title p-3"><b>Goods Received Note: </b><span id="txt_docDisplayNo">@Model.DocumentMain.DocNoDisplay</span></h3>
+                            <ul class="nav nav-pills ml-auto p-2">
+                                <li><button onclick="ClearForm(true)" type="button" style="border:1px solid; background-color:#3985d2;color:white" class="btn " id="btn_new" name="btn_new"> New</button></li>
+                                <li>@Html.ActionLink("Retrieve", "List", "Purchase", new { @class = "btn fa-pull-right btn_search", @style = "border:1px solid; background-color:#3985d2;color:white" })</li>
+                                @if (Model.DocumentMain.Status == Inventory.Constants.DocumentStatus.AuthorizedDocument)
+                                {
+                                    <li><button style="border:1px solid; background-color:#3985d2;color:white" type="button" disabled id="btn_save" name="btn_submit" class="btn js-save"> Save</button></li>
+                                }
+                                else
+                                {
+                                    <li><button style="border:1px solid; background-color:#3985d2;color:white" type="submit" id="btn_save" name="btn_submit" class="btn js-save"> Save</button></li>
+                                }
+
+                                <li><input id="btn_authorize" name="btn_authorize" type="button" style="border:1px solid; background-color:#3985d2;color:white" class="btn pull-right" onclick="Authorize()" value="Authorize" /></li>
+                                <li>
+                                    @Html.TextBoxFor(m => m.DocumentMain.DocType, new { @type = "hidden", @id = "txt_doctype", @name = "txt_doctype", @class = "form-control", @readonly = "true" })
+                                    <button type="button" onclick="PrintReport()" class="btn btn-default form-control" id="btn_print1" name="btn_print1" data-toggle="modal" data-target="#myReportModal" disabled>Print</button>
+                                </li>
+                            </ul>
+                        </div><!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-2 col-md-6 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.TextBoxFor(m => m.DocumentMain.DocDate, new { @Value = Model.DocumentMain.DocDate.ToString("yyyy-MM-dd"), @type = "date", @id = "txt_docDate", @name = "txt_docDate", @class = "form-control", @required = "required " })
+                                        <label for="txt_docDate">Doc Date</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        <div class="form-group">
+                                            @Html.DropDownListFor(m => m.DocumentMain.SuplCode, new SelectList(Model.SupplierList, "SupplierCode", "SupplierName"), "Select Supplier", new { @id = "ddl_supplier", @name = "ddl_supplier", @class = "form-control select2bs4", @required = "required", @onchange = "GetSupplierProducts()" })
+                                        </div>
+                                        <label for="ddl_supplier">Supplier</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12" style="display:block">
+                                    <div class="form-group has-float-label">
+                                        @Html.DropDownListFor(m => m.DocumentMain.Location, new SelectList(Model.LocationList, "LOC_ID", "NAME"), "Select Location", new { @id = "ddl_location", @name = "ddl_location", @class = "form-control", @readonly = "readonly" })
+                                        <label for="ddl_location">Location</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-6 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        @Html.TextBoxFor(m => m.DocumentMain.FreeQty, new { @type = "text", @id = "txt_FreeQty", @name = "txt_FreeQty", @class = "form-control" })
+                                        <label for="txt_FreeQty">Free Qty</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-6 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        <input type="text" readonly id="txt_Balance" class="form-control" value="0" />
+                                        <label for="txt_Balance">Balance</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-5 col-md-6 col-sm-12">
+                                    @*@Html.DropDownListFor(m => m.Bcode, new SelectList(Model.ItemList, "barcode", "Description"), "Select Item", new { @class = "form-control", @id = "ddl_itemName", @name = "ddl_itemName", @onchange = "getProduct()", @required = "required", onDblClick = "$('#itemList').click()" })*@
+                                    <input type="button" value="Get Products" id="itemList" class="btn btn-block btn-primary" data-toggle="modal" data-target="#modal-lg" disabled />
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mar-topmbl10">
+                                    <div class="form-group has-float-label">
+                                        <input id="txt_TotalQty" name="txt_TotalQty" class="form-control" required="required" placeholder="Total Qty" type="text" value="0" disabled />
+                                        <label for="txt_TotalQty">Total Quantity</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="form-group has-float-label">
+                                        <input type="text" id="txt_totalAmount" placeholder="Total Amount" disabled="disabled" class="form-control" />
+                                        <label for="txt_totalAmount">Total Amount</label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="modal-lg">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content">
+                                    <div class="modal-header" style="background-color:#3498DB;color:white">
+                                        <h4 class="modal-title">Select Item</h4>
+                                        <button type="button" id="btn_custInformation" name="btn_custInformation" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            @*<div class="col-lg-1 col-md-1 col-sm-12">
+                                                    <label style="font-size:15px;margin-top:7px;">UAN No</label>
+                                                </div>*@
+                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                <input id="txt_uanno" name="txt_uanno" class="form-control" type="text" placeholder="UAN Code" />
+                                            </div>
+                                            @*<div  class="col-lg-2 col-md-2 col-sm-12">
+                                                    <label style="font-size:15px;margin-top:7px;">Description</label>
+                                                </div>*@
+                                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                                <input class="form-control" type="text" placeholder="Item Name" id="myInput">
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                <input class="form-control" type="number" value="1" min="1" placeholder="Quantity" id="QTYYYY">
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row" style="display:block;overflow:auto;overflow-y:scroll;overflow-x:scroll;height:380px">
+                                            <table border="0" id="ItemTable" class="table table-bordered" style="width: 100%">
+                                                <thead style="background-color:#3498DB;color:white">
+                                                    <tr>
+                                                        <th style="width: 10%">UAN</th>
+                                                        <th style="display:none">Barcode</th>
+                                                        <th style="width: 35%">Name</th>
+                                                        <th style="width: 35%">Name</th>
+                                                        <th style="width: 10%">Cost</th>
+                                                        <th style="width: 10%">Retail</th>
+                                                        <th style="display:none">Ctn Pcs</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="ItemBody">
+                                                    @foreach (var item in Model.ItemList)
+                                                    {
+                                                        <tr>
+                                                            <td>@item.Uanno</td>
+                                                            <td style="display:none">@item.Barcode</td>
+                                                            <td>@item.Description</td>
+                                                            <td>@item.UrduName</td>
+                                                            <td>@item.Cost</td>
+                                                            <td>@item.Retail</td>
+                                                            <td style="display:none">@item.Ctnpcs</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row" id="tablePurchaseDetail" style="display:block;overflow:auto;overflow-y:scroll;overflow-x:scroll;height:380px">
+                        <div class="col-lg-12">
+                            <table border="0" class="table table-bordered table-table table-responsive" id="purchaseDetail_Table">
+                                <thead style="background-color:#3498DB;color:white">
+                                    <tr>
+                                        <th width="5%">UAN</th>
+                                        <th width="35%">Item Name</th>
+                                        <th width="5%">C.Size</th>
+                                        <th width="5%">CTN</th>
+                                        <th width="8%">Qty</th>
+                                        <th width="5%">F.Qty</th>
+                                        <th width="8%">Retail</th>
+                                        <th width="8%">Cost</th>
+                                        <th width="8%">Disc</th>
+                                        <th width="8%">Amount</th>
+                                        <th width="10%">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblbody">
+                                    @if (Model.DocumentDetailList != null)
+                                    {
+                                        int i = 1;
+                                        foreach (var item in Model.DocumentDetailList)
+                                        {
+                                            decimal qty = Convert.ToDecimal(item.Qty);
+                                            decimal Cost = Convert.ToDecimal(item.Cost);
+                                            decimal Discount = Convert.ToDecimal(item.Discount);
+                                            decimal Amount = Convert.ToDecimal(item.Amount);
+
+                                            <tr id="trrr@(i)">
+                                                <td>@item.Uanno</td>
+                                                <td style='display:none;'>@item.Barcode</td>
+                                                <td>@item.Description</td>
+                                                <td style="background-color: #e9ecef;">@item.CtnPcs</td>
+                                                <td class='changeable' contenteditable='true'>0</td>
+                                                <td class='changeable' contenteditable='true'>@qty</td>
+                                                <td class='changeable' contenteditable='true'>@item.FreeQty</td>
+                                                <td class='changeable' contenteditable='true'>@item.Retail</td>
+                                                <td class='changeable' contenteditable='true'>@Cost</td>
+                                                <td class='changeable' contenteditable='true'>@Discount</td>
+                                                <td>@Amount</td>
+                                                <td align='center'>
+                                                    <a onclick='RemoveRow("tr#trrr@(i)")' class='fa fa-trash' style='color:red'></a>
+                                                    @*&nbsp;&nbsp;|&nbsp;&nbsp;
+                                                        <a onclick='EditRow("tr#trrr@(i)")' class='fa fa-edit' style="color:blue"></a>*@
+                                                </td>
+                                            </tr>
+                                            i = i + 1;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="col-lg-12 col-xs-12">
+    <div class="modal fade" id="myReportModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            <div class="modal-content">
+                <iframe name="DetailFrame" id="DetailFrame" src="about:blank" class="col-xs-12" style="height:600px"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/content/js/purchase.js"></script>
+    <script type="text/javascript">
+        $('.select2bs4').select2({
+            theme: 'bootstrap4',
+            dropdownAutoWidth: true
+        });
+
+
+        $("#itemList").click(function () {
+            $("#myInput").val("");
+            $("#ItemBody tr").filter(function () {
+                $(this).show()
+            });
+        });
+
+        //$("#ddl_supplier").val('@Model.DocumentMain.SuplCode').trigger('change');
+
+        GetSupplierProducts();
+
+        function GetBalance() {
+            $("#txt_Balance").val("");
+            var customerCode = $("#ddl_supplier").val();
+            if (customerCode == null && customerCode == "") {
+                return;
+            }
+            $.ajax({
+                url: "/Customers/GetBalance/?id=" + customerCode,
+                type: "GET",
+            }).done(function (obj) {
+                $("#txt_Balance").val(obj.Balance)
+            }).fail(function (ex) {
+                $("#txt_Balance").val("");
+                toastr.error('Balance Inquiry Fail');
+            });
+        }
+        function GetSupplierProducts() {
+            var supplierId = $("#ddl_supplier").val();
+            if (supplierId == "") {
+                return;
+            }
+            $.ajax({
+                url: "/Purchase/GetSupplierProduct?id=" + supplierId,
+                type: "GET",
+                dataType: "JSON",
+                success: function (_data) {
+                    $('#ItemBody').empty();
+                    $("#itemList").attr("disabled", "disabled");
+                    GetBalance();
+                    if (_data == "NoProduct") {
+                        toastr.error('This Supplier Has no Products');
+                        return;
+                    }
+                    if (_data == "SelectSupplier") {
+                        toastr.error('Select Supplier');
+                        return;
+                    }
+                    var obj = JSON.parse(_data);
+                        CreateProductTable(obj);
+                    $("#itemList").removeAttr("disabled");
+                },
+                error: function (xhr) {
+                    alert('Request Status: \n ' +
+                        xhr.status +
+                        ' Status Text: ' +
+                        xhr.statusText +
+                        ' ' +
+                        xhr.responseText);
+                }
+            })
+            $("#itemList").removeAttr("disabled")
+        }
+        function PrintReport() {
+            $('#DetailFrame').attr('src', "about:blank");
+            var docno = $("#txt_docNo").val();
+            var DetailUrl = "/Reports/GoodReceivedNote?Doc_Number=" + docno;
+            $('#DetailFrame').attr('src', DetailUrl);
+        }
+        $("#txt_uanno").on("keydown", function (event) {
+            if (event.which == 13) {
+                var Uan = $('#txt_uanno').val();
+                if (Uan != "") {
+                    $.ajax({
+                        url: "/api/Product?id=" +""+ "&UanNo=" + Uan + "&Name=",
+                        type: "GET",
+                        dataType: "JSON",
+                        success: function (_data) {
+                            var obj = JSON.parse(_data);
+                            if (obj == null) {
+                                alert("null");
+                                return;
+                            }
+                            CreateProductTable(obj);
+                        },
+                        error: function (xhr) {
+                            alert('Request Status: \n ' +
+                                xhr.status +
+                                ' Status Text: ' +
+                                xhr.statusText +
+                                ' ' +
+                                xhr.responseText);
+                        }
+                    })
+                }
+                else {
+                    GetSupplierProducts();
+                }
+            }
+        });
+        $("#myInput").on("keydown", function (event) {
+            if (event.which == 13) {
+                var ProductName = $('#myInput').val();
+                if (ProductName != "") {
+                    $.ajax({
+                        url: "/api/Product?id=" +""+ "&UanNo=" +"" + "&Name=" + ProductName,
+                        type: "GET",
+                        dataType: "JSON",
+                        success: function (_data) {
+                            var obj = JSON.parse(_data);
+                            if (obj == null) {
+                                alert("null");
+                                return;
+                            }
+                            CreateProductTable(obj);
+                        },
+                        error: function (xhr) {
+                            alert('Request Status: \n ' +
+                                xhr.status +
+                                ' Status Text: ' +
+                                xhr.statusText +
+                                ' ' +
+                                xhr.responseText);
+                        }
+                    })
+                }
+                else {
+                    GetSupplierProducts();
+                }
+            }
+        });
+        function CreateProductTable(obj) {
+            if (obj == null || obj == "") {
+                return;
+            }
+            $('#ItemBody').empty();
+            var html = "";
+            $.each(obj, function (index, obj) {
+                html += "<tr onclick=showTable(this)>";
+                html += "<td>" + obj.Uanno + "</td>";
+                html += "<td style='display:none;'>" + obj.Barcode + "</td>";
+                html += "<td>" + obj.Description + "</td>";
+                html += "<td>" + obj.UrduName + "</td>";
+                html += "<td>" + obj.Cost + "</td>";
+                html += "<td>" + obj.Retail + "</td>";
+                html += "<td style='display:none;'>" + obj.Ctnpcs + "</td>";
+                html += "</tr>";
+            });
+            $('#ItemBody').append(html);
+        }
+        $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#ItemBody tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+    </script>
+}

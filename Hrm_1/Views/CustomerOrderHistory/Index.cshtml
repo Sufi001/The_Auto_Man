@@ -1,0 +1,214 @@
+﻿@model Inventory.ViewModel.CustomerSupplierViewModel
+@{
+    ViewBag.Title = "Index";
+}
+@section CSS{
+    <style>
+        #btn_submit, #btn_cancel, #btn_close {
+            width: 70px;
+            margin-left: 10px;
+        }
+
+        #list {
+            width: 90px;
+            margin-left: 3px;
+        }
+
+        #add {
+            width: 88px;
+            margin-left: 3px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .fileUpload {
+            border: 1px solid #ccc;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+            width: 100px;
+        }
+    </style>
+
+}
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+
+                    <!-- /.card -->
+                    <div class="card">
+                        <div class="card-header" style="background-color:#3498DB;color:white;height:55px">
+                            <h2 class="card-title"><b>Order List</b></h2>
+                        </div>
+                        @{int i = 0;}
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                    <thead style="background-color:#3498DB;color:white">
+                                        <tr>
+                                            <th style="width:5%">Sr</th>
+                                            <th style="width:5%">Code</th>
+                                            <th style="width:25%">Name</th>
+                                            <th style="width:25%">Email</th>
+                                            <th style="width:5%">Mobile</th>
+                                            <th style="width:5%">Address</th>
+                                            <th style="width:5%">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var item in Model.CustomerSupplierList)
+                                        {
+                                            i = i + 1;
+                                            <tr>
+                                                <td class="col-xs-1">@i</td>
+                                                <td>@item.CUST_CODE</td>
+                                                <td>@item.NAME</td>
+                                                <td>@item.EMAIL</td>
+                                                <td>@item.Mobile</td>
+                                                <td>@item.ADDRESS</td>
+                                                <td><span data-customer-id="" onclick="GetData('@item.TransNo')"><i style="color:#3498DB" class='fa fa-edit'></i></span></td>
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+</div>
+@Html.HiddenFor(m => m.CUST_CODE, new { @id = "txt_CustCode", @name = "txt_CustCode" })
+<div id="AddNewCustomer" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header btn-primary">
+                <h4 class="modal-title">
+                    Customer: @Html.LabelFor(m => m.NAME, new { @id = "txt_CustName" })
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="example1" class="table table-bordered table-striped" width="100%" cellspacing="0">
+                        <thead style="background-color:#3498DB;color:white">
+                            <tr>
+                                <th style="width:15%">Name</th>
+                                <th style="width:5%">TransNo</th>
+                                <th style="width:15%">Trans Amount</th>
+                                <th style="width:10%">Trans Date</th>
+                                <th style="width:10%">REDEMPOINT</th>
+                                <th style="width:10%">TransPoint</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablebody"></tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/AdminLte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/AdminLte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script>
+        $("#example1").DataTable({
+            "pageLength": 50
+        });
+        @if (TempData["message"] != null)
+         {
+             var message = TempData["message"].ToString();
+             if (message == "success")
+             {
+                 @:toastr.success('Data save successfully');
+                             }
+             else if (message == "fail")
+             {
+                 @:toastr.error('Something went wrong! Data not Saved.');
+                                 @:$("#AddNewCustomer").modal('show');
+                             }
+             else
+             {
+                 @:toastr.error('@message');
+                                 @:$("#AddNewCustomer").modal('show');
+                             }
+         }
+
+        var GetData = function (id) {
+            if (id == null || id == "") {
+                return;
+            }
+            $.ajax({
+                url: "/CustomerOrderHistory/Edit/?id=" + id,
+                type: "GET",
+                dataType: "JSON"
+            }).done(function (obj) {
+                debugger;
+                $('#tablebody').empty();
+                $("#txt_CustName").text(obj.NAME);
+                var html = "";
+                html += "<tr>";
+                html += "<td>" + obj.NAME + "</td>";
+                html += "<td>" + obj.TransNo + "</td>";
+                html += "<td>" + obj.TransAmount + "</td>";
+                html += "<td>" + obj.TransDate + "</td>";
+                html += "<td>" + obj.RedemPoint + "</td>";
+                html += "<td>" + obj.TransPoint + "</td>";
+                html += "</tr>";
+                $('#tablebody').append(html);
+                $("#AddNewCustomer").modal();
+            }).fail(function (xhr) {
+            })
+        };
+        function ClearForm() {
+            $("#txt_SuplCode").val('');
+            $("#txt_customerName").val('');
+            $("#txt_customerName").focus();
+            $("#txt_UrduName").val('');
+            $("#ddl_Area").empty();
+            $("#txt_customerAddress").val('');
+            $("#txt_cnic").val('');
+            $("#txt_strn").val('');
+            $("#txt_phoneno").val('');
+            $("#txt_contactPerson").val('');
+            $("#txt_mobileno2").val('');
+            $("#txt_mobileno").val('');
+            $("#txt_email").val('');
+            $("#txt_Balance").val('0');
+            $("#txt_openingBalance").val('0');
+            $("#ddl_loyality").val("");
+        }
+        $.date = function (dateObject) {
+            var d = new Date(dateObject);
+            var day = d.getDate();
+            var month = d.getMonth() + 1;
+            var year = d.getFullYear();
+            if (day < 10) {
+                day = "0" + day;
+            }
+            if (month < 10) {
+                month = "0" + month;
+            }
+            var date = day + "/" + month + "/" + year;
+
+            return date;
+        };
+    </script>
+
+}

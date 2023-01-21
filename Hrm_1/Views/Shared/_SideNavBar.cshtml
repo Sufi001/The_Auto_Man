@@ -1,0 +1,480 @@
+﻿@{
+    var UserPermissions = new List<string>();
+    string cookieName = FormsAuthentication.FormsCookieName;
+    HttpCookie authCookie = Request.Cookies[cookieName];
+    if (authCookie != null)
+    {
+        FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(authCookie.Value);
+        string UserData = ticket.UserData;
+        if (UserData != null)
+        {
+            var data = UserData.Split(',');
+            foreach (var item in data)
+            {
+                UserPermissions.Add(item);
+            }
+        }
+    }
+}
+<style>
+    .boderBottom {
+        border-bottom: solid 1px;
+    }
+</style>
+<aside class="main-sidebar sidebar-light-primary elevation-4">
+    <!-- Brand Logo -->
+    <div class="col-12">
+        <span class="brand-text font-weight-bold" style="color:cornflowerblue;font-size:20px;margin-left:5px">The Auto Man</span>
+    </div>
+    @*<a href="#" class="brand-link">
+            <img src="/images/Logo/Logo.jpg" style="height: 150px;" class="col-lg-12">
+            @*<img src="/images/SideBarLogo.png" style="height: 125px;" class="col-lg-12">
+
+            @*<img src="/AdminLte/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+            <span class="brand-text font-weight-light">AdminLTE 3</span>
+        </a>*@
+    <!-- Sidebar -->
+    <div class="sidebar">
+        
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                @if (UserPermissions.Contains("DashBoard"))
+                {
+                    <li class="nav-item  boderBottom">
+                        <a href="@Url.Action("Index", "DashBoard")" class="nav-link">
+                            <i class="nav-icon fas fa-home"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
+                }
+                @if (UserPermissions.Contains("Reviews List"))
+                {
+                    <li class="nav-item  boderBottom">
+                        <a href="@Url.Action("ReviewsList","Items")" class="nav-link">
+                            <i class="nav-icon fab fa-first-order"></i>
+                            <p>Reviews List</p>
+                        </a>
+                    </li>
+                }
+                
+
+                <li class="nav-item has-treeview boderBottom">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa fa-wrench" aria-hidden="true"></i>
+                        <p>
+                            Utility
+                            <i class="fas fa-angle-right right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item  boderBottom">
+                            <a href="@Url.Action("Index","Brand")" class="nav-link">
+                                <i class="nav-icon far fa-circle "></i>
+                                <p>Brand</p>
+                            </a>
+                        </li>
+                        <li class="nav-item  boderBottom">
+                            <a href="@Url.Action("Index","Branch")" class="nav-link">
+                                <i class="nav-icon far fa-circle "></i>
+                                <p>Branch</p>
+                            </a>
+                        </li>
+                        <li class="nav-item  boderBottom">
+                            <a href="@Url.Action("Index","City")" class="nav-link">
+                                <i class="nav-icon far fa-circle "></i>
+                                <p>City</p>
+                            </a>
+                        </li>
+                        <li class="nav-item  boderBottom">
+                            <a href="@Url.Action("Index","Area")" class="nav-link">
+                                <i class="nav-icon far fa-circle "></i>
+                                <p>Area</p>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+
+                @if (UserPermissions.Contains("User"))
+                {
+                    <li class="nav-item  boderBottom">
+                        <a href="@Url.Action("Index", "Account")" class="nav-link">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>User Management</p>
+                        </a>
+                    </li>
+                }
+                @if (UserPermissions.Contains("Unauthorize"))
+                {
+                    <li class="nav-item  boderBottom">
+                        <a href="@Url.Action("Index", "ManageDocument")" class="nav-link">
+                            <i class="nav-icon fas fa-unlock-alt"></i>
+                            <p>Unauthorize</p>
+                        </a>
+                    </li>
+                }
+                @if (UserPermissions.Contains("ClientConfiguration"))
+                {
+                    <li class="nav-item  boderBottom">
+                        <a href="@Url.Action("ClientConfiguration", "Account")" class="nav-link">
+                            <i class="nav-icon fas fa-user-cog"></i>
+                            <p>Client Configuration</p>
+                        </a>
+                    </li>
+                }
+                @if (UserPermissions.Contains("Supplier") || UserPermissions.Contains("Purchase") || UserPermissions.Contains("Purchase Return"))
+                {
+                    <li class="nav-item has-treeview boderBottom">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fa fa-cart-arrow-down" aria-hidden="true"></i>
+                            <p>
+                                Supplier
+                              
+                                <i class="fas fa-angle-right right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @if (UserPermissions.Contains("Supplier"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Suppliers","Supplier")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Supplier</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("Purchase"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("PurchasePage", "Purchase")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Purchase</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("Purchase Return"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","PurchaseReturn")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Purchase Return</p>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+                @if (UserPermissions.Contains("Customer") || UserPermissions.Contains("Booking") || UserPermissions.Contains("Booking Return") || UserPermissions.Contains("Sales") || UserPermissions.Contains("Sales Return") || UserPermissions.Contains("Order Booking") || UserPermissions.Contains("Sales Staff"))
+                {
+                    <li class="nav-item has-treeview boderBottom">
+                        <a href="#" class="nav-link">
+                            <i class="far fa-user nav-icon"></i>
+                            <p>
+                                Customer
+                                
+                                <i class="fas fa-angle-right right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @if (UserPermissions.Contains("Customer"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Customers","Customers")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Customers</p>
+
+                                    </a>
+                                </li>
+                            }
+                            
+                            @if (UserPermissions.Contains("Sales"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","Sales",new {docType = Inventory.Constants.Constants.SalesDocument, requestPage = Inventory.Constants.SalesPage.Index})" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Sales</p>
+                                    </a>
+                                </li>
+                            }
+                           
+
+                            @if (UserPermissions.Contains("Sales Return"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","Sales",new {docType = Inventory.Constants.Constants.SalesReturnDocument, requestPage = Inventory.Constants.SalesPage.Index})" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Sales Return</p>
+                                    </a>
+                                </li>
+                            }
+
+                            
+                            @if (UserPermissions.Contains("Sales Staff"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","StaffMembers")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Sales Staff</p>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+                @if (UserPermissions.Contains("Item Entry") || UserPermissions.Contains("Item List") || UserPermissions.Contains("DGS"))
+                {
+                    <li class="nav-item has-treeview boderBottom">
+                        <a href="#" class="nav-link">
+                            <i class="fa fa-bars nav-icon"></i>
+                            <p>
+                                Item
+                               
+                                <i class="fas fa-angle-right right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @if (UserPermissions.Contains("Item Entry"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","Items")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Item Entry</p>
+                                    </a>
+                                </li>
+                            }
+
+                            @if (UserPermissions.Contains("Item List"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("List", "Items")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Item List</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("DGS"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","DGS")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Edit Department</p>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+                @if (UserPermissions.Contains("Transfer In") || UserPermissions.Contains("Transfer Out"))
+                {
+                    <li class="nav-item has-treeview boderBottom">
+                        <a href="#" class="nav-link">
+
+                            <i class="nav-icon fa fa-arrows-alt-h" aria-hidden="true"></i>
+                            <p>
+                                Stock
+                                <i class="fas fa-angle-right right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @if (UserPermissions.Contains("Transfer In"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("TransferPage", "Transfer")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Stock In</p>
+                                    </a>
+                                </li>
+                            }
+
+                            @if (UserPermissions.Contains("Transfer Out"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("TransferPageOut", "Transfer")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Stock Out</p>
+                                    </a>
+                                </li>
+                            }
+
+                            <li class="nav-item">
+                                <a href="@Url.Action("List","Transfer")" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Stock In List</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("TransferOutList", "Transfer")" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Stock Out List</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                @if (UserPermissions.Contains("Waste & Gain"))
+                {
+                    <li class="nav-item has-treeview boderBottom">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fa fa-wrench" aria-hidden="true"></i>
+                            <p>
+                                Waste & Adjustment
+                                <i class="fas fa-angle-right right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item  boderBottom">
+                                <a href="@Url.Action("Index", "StockAdjustment")" class="nav-link">
+                                    <i class="nav-icon far fa-circle "></i>
+                                    <p>Waste</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+
+                @if (UserPermissions.Contains("Product Report") || UserPermissions.Contains("Purchase Report") || UserPermissions.Contains("Purchase Return Report")
+|| UserPermissions.Contains("Sales Report") || UserPermissions.Contains("Sales Return Report") || UserPermissions.Contains("Stock Transfer Report")
+|| UserPermissions.Contains("Inventory Report") || UserPermissions.Contains("Customer Balance Report") || UserPermissions.Contains("Supplier Balance Report")
+|| UserPermissions.Contains("Customer Report") || UserPermissions.Contains("Supplier Recovery"))
+                {
+                    <li class="nav-item has-treeview boderBottom">
+                        <a href="#" class="nav-link">
+                            <i class="fa fa-file nav-icon"></i>
+                            <p>
+                                Reports
+                               
+                                <i class="fas fa-angle-right right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @if (UserPermissions.Contains("Product Report"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Product", "Reports")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Product Items</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("Purchase Report"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Purchase", "Reports")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Purchase</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("Purchase Return Report"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("PurchaseReturn", "Reports")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Purchase Return</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("Sales Report"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Sales", "Reports")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Sales</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("Sales Return Report"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("SalesReturn", "Reports")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Sales Return</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("Stock Transfer Report"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("StockTransfer", "Reports")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Stock Transfer</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("Inventory Report"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Inventory", "Reports")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Inventory</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("Customer Balance Report"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Customer", "Reports")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Customer Balance</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("Supplier Balance Report"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Supplier", "Reports")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Supplier Balance</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("Customer Recovery"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("CSSRecovery", "Reports",new {ViewName = "CustomerStaff"})" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Customer Recovery</p>
+                                    </a>
+                                </li>
+                            }
+                            @if (UserPermissions.Contains("Supplier Recovery"))
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("CSSRecovery", "Reports",new { ViewName = "SupplierStaff" })" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Supplier Recovery</p>
+                                    </a>
+                                </li>
+                            }
+
+                            <li class="nav-item">
+                                <a href="@Url.Action("ItemLedger", "Reports")" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Item Ledger</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("StockAdjustment", "Reports")" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Waste & Gain</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("NegitiveStock", "Reports")" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Negitive Stock</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+            </ul>
+
+
+
+        </nav>
+    </div>
+
+</aside>
+@section scripts{
+}

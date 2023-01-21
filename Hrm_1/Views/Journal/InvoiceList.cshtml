@@ -1,0 +1,85 @@
+﻿@model List<Inventory.ViewModels.Journal.JournalViewModel>
+@{
+    ViewBag.Title = "Voucher List";
+}
+@section CSS{
+    <style>
+        #list {
+            width: 120px;
+            margin-left: 3px;
+        }
+
+        table thead tr th {
+            color: white;
+        }
+    </style>
+}
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header" style="background-color:#3498DB;height:55px">
+                            <div class="row">
+                                <div class="col-6 pt-1">
+                                    <h2 class="card-title"><b style="color:white">Voucher List</b></h2>
+                                </div>
+                                <div class="col-6">
+                                    <button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="list" class="btn  fa-pull-right" onclick="location.href='@Url.Action("Index", "Journal", new { target="_blank" })'">New Invoice</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+
+                                <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="ProductTable">
+                                    <thead style="background-color:#3498DB">
+                                        <tr>
+                                            <th width="5%">No</th>
+                                            <th width="10%">Doc No</th>
+                                            <th width="70%">Received From</th>
+                                            <th width="10%">Amount</th>
+                                            <th width="5%">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{int n = 0;}
+                                        @foreach (var item in Model)
+                                        {
+                                            n = n + 1;
+                                            <tr>
+                                                <td>@n</td>
+                                                <td>@item.Doc_Seq</td>
+                                                <td>@item.ReceivedFrom</td>
+                                                <td>@item.Amount</td>
+                                                <td><a href="/Journal/Edit/@item.Doc_Seq"><span><i class='fa fa-edit'></i></span></a></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/AdminLte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/AdminLte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script>
+        $("#ProductTable").DataTable({
+            "pageLength": 50
+        });
+    </script>
+}

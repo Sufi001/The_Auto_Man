@@ -1,0 +1,1222 @@
+﻿@model Inventory.ViewModels.DocumentViewModel
+@{
+    ViewBag.Title = "Booking";
+}
+@section CSS{
+    <link href="~/content/fullcalendar.css" rel="stylesheet" />
+}
+<style>
+    .fc-month-button {
+        width: 90px;
+        height: 35px;
+        color: #ffffff;
+        background-color: #eb4aa5;
+    }
+
+    .fc-basicWeek-button {
+        width: 90px;
+        height: 35px;
+        color: #ffffff;
+        background-color: #6dc7be;
+    }
+
+    .fc-basicDay-button {
+        width: 90px;
+        height: 35px;
+        color: #ffffff;
+        background-color: #b198dc;
+    }
+
+    .fc-btnJan-button {
+        width: 90px;
+        height: 50px;
+        color: #ffffff;
+        background-color: #f87952;
+    }
+
+    .fc-btnFaceBook-button {
+        width: 90px;
+        height: 35px;
+        color: #ffffff;
+        background-color: #56bdde;
+    }
+
+    .fc-btnList-button {
+        width: 90px;
+        height: 35px;
+        color: #ffffff;
+        background-color: #56bdde;
+    }
+
+    .btn_search {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #btn_new {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #btn_save {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #add_btn {
+        width: 60px;
+    }
+
+    #btn_authorize {
+        width: 92px;
+        margin-left: 3px;
+    }
+
+    #btn_cancel {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #btn_close {
+        width: 90px;
+        margin-left: 3px;
+    }
+
+    #btn_print1 {
+        width: 90px;
+        margin-left: 3px;
+    }
+</style>
+<div class="content-wrapper">
+    <form id="pform" onkeydown="return event.keyCode!=13" Class="was-validated">
+        <div id="calender" style="padding-top: 30px;"></div>
+        <input style="display:none" type="text" class="hidden" id="txt_supplcode" value="@Model.DocumentMain.SuplCode" />
+        <input type="hidden" id="txt_TotalDiscountAmount" />
+        <input type="hidden" id="txt_TotalQty" value="0" />
+        @Html.TextBoxFor(m => m.DocumentMain.DocType, new { @type = "hidden", @id = "txt_doctype", @name = "txt_doctype", @class = "form-control", @readonly = "true" })
+        @Html.TextBoxFor(m => m.DocumentMain.RequestPage, new { @type = "hidden", @Value = Model.DocumentMain.RequestPage, @readonly = "true", @class = "form-control", @id = "RequestPage" })
+        @Html.TextBoxFor(m => m.DocumentMain.DocNo, new { @type = "hidden", @Value = Model.DocumentMain.DocNo, @readonly = "true", @class = "form-control", @id = "txt_docNo" })
+        @Html.TextBoxFor(m => m.DocumentMain.Status, new { @type = "hidden", @Value = Model.DocumentMain.Status, @readonly = "true", @class = "form-control", @id = "txt_status" })
+        <input id="txt_cost" name="txt_cost" class="form-control" type="hidden" />
+        <input type="hidden" value="" class="" id="txt_warehouse" />
+        <input type="text" id="new_DocNo" value="" style="display:none" />
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:#3498DB;color:white">
+                        <h4 class="modal-title">Booking</h4>
+                        @Html.TextBoxFor(m => m.DocumentMain.DocDate, new { @Value = Model.DocumentMain.DocDate.ToString("yyyy-MM-dd"), @type = "date", @id = "txt_docDate", @name = "txt_docDate", @class = "form-control", @style = "width:25%;margin-right:6px;margin-left:6px", @required = "required "})
+                        @Html.ValidationMessageFor(m => m.DocumentMain.DocDate)
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" id="_form">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <!-- Custom Tabs -->
+                                        <div class="card">
+                                            <div class="card-header d-flex p-0">
+                                                <h3 class="card-title p-3">Booking @(Model.DocumentMain.DocType == "IN" ? "" : "Return") Voucher</h3>
+
+                                                <ul class="nav nav-pills ml-auto p-2">
+                                                    <li><button type="button" id="btn_new" onclick="ClearForm(true)" class="btn btn-outline-primary fa-pull-right" data-toggle="modal" data-target="#modal-lg">New</button></li>
+                                                    <li><button type="submit" id="btn_save" class="btn btn-outline-danger js-save  fa-pull-right" data-toggle="modal" data-target="#modal-lg">Save</button></li>
+                                                    <li><input type="button" id="btn_authorize" class="btn btn-outline-danger fa-pull-right" onclick="Authorize()" value="Authorize" data-toggle="modal" data-target="#modal-lg"></li>
+                                                    <li><button type="button" id="btn_cancel" class="btn btn-outline-dark" onclick="inactiveBooking()">Cancel</button></li>
+                                                    <li><button type="button" id="btn_close" class="btn btn-default" data-dismiss="modal">Close</button></li>
+                                                    <li><button type="button" onclick="PrintReport()" class="btn btn-outline-secondary form-control" id="btn_print1" name="btn_print1" data-toggle="modal" data-target="#myReportModal" disabled>Print</button></li>
+                                                </ul>
+                                            </div><!-- /.card-header -->
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                                        <div class="form-group has-float-label">
+                                                            @Html.DropDownListFor(m => m.DocumentMain.SuplCode, new SelectList(Model.SupplierList, "SupplierCode", "SupplierName"), "Select Customer", new { @id = "ddl_supplier", @name = "ddl_supplier", @class = "form-control", @onchange = "AddTextBox()", @Required = "Required" })
+                                                            <label for="ddl_supplier">Customer</label>
+                                                        </div>
+                                                        <br />
+                                                        <div style="display:none" id="div_text">
+                                                            <input type="text" class="form-control" id="txt_CustomerName" placeholder="Customer Name" name="txt_CustomerName" />
+                                                            <input type="button" class="btn btn-primary" onclick="SaveNewCustomer()" style="float:left;margin-left:10px;margin-top:10px" value="Save" />
+                                                            <input type="button" class="btn btn-secondary" style="float:left;margin-left:5px;margin-top:10px" onclick="cancelcustomer()" value="cancel" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2 col-md-6 col-sm-12">
+                                                        <div class="form-group has-float-label">
+                                                            @Html.TextBoxFor(m => m.DocumentMain.Phone, new { @id = "txt_phone", @maxlength = 11, @minlength = 11, @placeholder = "Phone No", @name = "txt_phone", @class = "form-control", @required = "required" })
+                                                            <label for="txt_phone">Phone No</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2 col-md-6 col-sm-12">
+                                                        <div class="form-group has-float-label">
+                                                            <input maxlength="6" type="text" id="txt_AdvanceAmount" ,name="txt_AdvanceAmount" Required="Required" placeholder="Advance" value="@Model.DocumentMain.Advance" class="form-control" ,@Required="Required" />
+                                                            <label for="txt_AdvanceAmount">Advance Amount</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                                        <div class="form-group has-float-label">
+                                                            <input type="text" id="txt_totalAmount" name="txt_totalAmount" placeholder="Total" readonly class="form-control" />
+                                                            <label for="txt_totalAmount">Total Amount</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                                        <div class="form-group has-float-label">
+                                                            @Html.DropDownListFor(m => m.Bcode, new SelectList(Model.ItemList, "barcode", "Description"), "Select Item", new { @class = "form-control", @id = "ddl_itemName", @name = "ddl_itemName", @onchange = "getProduct()" })
+                                                            <label for="ddl_itemName">Products</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2 col-md-6 col-sm-12">
+                                                        <div class="form-group has-float-label">
+                                                            @Html.DropDownListFor(m => m.DocumentMain.staffcode, new SelectList(Model.Stafflist, "SUPL_CODE", "SUPL_NAME"), "Service Personal", new { @class = "form-control", @id = "ddl_staffName", @name = "ddl_staffName", @Required = "Required" })
+                                                            <label for="ddl_staffName">Staff Member</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="form-group has-float-label">
+                                                            @Html.TextBoxFor(m => m.DocumentMain.Time, "", new { @id = "txt_time", @placeholder = "Time", @type = "time", @name = "txt_time", @Required = "Required", @class = "form-control"})
+                                                            <label for="txt_time">Time</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-1 col-md-6 col-sm-12">
+                                                        <div class="form-group has-float-label">
+                                                            <input id="txt_qty" name="txt_qty" value="1" class="form-control" Required="Required" placeholder="Qty" type="text" min="0" onchange="calculateAmount()" />
+                                                            <label for="txt_qty">Quantity</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-1 col-md-6 col-sm-12">
+                                                        <div class="form-group has-float-label">
+                                                            <input id="txt_discount" name="txt_discount" placeholder="Discount" class="form-control" type="text" />
+                                                            <label for="txt_discount">Discount</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2 col-md-6 col-sm-12">
+                                                        <div class="form-group has-float-label">
+                                                            <input id="txt_retail" name="txt_retail" placeholder="Retail" class="form-control" type="text" onchange="calculateAmount()" />
+                                                            <label for="txt_retail">Retail</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-1 col-md-3 col-sm-12">
+                                                        <input value="Add" id="add_btn" onclick="showTable()" class="btn btn-primary  form-control" type="button" style="width:80px" />
+                                                    </div>
+                                                    @*<div class="col-lg-2 col-md-6 col-sm-12">
+                                                            <input maxlength="6" type="text" id="txt_Payment" ,name="txt_Payment" placeholder="Payment" value="@Model.DocumentMain.Payment" class="form-control" />
+                                                        </div>*@
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-5" style="padding-left: 1px;display:none">
+                                                        @Html.TextBoxFor(m => m.DocumentMain.DocNoDisplay, new { @Value = Model.DocumentMain.DocNoDisplay, @readonly = "true", @id = "DocumentMain_DocNoDisplay", @class = "form-control" })
+                                                        <label class="control-label"> Doc No </label>
+                                                    </div>
+                                                    <div style="display:none">
+                                                        <label class="control-label">Location</label>
+                                                        @Html.DropDownListFor(m => m.DocumentMain.Location, new SelectList(Model.LocationList, "Loc_Id", "NAME"),
+                                                    "Select Location", new { @id = "ddl_location", @name = "ddl_location", @class = "form-control", @onchange = "FillWarehouse()", @onfocus = "FillWarehouse1()" })
+                                                        @Html.ValidationMessageFor(m => m.DocumentMain.Location)
+                                                       
+                                                        <br />
+                                                    </div>
+                                                    <div class="col-lg-2 col-xs-12" style="display:none">
+                                                        <label>Ret_Amt</label>
+                                                        <input type="text" maxlength="8" style="width:70px" class="form-control" id="txt_Return" value="@Model.DocumentMain.ReturnAmount" />
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left:25px;display:none">
+                                                        <label class="control-label">Barcode</label>
+                                                        <input id="txt_uanno" name="txt_uanno" class="form-control" type="text" />
+                                                    </div>
+                                                    <div class="row" style="display:none">
+                                                        <div class="col-lg-7">
+                                                        </div>
+                                                        <div class="col-lg-1">
+                                                            <label>Qty in Hand :</label>
+                                                        </div>
+                                                        <div class="col-lg-1">
+                                                            <input type="text" id="txt_qtyinHand" value="0" disabled="disabled" class="form-control" />
+                                                        </div>
+                                                        <div class="col-lg-1">
+                                                            <label class="control-label"> Total Amount</label>
+                                                            <input id="txt_amount" readonly="readonly" name="txt_amount" class="form-control" placeholder="Amount" type="text" />
+                                                        </div>
+                                                        <div class="col-lg-1">
+                                                            <div id="tttt" style="padding-top: 3px">
+                                                                <input value="Add" onclick="showTable()" class="btn btn-primary pull-right form-control" type="button" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-1" style="padding-left: 1px">
+                                                            <label>Total Amount: </label>
+                                                            @*<input style="background: transparent; border: none;" type="text" id="txt_totalAmount" value="0" disabled="disabled" class="form-control" />*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12" @*id="tablePurchaseDetail"*@>
+                                <div style="display:block;height:155px;overflow:auto;overflow-y:scroll">
+                                    <div class="table-responsive">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="purchaseDetail_Table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="display:none">Barcode</th>
+                                                    <th>Item Name</th>
+                                                    <th>Qty</th>
+                                                    <th>Retail</th>
+                                                    <th>Discount</th>
+                                                    <th>Amount</th>
+                                                    <th>Service by</th>
+                                                    <th style="display:none">Warehouse</th>
+                                                    <th style="display:none">Color</th>
+                                                    <th>Service Time</th>
+                                                    <th>Delete</th>
+                                                    <th>Edit</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tblbody">
+                                                @{int i = 1;}
+                                                @if (Model.DocumentDetailList != null)
+                                                {
+                                                    foreach (var item in Model.DocumentDetailList)
+                                                    {
+                                                        <tr id="trrr@(i)">
+                                                            <td style="display:none">@item.Uanno</td>
+                                                            <td style='display:none;'>@item.Barcode</td>
+                                                            <td>@item.Description</td>
+
+                                                            @{int qty = Convert.ToInt32(item.Qty);}
+                                                            <td>@qty</td>
+
+                                                            @{int retail = Convert.ToInt32(item.Retail);}
+                                                            <td>@retail</td>
+                                                            @*<td>@item.Retail</td>*@
+                                                            <td style='display:none;'>@item.Cost</td>
+                                                            @{int Discount = Convert.ToInt32(item.Discount);}
+                                                            <td>@Discount</td>
+
+                                                            @{int Amount = Convert.ToInt32(item.Amount);}
+                                                            <td>@Amount</td>
+                                                            <td style='display:none;'>@item.staffcode</td>
+                                                            <td>@Model.DocumentMain.staffcode</td>
+                                                            <td style='display:none;'>@item.Warehouse</td>
+                                                            <td style='display:none;'>@item.WarehouseName</td>
+                                                            <td style='display:none;'>@item.Colour</td>
+                                                            <td style='display:none;'>@item.ColourName</td>
+                                                            @if (item.DateTimeSlot.HasValue)
+                                                            {
+                                                                <td>@item.DateTimeSlot.Value.ToString("hh:mm tt")</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>@item.DateTimeSlot</td>
+                                                            }
+                                                            <td><a onclick='RemoveRow("tr#trrr@(i)","@(i)")' class='fa fa-trash'></a></td>
+                                                            <td><a onclick='EditRow("tr#trrr@(i)","@(i)")' class='fa fa-edit'></a></td>
+                                                        </tr>
+                                                                        i = i + 1;
+                                                                    }
+                                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="modal fade" id="myModal" role="dialog" style="display:none">
+                                    <div class="modal-dialog" style="width: 1000px;height: 800px">
+
+
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h4 class="modal-title">Modal Header</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+
+                                                        <iframe id="reportFrame"
+                                                                style="width: 900px; height: 600px; zoom: 1; box-sizing: content-box"></iframe>
+                                                    </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>*@
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="modal fade" id="myModal" role="dialog" style="display:none">
+        <div class="modal-dialog" style="width: 1000px;height: 800px">
+
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Modal Header</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            <iframe id="reportFrame"
+                                    style="width: 900px; height: 600px; zoom: 1; box-sizing: content-box"></iframe>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    @*<div class="modal fade" id="OnlineBookingModel" role="dialog" data-keyboard="false">
+
+            <div class="modal-dialog">
+
+                 Modal content
+                <div class="modal-content">
+
+                    <div>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="row searchRow">
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="margin-top:20px">
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive">
+                                    <div id="tbl_Scroll" style="margin-top:0px">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="table-bordered table-responsive table-striped display" id="tbl_Items">
+                                            <thead>
+                                                <tr style="height:40px">
+                                                    <td class="col-lg-1">No</td>
+                                                    <th class="col-lg-3 col-md-3 col-xs-1">Document Number</th>
+                                                    <th class="col-lg-3 col-md-3 col-xs-1">Customer Name</th>
+                                                    <th class="col-lg-3 col-md-3 col-xs-1">Booking Date</th>
+                                                    <th>Confirm</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbl_itemBody">
+                                                @{int n = 1;}
+                                                @if (Model.Onlinebooking != null)
+                                                {
+                                                    foreach (var item in Model.Onlinebooking)
+                                                    {
+                                                <tr id="trrra@(n)">
+                                                    <td style="text-align:center">@n</td>
+                                                    <td id="aaa@(n)" style="text-align:center">@item.DocNo</td>
+                                                    <td style="text-align:center">@item.CustomerName</td>
+                                                    <td style="text-align:center">@item.DocDate</td>
+                                                    <td style="text-align:center">
+
+                                                        <a href="#" id="a@(n)" onclick="confirmbooking(a@(n))" value="@item.DocNo">Confirm</a>
+                                                    </td>
+                                                </tr>
+                                                        n = n + 1;
+                                                    }
+                                                }
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                            <p id="filter" style="margin-left:1px; margin-top:20px"></p>
+                                        </div>
+                                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                                            <button type="button" style="float:right;margin-top:20px" onclick="RemoveModel()" class="btn btn-warning">Close</button>
+                                            <p id="pagination" style="float:right;margin-right:20px"></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-xs-12" style="margin-top:30px">
+                                        <div class="modal fade" id="myReportModal" role="dialog" data-keyboard="false" data-backdrop="static">
+                                            <div class="modal-dialog">
+                                                <button type="button" class="btn btn-danger" onclick="RemoveReportModel()" style="margin-left:20px">Close</button>
+                                                <div class="modal-content" style="align-content:center">
+
+
+                                                    <iframe name="DetailFrame" id="DetailFrame" src="about:blank" style="height:600px;width:600px"></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+
+    <div class="modal fade" id="OnlineBookingModel">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:#3498DB;color:white">
+                    <h4 class="modal-title">Facebook Booking</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table table-responsive">
+                        <table class="table table-bordered" id="example1">
+                            <thead style="background-color:#3498DB;color:white">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Document Number</th>
+                                    <th>Customer Name</th>
+                                    <th>Booking Date</th>
+                                    <th>Confirm</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl_itemBody">
+                                @{int n = 1;}
+                                @if (Model.Onlinebooking != null)
+                                {
+                                    foreach (var item in Model.Onlinebooking)
+                                    {
+                                        <tr id="trrra@(n)">
+                                            <td>@n</td>
+                                            <td id="aaa@(n)">@item.DocNo</td>
+                                            <td>@item.CustomerName</td>
+                                            <td>@item.DocDate</td>
+                                            <td>
+
+                                                <a href="#" id="a@(n)" onclick="confirmbooking(a@(n))" value="@item.DocNo">Confirm</a>
+                                            </td>
+                                        </tr>
+                                        n = n + 1;
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" class="btn btn-default fa pull-right" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+</div>
+@section scripts{
+    <script src="~/Scripts/lib/moment.min.js"></script>
+    <script src="~/Scripts/fullcalendar.min.js"></script>
+    <script src="~/content/js/Booking.js"></script>
+    <script type="text/javascript">
+        var doctype  = '@Model.DocumentMain.DocType';
+        AddNewCustomer();
+        $(document).ready(function () {
+            @if (Model.DocumentDetailList != null)
+            {
+                 @:$('#myModal').modal();
+                                    }
+
+            var today = moment().format('YYYY-MM-DD');
+            fetchevents();
+
+            //var table = $('#tbl_Items').DataTable({
+            //    "bAutoWidth": false,
+            //    "bScrollCollapse": true,
+            //    "responsive": true,
+            //    "dom": "<'row'<'col-sm-12'tr>>" +
+            //    "<'row'<'col-sm-4'><'col-sm-8'p>>",
+            //    "oLanguage":
+            //    {
+            //        "sLengthMenu": "_MENU_ "
+            //    }
+            //});
+            //$("#pagination").append($(".dataTables_paginate"));
+            //$("#customers_length").prependTo("#filter");
+            //$('#txt_search').on('keyup', function () {
+            //    table.search(this.value).draw();
+            //});
+
+        });
+        var events = [];
+        function fetchevents() {
+            $.ajax({
+                type: "GET",
+                url: "/Sales/GetEvents?docType=" + doctype,
+                success: function (data) {
+                    var obj = JSON.parse(data);
+                    $.each(obj, function (i, v) {
+                        events.push({
+                            title: v.SupplierName,
+                            start: moment(v.DocumentDate),
+                            Cancel: v.Cancel,
+                            //color: v.ThemeColor,
+                            eventId: v.DocumentNo,
+                            Doctype: v.Doctype,
+                            Status: v.Status,
+                            Date1: v.DocumentDate,
+                            Name: v.SupplierName,
+                            Cust_Id: v.SupplierId,
+                            Phone: v.SupplierPhoneNo,
+                            LocationId: v.LocationId,
+                            //Time1: v.Time,
+                            ReturnAmount: v.ReturnAmount,
+                            Amount: v.Amount,
+                            //Discountcategorydiscription: v.Discountcategorydiscription,
+                            //DiscountCategoryId: v.DiscountCategoryId,
+                            //CustomerDiscount: v.CustomerDiscount,
+                            Advance: v.Advance,
+                            Payment: v.Payment,
+                        });
+                    })
+                    GenerateCalender(events);
+                },
+                error: function (error)
+                { alert('failed'); }
+            })
+        }
+        function GenerateCalender(events) {
+            $('#calender').fullCalendar('destroy');
+            $('#calender').fullCalendar({
+                contentHeight: 1000,
+                defaultDate: new Date(),
+                timeFormat: 'hh(:mm)a',
+                buttonText: {
+                    month: 'Month',
+                    week: 'Week',
+                    day: 'Day'
+                },
+                customButtons: {
+                    btnJan: {
+                        text: 'Booking',
+                        click: function () {
+                            ClearForm(true);
+                            var w = formatDate(new Date());
+                            $("#txt_docDate").val(w);
+                            $('#myModal').modal();
+                        }
+                    },
+                    btnList: {
+                        text: 'List',
+                        click: function () {
+
+                            //window.location.href = '/sales/BookingList'
+
+                            window.location.href = "/sales/List?docType=@Model.DocumentMain.DocType&requestPage=@Inventory.Constants.SalesPage.Booking"
+                        }
+                    },
+                    btnFaceBook: {
+                        text: 'FaceBook',
+                        click: function () {
+                            //    $('#OnlineBookingModel').modal('show');
+
+                            $.ajax({
+                                url: "GetOnlineBooking/",
+                                method: "post",
+                                //   data: { DocNo: docno }
+                            })
+   .done(function (_obj) {
+       if (_obj != "") {
+           $("#tbl_itemBody tr").remove();
+           var obj = JSON.parse(_obj);
+           var rowno = 0;
+           $.each(obj, function (index, element) {
+               rowno = rowno + 1;
+               $('#tbl_itemBody').append("<tr style=height:20px id=trrra" +
+                rowno +
+                "><td style=text-align:center>" + rowno + "</td><td id=aaa" + rowno + " style=text-align:center>" +
+               obj[index].DocNo +
+                "</td><td style=text-align:center>" +
+                obj[index].CustomerName +
+                   "</td><td>" +
+                obj[index].DocDate +
+                   "</td><td style=text-align:center><a href=# id=a" + rowno + " onclick=confirmbooking(a" + rowno + ") value=" + obj[index].DocNo + ">Confirm</a></td></tr>");
+           });
+       }
+       $('#OnlineBookingModel').modal('show');
+   })
+   .fail(function () {
+       toastr.error('Cannot Retrieved FaceBook Booking.');
+   });
+                        }
+                    }
+                },
+                header: {
+                    left: 'prev,next',
+                    center: 'title',
+                    right: 'btnList,month,basicWeek,basicDay,btnJan,btnFaceBook'
+                },
+                eventLimit: true,
+                eventColor: '#378006',
+                events: events,
+                eventRender: function (event, element) {
+                    if (event.Cancel == "3") {
+                        element.css('background-color', '#d43f3a');
+                    }
+                    if (event.Doctype == "3") {
+                        element.css('background-color', '#337ab7');
+                    }
+                },
+                eventClick: function (calEvent, jsEvent, view) {
+                    //   ClearForm();
+                    $("#txt_customerCategory").val("");
+                    $("#txt_customerCategoryId").val("");
+                    $("#txt_customerDiscount").val("");
+                    $('#myModal #eventTitle').text("hello");
+                    $('#myModal #eventTitle').val(calEvent.Phone);
+                    $("#DocumentMain_DocNoDisplay").val(calEvent.eventId);
+                    $("#txt_status").val(calEvent.Status);
+                    $("#txt_docNo").val(calEvent.eventId);
+                    var w = formatDate(calEvent.Date1);
+                    $("#txt_docDate").val(w);
+                    $("#txt_status").val(calEvent.Status);
+                    $("#txt_phone").val(calEvent.Phone);
+                    $("#ddl_supplier").val(calEvent.Cust_Id);
+                    $("#txt_supplcode").val(calEvent.Cust_Id);
+                    $("#txt_time").val(calEvent.Time1);
+                    $("#txt_Payment").val(calEvent.Payment);
+                    if (calEvent.ReturnAmount == "null") {
+                        $("#txt_Return").val("0");
+                    }
+                    else {
+                        $("#txt_Return").val(calEvent.ReturnAmount);
+                    }
+                    $("#txt_AdvanceAmount").val(calEvent.Advance);
+                    $("#ddl_location").val(calEvent.LocationId);
+                    $("#txt_customerCategory").val(calEvent.Discountcategorydiscription);
+                    $("#txt_customerCategoryId").val(calEvent.DiscountCategoryId);
+                    $("#txt_customerDiscount").val(calEvent.CustomerDiscount);
+                    if (calEvent.Doctype == "1") {
+                        $("#txt_doctype").val("IN");
+                    }
+                    else {
+                        $("#txt_doctype").val("IR");
+                    }
+                    if (calEvent.Status == "3" || calEvent.Cancel == "3") {
+                        $('#btn_authorize').attr('disabled', 'disabled');
+                        $("#add_btn").attr('disabled', 'disabled');
+                        $('#btn_submit').attr('disabled', 'disabled');
+                        $('#btn_cancel').attr('disabled', 'disabled');
+                    }
+                    else {
+                        $('#btn_submit').removeAttr("disabled");
+                        $('#btn_authorize').removeAttr("disabled");
+                        $("#add_btn").removeAttr("disabled");
+                        $("#btn_cancel").removeAttr("disabled");
+                    }
+                    if (calEvent.eventId != "") {
+                        //$("#tablePurchaseDetail").show();
+                        //$.ajax({
+                        //    url: "/Sales/gettable?Doc_No=" + calEvent.eventId,
+                        //    method: "post",
+                        //}).done(function (obj) {
+                        //      var _obj = JSON.parse(obj);
+                        //      var c = 1;
+                        //      $("#tblbody tr").remove();
+                        //      $.each(_obj, function (i, v) {
+                        //          var Discountamt = Math.round(((_obj[i].Retail * _obj[i].Discount) / 100) * _obj[i].Qty);
+                        //          $("#tblbody").append("<tr id=trrr" +
+                        //                c +
+                        //                "><td style='display:none;'>" +
+                        //                _obj[i].UanNo +
+                        //                "</td><td style='display:none;'>" +
+                        //                _obj[i].ItemCode +
+                        //                "</td><td>" +
+                        //                _obj[i].ItemName +
+                        //                "</td><td>" +
+                        //                _obj[i].Qty +
+                        //                "</td><td>" +
+                        //               _obj[i].Retail +
+                        //                "</td><td style='display:none;'>" +
+                        //                _obj[i].Cost +
+                        //                "</td><td>" +
+                        //                Discountamt +
+                        //                "</td><td>" +
+                        //                _obj[i].Amount +
+                        //                 "</td><td style='display:none;'>" +
+                        //                _obj[i].SalesBycode +
+                        //                 "</td><td>" +
+                        //                _obj[i].SalesByName +
+                        //                "</td><td style='display:none;'>" +
+                        //                _obj[i].warehouse
+                        //                 +
+                        //                "</td><td style='display:none;'>" +
+                        //                  _obj[i].warhousename
+                        //                 +
+                        //                "</td><td style='display:none;'>" +
+                        //                 _obj[i].colour +
+                        //                "</td><td style='display:none;'>" +
+                        //                _obj[i].colourname +
+                        //          "</td><td >" + _obj[i].TimeSlot + "</td></tr>");
+                        //          $("#tblbody tr").last().append(
+                        //              "<td><a onclick='RemoveRow(trrr" +
+                        //              c +
+                        //              "," +
+                        //              c +
+                        //              ")' class='fa fa-trash'></a></td><td><a onclick='EditRow(trrr" +
+                        //              c +
+                        //              "," +
+                        //              c +
+                        //              ")' class='fa fa-edit'></a></td>");
+                        //          c++;
+                        //      });
+                        //      $("#ddl_staffName option[value='" + _obj[0].SalesBycode + "']").attr('selected', true);
+                        //      $("#btn_print1").removeAttr('disabled');
+                        //      calculateTotal();
+                        //  }).fail(function (xhr) {
+                        //     alert("fail")
+                        //  });
+                        window.location.replace("/Sales/Edit?docno=" + calEvent.eventId + "&requestPage=" + '@Inventory.Constants.SalesPage.Booking');
+                    }
+                    $('#myModal').modal();
+                },
+                dayClick: function (date, jsEvent, view) {
+                    $('#myModal').modal();
+                    ClearForm(true);
+                    var w = formatDate(date);
+                    $("#txt_docDate").val(w);
+                }
+            })
+        }
+
+        //     var events = [];
+        //     function fetchevents() {
+        //         $('#calender').fullCalendar('destroy');
+        //         events = [];
+        //         $.ajax({
+        //             type: "GET",
+        //             url: "/Sales/GetEvents",
+        //             success: function (data) {
+        //                 var obj = JSON.parse(data);
+        //                 debugger;
+        //                 $.each(obj, function (i, v) {
+        //                     debugger;
+        //                     events.push({
+        //                         title: v.SupplierName,
+        //                         //    description: v.ItemName,
+        //                         start: moment(v.DocumentDate),
+        //                         Cancel: v.Cancel,
+        //                         color: v.ThemeColor,
+        //                         eventId: v.DocumentNo,
+        //                         //   Service: v.ItemName,
+        //                         //  Type: v.Type,
+        //                         //   Sevices: v.ItemCode,
+        //                         //  Type: v.TypeID,
+        //                         Doctype: v.Doctype,
+        //                         Status: v.Status,
+        //                         Date1: v.DocumentDate,
+        //                         Name: v.SupplierName,
+        //                         Cust_Id: v.SupplierId,
+        //                         Phone: v.SupplierPhoneNo,
+        //                         LocationId: v.LocationId,
+        //                         Time1: v.Time,
+        //                         ReturnAmount: v.ReturnAmount,
+        //                         Amount: v.Amount,
+        //                         //StaffMember:v.
+        //                         Discountcategorydiscription: v.Discountcategorydiscription,
+        //                         DiscountCategoryId: v.DiscountCategoryId,
+        //                         CustomerDiscount: v.CustomerDiscount,
+        //                         Advance: v.Advance,
+        //                         Payment: v.Payment,
+        //                     });
+        //                 })
+        //                 GenerateCalender(events);
+        //             },
+        //             error: function (error) {
+        //                 alert('failed');
+        //             }
+        //         })
+        //     }
+        //     function GenerateCalender(events) {
+        //         debugger;
+        //         $('#calender').fullCalendar('destroy');
+        //         $('#calender').fullCalendar({
+        //             contentHeight: 1000,
+        //             defaultDate: new Date(),
+        //             timeFormat: 'hh(:mm)a',
+        //             buttonText: {
+        //                 // today: 'Today',
+        //                 month: 'Month',
+        //                 week: 'Week',
+        //                 day: 'Day'
+        //             },
+        //             //timeFormat:'HH:mm A',
+        //             //Start: event.start.format('DD/MM/YYYY HH:mm A'),
+        //             customButtons: {
+        //                 btnJan: {
+        //                     text: 'Booking',
+        //                     click: function () {
+        //                         ClearForm(true);
+        //                         var w = formatDate(new Date());
+        //                         $("#txt_docDate").val(w);
+        //                         $('#myModal').modal();
+        //                     }
+        //                 },
+        //                 btnFaceBook: {
+        //                     text: 'FaceBook',
+        //                     click: function () {
+        //                         //    $('#OnlineBookingModel').modal('show');
+        //                         $.ajax({
+        //                             url: "GetOnlineBooking/",
+        //                             method: "post",
+        //                             //   data: { DocNo: docno }
+        //                         })
+        //.done(function (_obj) {
+        //    if (_obj != "") {
+        //        $("#tbl_itemBody tr").remove();
+        //        var obj = JSON.parse(_obj);
+        //        var rowno = 0;
+        //        $.each(obj, function (index, element) {
+        //            rowno = rowno + 1;
+        //            $('#tbl_itemBody').append("<tr style=height:20px id=trrra" +
+        //             rowno +
+        //             "><td style=text-align:center>" + rowno + "</td><td id=aaa" + rowno + " style=text-align:center>" +
+        //            obj[index].DocNo +
+        //             "</td><td style=text-align:center>" +
+        //             obj[index].CustomerName +
+        //                "</td><td>" +
+        //             obj[index].DocDate +
+        //                "</td><td style=text-align:center><a href=# id=a" + rowno + " onclick=confirmbooking(a" + rowno + ") value=" + obj[index].DocNo + ">Confirm</a></td></tr>");
+        //        });
+        //    }
+        //    $('#OnlineBookingModel').modal('show');
+        //})
+        //.fail(function () {
+        //    toastr.error('Cannot Retrieved FaceBook Booking.');
+        //});
+        //                     }
+        //                 }
+        //             },
+        //             header: {
+        //                 left: 'prev,next', //today',
+        //                 center: 'title',
+        //                 right: 'month,basicWeek,basicDay,btnJan,btnFaceBook'
+        //             },
+        //             eventLimit: true,
+        //             eventColor: '#378006',
+        //             events: events,
+        //             eventRender: function (event, element) {
+        //                 if (event.Cancel == "3") {
+        //                     element.css('background-color', '#d43f3a');
+        //                 }
+        //                 if (event.Doctype == "3") {
+        //                     element.css('background-color', '#337ab7');
+        //                 }
+        //             },
+        //             eventClick: function (calEvent, jsEvent, view) {
+        //                 //   ClearForm();
+        //                 $("#txt_customerCategory").val("");
+        //                 $("#txt_customerCategoryId").val("");
+        //                 $("#txt_customerDiscount").val("");
+        //                 $('#myModal #eventTitle').text("hello");
+        //                 $('#myModal #eventTitle').val(calEvent.Phone);
+        //                 $("#DocumentMain_DocNoDisplay").val(calEvent.eventId);
+        //                 $("#txt_status").val(calEvent.Status);
+        //                 $("#txt_docNo").val(calEvent.eventId);
+        //                 var w = formatDate(calEvent.Date1);
+        //                 $("#txt_docDate").val(w);
+        //                 $("#txt_status").val(calEvent.Status);
+        //                 $("#txt_phone").val(calEvent.Phone);
+        //                 $("#ddl_supplier").val(calEvent.Cust_Id);
+        //                 $("#txt_supplcode").val(calEvent.Cust_Id);
+        //                 $("#txt_time").val(calEvent.Time1);
+        //                 $("#txt_Payment").val(calEvent.Payment);
+        //                 if (calEvent.ReturnAmount == "null") {
+        //                     $("#txt_Return").val("0");
+        //                 }
+        //                 else {
+        //                     $("#txt_Return").val(calEvent.ReturnAmount);
+        //                 }
+        //                 $("#txt_AdvanceAmount").val(calEvent.Advance);
+        //                 $("#ddl_location").val(calEvent.LocationId);
+        //                 $("#txt_customerCategory").val(calEvent.Discountcategorydiscription);
+        //                 $("#txt_customerCategoryId").val(calEvent.DiscountCategoryId);
+        //                 $("#txt_customerDiscount").val(calEvent.CustomerDiscount);
+        //                 if (calEvent.Doctype == "1") {
+        //                     $("#txt_doctype").val("IN");
+        //                 }
+        //                 else {
+        //                     $("#txt_doctype").val("IR");
+        //                 }
+        //                 if (calEvent.Status == "3" || calEvent.Cancel == "3") {
+        //                     $('#btn_authorize').attr('disabled', 'disabled');
+        //                     $("#add_btn").attr('disabled', 'disabled');
+        //                     $('#btn_submit').attr('disabled', 'disabled');
+        //                     $('#btn_cancel').attr('disabled', 'disabled');
+        //                 }
+        //                 else {
+        //                     $('#btn_submit').removeAttr("disabled");
+        //                     $('#btn_authorize').removeAttr("disabled");
+        //                     $("#add_btn").removeAttr("disabled");
+        //                     $("#btn_cancel").removeAttr("disabled");
+        //                 }
+        //                 if (calEvent.eventId != "") {
+        //                     $("#tablePurchaseDetail").show();
+        //                     $.ajax({
+        //                         url: "/Sales/gettable?Doc_No=" + calEvent.eventId,
+        //                         method: "post",
+        //                         //  data:doctype
+        //                     })
+        //                       .done(function (obj) {
+        //                           var _obj = JSON.parse(obj);
+        //                           var c = 1;
+        //                           $("#tblbody tr").remove();
+        //                           $.each(_obj, function (i, v) {
+        //                               var Discountamt = Math.round(((_obj[i].Retail * _obj[i].Discount) / 100) * _obj[i].Qty);
+        //                               $("#tblbody").append("<tr id=trrr" +
+        //                                     c +
+        //                                     "><td style='display:none;'>" +
+        //                                     _obj[i].UanNo +
+        //                                     "</td><td style='display:none;'>" +
+        //                                     _obj[i].ItemCode +
+        //                                     "</td><td>" +
+        //                                     _obj[i].ItemName +
+        //                                     "</td><td>" +
+        //                                     _obj[i].Qty +
+        //                                     "</td><td>" +
+        //                                    _obj[i].Retail +
+        //                                     "</td><td style='display:none;'>" +
+        //                                     _obj[i].Cost +
+        //                                     "</td><td>" +
+        //                                     Discountamt +
+        //                                     "</td><td>" +
+        //                                     _obj[i].Amount +
+        //                                      "</td><td style='display:none;'>" +
+        //                                     _obj[i].SalesBycode +
+        //                                      "</td><td>" +
+        //                                     _obj[i].SalesByName +
+        //                                     "</td><td style='display:none;'>" +
+        //                                     _obj[i].warehouse
+        //                                      +
+        //                                     "</td><td style='display:none;'>" +
+        //                                       _obj[i].warhousename
+        //                                      +
+        //                                     "</td><td style='display:none;'>" +
+        //                                      _obj[i].colour +
+        //                                     "</td><td style='display:none;'>" +
+        //                                     _obj[i].colourname +
+        //                                     "</td></tr>");
+        //                               $("#tblbody tr").last().append(
+        //                                   "<td><a onclick='RemoveRow(trrr" +
+        //                                   c +
+        //                                   "," +
+        //                                   c +
+        //                                   ")' class='glyphicon glyphicon-minus'></a></td><td><a onclick='EditRow(trrr" +
+        //                                   c +
+        //                                   "," +
+        //                                   c +
+        //                                   ")' class='glyphicon glyphicon-edit'></a></td>");
+        //                               c++;
+        //                           });
+        //                           $("#btn_print1").removeAttr('disabled');
+        //                           calculateTotal();
+        //                       })
+        //                       .fail(function (xhr) {
+        //                           //  $("#btn_new").removeAttr('disabled');
+        //                       });
+        //                 }
+        //                 $('#myModal').modal();
+        //             },
+        //             dayClick: function (date, jsEvent, view) {
+        //                 //                                    var d1 = new Date();
+        //                 //                                    var CurrentDatetime = formatDate(d1);
+        //                 //  //                                  alert(CurrentDatetime);
+        //                 //                                    var d2 = date;
+        //                 //                                    var SelectedDate = formatDate(d2);
+        //                 ////                                    alert(SelectedDate);
+        //                 //                                    if (SelectedDate < CurrentDatetime)
+        //                 //                                    {
+        //                 //                                       // alert("Hello");
+        //                 //                                    }
+        //                 //                                    else
+        //                 //                                    {
+        //                 $('#myModal').modal();
+        //                 ClearForm(true);
+        //                 var w = formatDate(date);
+        //                 $("#txt_docDate").val(w);
+        //                 //   $('#btn_authorize').attr('disabled', 'disabled');
+        //                 // }
+        //             }
+        //         })
+        //     }
+
+        $("#example1").DataTable();
+        $(function () {
+            //$('#example2').DataTable({
+            //  "paging": true,
+            //  "lengthChange": false,
+            //  "searching": false,
+            //  "ordering": true,
+            //  "info": true,
+            //  "autoWidth": false,
+            //});
+        });
+
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            return [year, month, day].join('-');
+        }
+        function PrintReport() {
+            //   $('#DetailFrame').attr('src', "about:blank");
+
+            var currentdate = new Date();
+            var datetime = "Now: " + currentdate.getDate() + "/"
+                        + (currentdate.getMonth() + 1) + "/"
+                        + currentdate.getFullYear() + " "
+                        + currentdate.getHours() + ":"
+                        + currentdate.getMinutes() + ":"
+                        + currentdate.getSeconds();
+            //    alert(datetime);
+            var docno = $("#DocumentMain_DocNoDisplay").val();
+            var doctype = $("#txt_doctype").val();
+            var DetailUrl = "/Sales/PrintSaleDocumentreportByDocumentNumber?Doc_Number=" + docno + "&Doc_Date=" + datetime + "&Doc_Type=" + doctype + "#page=1&zoom=70";
+            // $('#DetailFrame').attr('src', DetailUrl);
+            var iframe = document.getElementById("DetailFrame");
+            iframe.src = DetailUrl;
+        }
+        $("#txt_phone").keypress(function (event) {
+            var keycode = event.which;
+
+            if (!(event.shiftKey == false && (keycode == 46 || keycode == 8 || keycode == 37 || keycode == 39 || (keycode >= 48 && keycode <= 57)))) {
+                event.preventDefault();
+            }
+
+            var data = $("#txt_Phone").val();
+            var length = data.length;
+            // alert(length);
+            if (length >= 11) {
+
+                event.preventDefault();
+            }
+
+        });
+        $("#txt_Payment").keypress(function (event) {
+            var keycode = event.which;
+
+            if (!(event.shiftKey == false && (keycode == 46 || keycode == 8 || keycode == 37 || keycode == 39 || (keycode >= 48 && keycode <= 57)))) {
+                event.preventDefault();
+            }
+
+            var data = $("#txt_Phone").val();
+            var length = data.length;
+            // alert(length);
+            if (length >= 7) {
+
+                event.preventDefault();
+            }
+
+        });
+        $("#txt_AdvanceAmount").keypress(function (event) {
+            var keycode = event.which;
+
+            if (!(event.shiftKey == false && (keycode == 46 || keycode == 8 || keycode == 37 || keycode == 39 || (keycode >= 48 && keycode <= 57)))) {
+                event.preventDefault();
+            }
+
+            var data = $("#txt_Phone").val();
+            var length = data.length;
+            // alert(length);
+            if (length >= 7) {
+
+                event.preventDefault();
+            }
+
+        });
+        $("#txt_Return").keypress(function (event) {
+            var keycode = event.which;
+
+            if (!(event.shiftKey == false && (keycode == 46 || keycode == 8 || keycode == 37 || keycode == 39 || (keycode >= 48 && keycode <= 57)))) {
+                event.preventDefault();
+            }
+
+            var data = $("#txt_Phone").val();
+            var length = data.length;
+            // alert(length);
+            if (length >= 7) {
+
+                event.preventDefault();
+            }
+
+        });
+        function toUpper(str) {
+            return str
+                .toLowerCase()
+                .split(' ')
+                .map(function (word) {
+                    //          console.log("First capital letter: " + word[0]);
+                    //           console.log("remain letters: " + word.substr(1));
+                    return word[0].toUpperCase() + word.substr(1);
+                })
+                .join(' ');
+        }
+        function confirmbooking(id) {
+            var rowid = "#trrr" + id.id;
+            id = "#aa" + id.id;
+            docno = $(id).text();
+            // alert(da);
+
+            $.ajax({
+                url: "UpdateOnlineBookingtomainbooking/",
+                method: "post",
+                data: { DocNo: docno }
+            })
+       .done(function (_obj) {
+           if (_obj != "") {
+               var obj = JSON.parse(_obj);
+               if (obj != "False") {
+                   fetchevents();
+                   $(rowid).remove();
+                   toastr.success('Booking Confirmed successfully.');
+                   var lastind;
+                   $('#ddl_supplier').empty();
+                   $('#ddl_supplier').append(new Option('Select Customer', ''));
+                   $.each(obj, function (index, element) {
+                       $('#ddl_supplier').append(new Option(obj[index].SUPL_NAME, obj[index].SUPL_CODE));
+                       //  lastind = obj[index].SUPL_CODE;
+                   });
+                   AddNewCustomer();
+               }
+               if (obj == "False") {
+                   toastr.error('Booking Not Confirmed successfully.');
+               }
+           }
+       })
+       .fail(function () {
+           toastr.error('Booking Not Confirmed successfully.');
+       });
+        }
+
+    </script>
+}

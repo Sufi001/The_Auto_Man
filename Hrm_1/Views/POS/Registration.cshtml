@@ -1,0 +1,234 @@
+﻿@model Inventory.ViewModels.POSRegistrationViewModel
+@{
+    ViewBag.Title = "POS Registration";
+}
+<style>
+      input[type=text], input[type=password],input[type=number],select {
+        margin: 8px 0;
+    }
+
+    .form-control {
+        height: 45px;
+    }
+    .callout, .card, .info-box, .mb-3, .my-3, .small-box {
+        margin-bottom: 0.2rem !important;
+    }
+    .card-header {
+        padding: .50rem 1.0rem;
+        padding-top: 0.25rem;
+        padding-right: 1.0rem;
+        padding-bottom: 0.0rem;
+        padding-left: 1.25rem;
+    }
+    select:focus, input:focus {
+        outline: none !important;
+        border-color: #719ECE !important;
+        box-shadow: 0 0 20px #719ECE !important;
+    }
+    #list, #Sumbit {
+        width: 90px;
+        margin-left: 3px;
+    }
+</style>
+
+@using (Html.BeginForm("Save", "POS", FormMethod.Post, new { enctype = "multipart/form-data", id = "Form", Class = "was-validated" }))
+{
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="row" id="_form">
+                <div class="col-12">
+                    <!-- Custom Tabs -->
+                    <div class="card">
+                        <div class="card-header d-flex p-0" style="background-color:#3498DB">
+                                <h2 style="font-size:20px" class="card-title p-3"><b style="color:white">Register Your POS</b></h2>
+                            <ul class="nav nav-pills ml-auto p-2">
+                                    <li><input style="border:1px solid; background-color:#3985d2;color:white" type="button" value="     New     " onclick="location.href='@Url.Action("Registration ", "POS", new { target="_blank" })'"  class="btn fa-pull-right" /></li>
+                                    <li><input style="border:1px solid; background-color:#3985d2;color:white" type="button" value="Save" id="Sumbit" class="btn fa-pull-right" /></li>
+                                    <li><button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="list" class="btn  fa-pull-right" onclick="location.href='@Url.Action("List", "POS", new { target="_blank" })'">List</button></li>
+                            </ul>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.POSID, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "POSID", @type = "text", autocomplete = "off" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.NTN, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "NTN", @type = "text", autocomplete = "off" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.BusinessName, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "BusinessName", @type = "text", autocomplete = "off" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.BranchName, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "BranchName", @type = "text", autocomplete = "off" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.BusinessAddress, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "BusinessAddress", @type = "text", autocomplete = "off" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.DropDownListFor(m => m.City, new SelectList(ViewBag.Cities, "city_code", "City_Name"), "Cities", new { @class = "form-control", required = "required" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.IPAddress, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "IPAddress", @type = "text", autocomplete = "off" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.Latitude, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "Latitude", @type = "text", autocomplete = "off" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.Longitude, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "Longitude", @type = "text", autocomplete = "off" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.Mode, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "Mode", @type = "text" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.UserId, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "UserId", @type = "text" } })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "Password", @type = "password" } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            @if(ViewBag.Message != null) {
+                if (ViewBag.Message == "POS Successfully Registered." || ViewBag.Message == "POS Info Successfully Updated.")
+                {
+                    @:toastr.success('@ViewBag.Message');
+                }
+                else
+                {
+                    @:toastr.error('@ViewBag.Message');
+                }
+
+            }
+            $("#Sumbit").click(function () {
+                var POSID = $('#POSID').val();
+                var NTN = $('#NTN').val();
+                var BusinessName = $('#BusinessName').val();
+
+                var BranchName = $('#BranchName').val();
+                var BusinessAddress = $('#BusinessAddress').val();
+                var City = $('#City').val();
+
+                var IPAddress = $('#IPAddress').val();
+                var Latitude = $('#Latitude').val();
+                var Longitude = $('#Longitude').val();
+
+                var Mode = $('#Mode').val();
+                var UserId = $('#UserId').val();
+                var Password = $('#Password').val();
+
+                if (POSID == null || POSID == "") {
+                    toastr.error("POSID Can't Be Null or Empty");
+                    return;
+                }
+                else if (NTN == null || NTN == "") {
+                    toastr.error("NTN Can't Be Null or Empty");
+                    return;
+                }
+                else if (BusinessName == null || BusinessName == "") {
+                    toastr.error("BusinessName Can't Be Null or Empty");
+                    return;
+                }
+                else if (BranchName == null || BranchName == "") {
+                    toastr.error("BranchName Can't Be Null or Empty");
+                    return;
+                }
+                else if (BusinessAddress == null || BusinessAddress == "") {
+                    toastr.error("BusinessAddress Can't Be Null or Empty");
+                    return;
+                }
+                else if (City == null || City == "") {
+                    toastr.error("City Can't Be Null or Empty");
+                    return;
+                }
+                else if (IPAddress == null || IPAddress == "") {
+                    toastr.error("IPAddress Can't Be Null or Empty");
+                    return;
+                }
+                else if (Latitude == null || Latitude == "") {
+                    toastr.error("Latitude Can't Be Null or Empty");
+                    return;
+                }
+                else if (Longitude == null || Longitude == "") {
+                    toastr.error("Longitude Can't Be Null or Empty");
+                    return;
+                }
+                else if (Mode == null || Mode == "") {
+                    toastr.error("Mode Can't Be Null or Empty");
+                    return;
+                }
+                else if (UserId == null || UserId == "") {
+                    toastr.error("User Id Can't Be Null or Empty");
+                    return;
+                }
+                else if (Password == null || Password == "") {
+                    toastr.error("Password Can't Be Null or Empty");
+                    return;
+                }
+                $("#Form").submit();
+            });
+        });
+
+        function Clear() {
+            debugger;
+            $('#POSID').val("");
+            $('#NTN').val("");
+            $('#BusinessName').val("");
+
+            $('#BranchName').val("");
+            $('#BusinessAddress').val("");
+            $('#City').val("");
+
+            $('#IPAddress').val("");
+            $('#Latitude').val("");
+            $('#Longitude').val("");
+
+            $('#Mode').val("");
+            $('#UserId').val("");
+            $('#Password').val("");
+        }
+</script>
+}
+
+
+
+  

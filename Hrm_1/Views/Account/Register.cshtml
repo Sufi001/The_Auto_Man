@@ -1,0 +1,562 @@
+﻿@model Inventory.ViewModels.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .panel-default > .panel-heading {
+        background-color: #9fa1a3;
+    }
+</style>
+
+<br />
+
+<div>
+    <div class="row">
+        @*<div class="row searchRow">*@
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            @*<label>Code</label>*@
+            <div class="input-group" style="padding-left:7px">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-search"></span>
+                </span>
+                <input type="text" class="form-control" id="txt_search" name="txt_search" placeholder="search" oninput="checkdata(this)" />
+            </div>
+        </div>
+        @*</div>*@
+    </div>
+    <div>
+        <button type="button" class="btn btn-default pull-right" style="margin-top:5px" id="btn_custAddRecord" onclick="clearform()" name="btn_custAddRecord" data-toggle="modal" data-target="#myModal">
+            Add Users
+        </button>
+    </div>
+    <div class="row" style="margin-left:8px;margin-top:0px">
+
+        <div class="panel panel-default" name="tbl_custTable">
+            <div class="panel-heading">
+                Users List
+            </div>
+            @{int i = 0;}
+            @*<div class="tbl_row">*@
+            <div style="display:block;height:415px;overflow:auto;overflow-y:scroll">
+                <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="Users">
+                    <thead>
+                        <tr id="theader">
+                            <th class="col-xs-1">No</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in Model.AllUsersList)
+                        {
+                            i = i + 1;
+                            <tr>
+                                <td class="col-xs-1">@i</td>
+                                <td><button data-customer-id="@item.UserCode"   data-toggle="modal" data-target="#SuperUserModel" class="btn-link js-Select">@item.UserName</button></td>
+                                @*<td>@Html.ActionLink(@item.EMP_NAME,"Edit","Employees",new {id =item.EMP_CODE },new {@id="abc"} )</td>*@
+                                <td>@item.UserStatus</td>
+                                <td>@item.Email</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @*</div>*@
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <p id="filter" @*style="margin-left:1px; margin-top:20px;"*@ style="width:190px;margin-top:20px;margin-left:5px"></p>
+        </div>
+        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <p id="pagination" style="float:right"></p>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("Save", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+    <div class="modal fade bd-example-modal-lg" id="myModal" role="dialog" data-keyboard="false" data-backdrop="static">
+        @*modal-lg*@
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="btn_custInformation" name="btn_custInformation" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title"> Add Users</h3>
+                </div>
+
+                <div class="row">
+                    <div id="sign_up" style="margin-top:-10px;margin-left:40px" class="mainbox col-md-7 col-md-offset-1 col-sm-8 ">
+                
+                           
+                            <div style="padding-top:30px" class="panel-body">
+                                <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
+                                <form id="loginform" class="form-horizontal" role="form">
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                        @Html.TextBoxFor(m => m.Id, new { @class = "form-control hidden", @id="txt_Id", @name = "superusername", @placeholder = "Id" })
+                                        @Html.TextBoxFor(m => m.SuperUserName, new { @class = "form-control", @name = "superusername", @placeholder = "Super User Name", @required = "required", @oninput = "checkdata(this)" })
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                        @Html.PasswordFor(m => m.SuperUserPassword, new {  @class = "form-control", @name = "Superuserpassword", id = "SuperuserPassword", @placeholder = "Super User password", @required = "required" })
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control",@id="txt_Name", @name = "username", @placeholder = "Name", @required = "required", @oninput = "checkdata(this)" })
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control",@id="txt_Email", @name = "username", @placeholder = "Email", @required = "required" })
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                        @Html.DropDownListFor(m => m.Location, new SelectList(Model.LoginLocationList, "Log_Loc_Id", "Log_Loc_Name"), "Select location",
+                       new { @id = "ddl_location", @class = "form-control", @placeholder = "Enter Location", @required = "required" })
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                        @*@Html.PasswordFor(m => m.Password, new { @onfocus = "enterpassword()", @class = "form-control", @name = "password", id = "Password", @placeholder = "password", @required = "required" })*@
+                                        @Html.TextBoxFor(m => m.Password, new { @onfocus = "enterpassword()", @class = "form-control", @name = "password", id = "Password", @placeholder = "password", @required = "required" })
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                        @*@Html.PasswordFor(m => m.ConfirmPassword, new { @onfocus = "confirmpassword()", @class = "form-control", id = "confirmpassword", @name = "confirmpassword", @placeholder = "Confirm password", @required = "required" })*@
+                                        @Html.TextBoxFor(m => m.ConfirmPassword, new { @onfocus = "confirmpassword()", @class = "form-control", id = "confirmpassword", @name = "confirmpassword", @placeholder = "Confirm password", @required = "required" })
+                                    </div>
+                                    <div class="row">
+                                      
+                                        <div class="col-lg-2 col-lg-offset-4">
+                                            <input type="submit" id="btn_submit" value="Save" class="btn btn-default" style="background-color:#ddd;margin-left:2px" />
+                                        </div>
+                                        <div class="col-lg-4"></div>
+                                    </div>
+                                </form>
+
+                            </div>
+                       
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="row">
+                            <div id="Passwordstrength" style="margin-top:380px">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div id="Confirmstrength" style="margin-top:60px">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+                }
+<div class="modal fade bd-example-modal-lg" id="SuperUserModel" role="dialog" data-keyboard="false" data-backdrop="static">
+    @*modal-lg*@
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" id="btn_custInformation" name="btn_custInformation" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Enter Super User Credentials</h3>
+            </div>
+            <div class="row">
+                <div id="sign_up" style="margin-top:35px;margin-left:40px" class="mainbox col-md-7 col-md-offset-1 col-sm-6 ">
+                            <form id="Confirmform" class="form-horizontal" role="form">
+                                <div style="margin-bottom: 25px" class="input-group">
+                                    <input type="text" value="" name="CustomerName" id="CustomerName" class="hidden" />
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                    @Html.TextBoxFor(m => m.ConfirmSuperUserName, new { @class = "form-control",id="ConfirmSuperUserName", @name = "Confirmsuperusername", @placeholder = "Confirm Super User Name",  @oninput = "checkdata(this)" })
+                                </div>
+                                <div style="margin-bottom: 25px" class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                    @Html.PasswordFor(m => m.ConfirmSuperUserPassword, new { @class = "form-control", @name = "ConfirmSuperUserPassword", id = "ConfirmSuperuserPassword", @placeholder = "Confirm Super User password"})
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <input type="submit" id="btn_ConfirmSuperUser" value="Confirm Super User" class="btn btn-default" style="background-color:#ddd;margin-left:2px;margin-bottom:30px;" />
+                                    </div>
+                                   
+                                </div>
+                            </form>
+            </div>
+        </div>
+    </div>
+</div>
+              </div>
+                @*@if (ViewBag.Message != null)
+                    {*@
+                @section scripts{
+                    <script type="text/javascript">
+
+                        $(document).ready(function () {
+                            $('#SuperuserPassword').val('Afzaal Ahmad');
+                            $('#SuperuserPassword').val('AfzaalAhmad123');
+
+                            if ('@ViewBag.status'=='2') {
+                                $('#myModal').modal('show');
+                                toastr.error('@ViewBag.Message');
+                            }
+                            if ('@ViewBag.Message' == '1') {
+                                toastr.success('@ViewBag.Message');
+                            }
+
+                            var table = $('#Users').DataTable({
+                                "bAutoWidth": false,
+                                "bScrollCollapse": true,
+                                "responsive":true,
+
+                                "dom": "<'row'<'col-sm-12'tr>>" +
+                         "<'row'<'col-sm-4'l><'col-sm-8'p>>",
+                                "oLanguage": {
+                                    "sLengthMenu":"_MENU_ "
+                                }
+                            });
+
+                            $("#pagination").append($(".dataTables_paginate"));
+                            //$('#customers_Length').prependTo("#filter");
+                            $('#Users_length').prependTo("#filter");
+                            var table = $('#Users').DataTable();
+                            $('#txt_search').on('keyup', function () {
+                                table.search(this.value).draw();
+                            });
+                            $('#txt_custName').on('keyup', function () {
+                                table.search(this.value).draw();
+                            });
+                            $("#btn_submit").attr('disabled', 'disabled');
+                        });
+                        var flag = false;
+                        var passwordconfirm = $("#Password").val();
+                        $("#Password").keyup(function (event) {
+                            flag = false;
+                            var password = $("#Password").val();
+                            $("#btn_submit").attr('disabled', 'disabled');
+                            var colour = "";
+                            var textcolour;
+                            var desc = new Array();
+                            desc[0] = "";
+                            desc[1] = "Weak";
+                            desc[2] = "Better";
+                            desc[3] = "Strongest";
+                            desc[4] = "Passwords must have at least one digit,one Uppercase letter,one lowercase letter and length between 8 to 15.";
+                            desc[5] = "Strongest";
+                            var score = 0;
+                            if (password.length >= 1) {
+                                score = 1;
+                                colour = "red";
+                                textcolour = "white";
+                            }
+                            if (password.length > 6) {
+                                score = 2;
+                                colour = "orange";
+                                textcolour = "white";
+                            }
+                            if (password.length > 6 && flag == false) {
+                                //   score = 3;
+                                colour = "orange";
+                                textcolour = "white";
+                                //    flag = true;
+                            }
+                            if ((password.match(/[a-z]/)) && (password.match(/[A-Z]/)) && (password.match(/\d+/)) && password.length >= 8 && password.length <= 15) {
+                                score = 3;
+                                colour = "green";
+                                textcolour = "white";
+                                flag = true;
+                            }
+                            if ((password.match(/[a-z]/)) && (password.match(/[A-Z]/)) && (password.match(/\d+/)) && password.length >= 8 && password.length <= 15 && password.match(/.[!,#,$,%,^,&,*,?,_,~,-,(,)]/)) {
+                                score = 3;
+                                colour = "green";
+                                textcolour = "white";
+                                flag = true;
+                            }
+                            if (password.length >= 8 && password.length <= 15 && flag == false) {
+                                colour = "red";
+                                textcolour = "white";
+                                score = 4;
+                            }
+                            document.getElementById("Passwordstrength").innerHTML = desc[score];
+                            $("#Passwordstrength").css("background-color", colour);
+                            $("#Passwordstrength").css("color", textcolour);
+                            passwordconfirm = password;
+                        });
+                        $("#Password").keypress(function (event) {
+                            var keycode = event.which;
+                            $("#btn_submit").attr('disabled', 'disabled');
+                            document.getElementById("Confirmstrength").innerHTML = " ";
+                            var data = $("#Password").val();
+                            var length = data.length;
+                            if (length >= 15) {
+                                event.preventDefault();
+                            }
+
+                        });
+                        $("#confirmpassword").keyup(function (event) {
+                            var Cpassword = $("#confirmpassword").val();
+                            var UserName = $("#UserName").val();
+                            var Email = $("#Email").val();
+                            if (Cpassword == passwordconfirm && flag == true) {
+                                $("#btn_submit").removeAttr('disabled');
+                                document.getElementById("Passwordstrength").innerHTML = "";
+                                document.getElementById("Confirmstrength").innerHTML = "";
+                                document.getElementById("Confirmstrength").innerHTML = "Click on Sing In Button For Register";
+                                $("#Confirmstrength").css("background-color", "Green");
+                                $("#Confirmstrength").css("color", "White");
+                            }
+                            if (Cpassword != passwordconfirm && flag == true) {
+                                $("#btn_submit").attr('disabled', 'disabled');
+                                document.getElementById("Passwordstrength").innerHTML = "";
+                                document.getElementById("Confirmstrength").innerHTML = "";
+                                document.getElementById("Confirmstrength").innerHTML = "Enter Correct Password For Register";
+                                $("#Confirmstrength").css("background-color", "Red");
+                                $("#Confirmstrength").css("color", "White");
+                            }
+                            //if (flag == true)
+                            //{
+                            //    document.getElementById("Passwordstrength").innerHTML = "";
+                            //    document.getElementById("Confirmstrength").innerHTML = "Please Confirm Password For Signup";
+                            //    $("#Confirmstrength").css("background-color", "Red");
+                            //    $("#Confirmstrength").css("color", "White");
+                            //}
+                        });
+                        $("#confirmpassword").keypress(function (event) {
+                            var keycode = event.which;
+                            var data = $("#confirmpassword").val();
+                            document.getElementById("Passwordstrength").innerHTML = "";
+                            var length = data.length;
+                            if (flag == false && passwordconfirm == "") {
+                                $("#Confirmstrength").css("background-color", "Red");
+                                $("#Confirmstrength").css("color", "White");
+                                document.getElementById("Confirmstrength").innerHTML = "";
+                                document.getElementById("Confirmstrength").innerHTML = "Please Enter Correct Password First With Strongest Strength";
+                                event.preventDefault();
+                            }
+                            if (flag == false) {
+                                $("#Passwordstrength").css("background-color", "Red");
+                                $("#Passwordstrength").css("color", "White");
+                                document.getElementById("Passwordstrength").innerHTML = "Please First Enter Correct Password";
+                                event.preventDefault();
+                            }
+                            if (length >= 15) {
+                                event.preventDefault();
+                            }
+
+                        });
+                        function enterpassword() {
+                            document.getElementById("Confirmstrength").innerHTML = "";
+                            flag = false;
+                            var password = $("#Password").val();
+                            var colour = "";
+                            var textcolour;
+                            var Cpassword = $("#confirmpassword").val();
+                            if (Cpassword == passwordconfirm && flag == true) {
+                                $("#btn_submit").removeAttr('disabled');
+                                //    document.getElementById("Passwordstrength").innerHTML = "";
+                                //    document.getElementById("Confirmstrength").innerHTML = "";
+                                //    document.getElementById("Confirmstrength").innerHTML = "Click on Sing In Button For Register";
+                                //    $("#Confirmstrength").css("background-color", "Green");
+                                //    $("#Confirmstrength").css("color", "White");
+                            }
+
+                            var desc = new Array();
+                            desc[0] = "";
+                            desc[1] = "Weak";
+                            desc[2] = "Better";
+                            desc[3] = "Strongest";
+                            desc[4] = "Passwords must have at least one digit,one Uppercase letter,one lowercase letter and length between 8 to 15.";
+                            desc[5] = "Strongest";
+                            var score = 0;
+                            if (password.length >= 1) {
+                                score = 1;
+                                colour = "red";
+                                textcolour = "white";
+                            }
+                            if (password.length > 6) {
+                                score = 2;
+                                colour = "orange";
+                                textcolour = "white";
+                            }
+                            if (password.length > 6 && flag == false) {
+                                //   score = 3;
+                                colour = "orange";
+                                textcolour = "white";
+                                //    flag = true;
+                            }
+                            if ((password.match(/[a-z]/)) && (password.match(/[A-Z]/)) && (password.match(/\d+/)) && password.length >= 8 && password.length <= 15) {
+                                score = 3;
+                                colour = "green";
+                                textcolour = "white";
+                                flag = true;
+                            }
+                            if ((password.match(/[a-z]/)) && (password.match(/[A-Z]/)) && (password.match(/\d+/)) && password.length >= 8 && password.length <= 15 && password.match(/.[!,#,$,%,^,&,*,?,_,~,-,(,)]/)) {
+                                score = 3;
+                                colour = "green";
+                                textcolour = "white";
+                                flag = true;
+                            }
+                            if (password.length >= 8 && password.length <= 15 && flag == false) {
+                                colour = "red";
+                                textcolour = "white";
+                                score = 4;
+                            }
+                            document.getElementById("Passwordstrength").innerHTML = desc[score];
+                            $("#Passwordstrength").css("background-color", colour);
+                            $("#Passwordstrength").css("color", textcolour);
+                            passwordconfirm = password;
+                        }
+                        function confirmpassword() {
+                            document.getElementById("Passwordstrength").innerHTML = "";
+
+                            var Cpassword = $("#confirmpassword").val();
+                            if (Cpassword == passwordconfirm && flag == true) {
+                                $("#btn_submit").removeAttr('disabled');
+                                document.getElementById("Passwordstrength").innerHTML = "";
+                                document.getElementById("Confirmstrength").innerHTML = "";
+                                document.getElementById("Confirmstrength").innerHTML = "Click on Sing In Button For Register";
+                                $("#Confirmstrength").css("background-color", "Green");
+                                $("#Confirmstrength").css("color", "White");
+                            }
+
+                            var Cpassword = $("#confirmpassword").val();
+                            var UserName = $("#UserName").val();
+                            var Email = $("#Email").val();
+                            if (Cpassword == passwordconfirm && flag == true) {
+                                $("#btn_submit").removeAttr('disabled');
+                                document.getElementById("Passwordstrength").innerHTML = "";
+                                document.getElementById("Confirmstrength").innerHTML = "";
+                                document.getElementById("Confirmstrength").innerHTML = "Click on Sing In Button For Register";
+                                $("#Confirmstrength").css("background-color", "Green");
+                                $("#Confirmstrength").css("color", "White");
+                            }
+                            if (Cpassword != passwordconfirm && flag == true) {
+                                $("#btn_submit").attr('disabled', 'disabled');
+                                document.getElementById("Passwordstrength").innerHTML = "";
+                                document.getElementById("Confirmstrength").innerHTML = "";
+                                document.getElementById("Confirmstrength").innerHTML = "Enter Correct Password For Register";
+                                $("#Confirmstrength").css("background-color", "Red");
+                                $("#Confirmstrength").css("color", "White");
+                            }
+                            //if (flag == true)
+                            //{
+                            //    document.getElementById("Passwordstrength").innerHTML = "";
+                            //    document.getElementById("Confirmstrength").innerHTML = "Please Confirm Password For Signup";
+                            //    $("#Confirmstrength").css("background-color", "Red");
+                            //    $("#Confirmstrength").css("color", "White");
+                            //}
+                        }
+
+                        function toUpper(str) {
+                            return str
+                                .toLowerCase()
+                                .split(' ')
+                                .map(function (word) {
+                                    //          console.log("First capital letter: " + word[0]);
+                                    //           console.log("remain letters: " + word.substr(1));
+                                    return word[0].toUpperCase() + word.substr(1);
+                                })
+                                .join(' ');
+                        }
+
+                        function checkdata(id) {
+                            // alert(id);
+                            var data = toUpper($(id).val());
+                            $(id).val(data);
+                            // alert(data);
+
+                        }
+
+                        function ClearName(){
+                            alert("NEW");
+                        }
+
+                        $("#Users").on("click", ".js-Select", function (e) {
+                            var button = $(this);
+                            clearform();
+                        //    $("#myModal").modal();
+                         //   alert(button.attr("data-customer-id"));
+                            $("#CustomerName").val(button.attr("data-customer-id"));
+                            $("#ConfirmSuperUserName").val("");
+                            $("#ConfirmSuperuserPassword").val("");
+
+                        })
+
+                        $('#Confirmform').submit(function (e) {
+                            e.preventDefault();
+                            $('#btn_ConfirmSuperUser').attr('disabled', 'disabled');
+                            var CustomerCode=$("#CustomerName").val();
+                            var SuperUsername = $("#ConfirmSuperUserName").val();
+                            var SuperUserPassword = $("#ConfirmSuperuserPassword").val();
+                            if(CustomerCode!=""&&SuperUsername!=""&&SuperUserPassword!=""){
+                            $.ajax({
+                                url: "Edit/" + CustomerCode,
+                                type:"Post",
+                                data:
+                                    {
+                                    UserCode: CustomerCode,
+                                    UserName: SuperUsername,
+                                    Password: SuperUserPassword
+                                    },
+                                success: function(_data)
+                                    {
+                                    var obj = JSON.parse(_data);
+                                    if (obj == "Null") {
+                                        toastr.error('Please Enter Correct Supper User Credentials');
+                                        $('#btn_ConfirmSuperUser').removeAttr("disabled");
+                                    }
+                                    if (obj == "No User") {
+                                        toastr.error('User Not Exists');
+                                        $('#btn_ConfirmSuperUser').removeAttr("disabled");
+                                    }
+                                    if(obj!="Null"&&obj!="No User")
+                                    {
+                                        clearform()
+                                      //  alert("Success");
+                                        $("#txt_Id").val(obj.Id);
+                                        $("#txt_Name").val(obj.UserName);
+                                        $("#ddl_location").val(obj.Location);
+                                        $("#ddl_Status").val(obj.Status);
+                                        $("#txt_Email").val(obj.Email);
+                                        $("#Password").val(obj.Password);
+                                        $("#confirmpassword").val(obj.Password);
+                                        $('#btn_ConfirmSuperUser').removeAttr("disabled");
+                                        $('#btn_submit').removeAttr("disabled");
+                                        // $("#SuperUserModel").modal("false");
+                                        $('#myModal').modal('show');
+                                        $('#SuperUserModel').modal('hide');
+                                    }
+                                   
+                                    },
+                                error: function (xhr) {
+                                  //  $('#btn_ConfirmSuperUser').attr('disabled', 'disabled');
+                                    $('#btn_ConfirmSuperUser').removeAttr("disabled");
+                                    alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                                }
+
+                            });
+                            }
+                            $('#btn_ConfirmSuperUser').removeAttr("disabled");
+                        });
+
+                        function clearform()
+                        {
+                            $("#txt_Id").val("");
+                            $("#txt_Name").val("");
+                            $("#ddl_location").val("");
+                            $("#ddl_Status").val("");
+                            $("#txt_Email").val("");
+                            $("#Password").val("");
+                            $("#confirmpassword").val("");
+                        }
+
+                    </script>
+                }
+                @*}*@

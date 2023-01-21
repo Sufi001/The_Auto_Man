@@ -1,0 +1,564 @@
+﻿@model Inventory.ViewModels.ReportsViewModels.PurchaseReportViewModel
+@{
+    ViewBag.Title = "Department Info";
+}
+@section Css{
+    <style>
+        a {
+            cursor: pointer;
+        }
+
+            a:not([href]):not([tabindex]) {
+                color: #007bff;
+            }
+
+        #list {
+            width: 90px;
+            margin-left: 3px;
+        }
+
+        #Product {
+            width: 90px;
+            margin-left: 3px;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        @*<section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-1">
+                        <div class="col-sm-6">
+                            <h3> Edit Department/Group/Sub Group</h3>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li>List</li>
+                                <li>tables</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>*@
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <!-- /.card -->
+                    <div class="card">
+                        <div class="card-header" style="background-color:#3498DB;height:55px">
+                            <div class="row">
+                                <div class="col-6 pt-1">
+                                    <h2 class="card-title"><b style="color:white">Edit Department/Group/Sub Group</b></h2>
+                                </div>
+                                <div class="col-6">
+                                    @* <button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="" class="btn fa-pull-right" onclick="location.href='@Url.Action("Index", "Items", new { target="_blank" })'">Product</button>
+                                        <button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="" class="btn fa-pull-right" onclick="location.href='@Url.Action("List", "Items", new { target="_blank" })'">List</button>*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="row" id="tableDepartmentDetail">
+                                        <div class="col-12">
+                                            <div class="table-responsive">
+                                                <table id="purchaseDetail_Table" class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="display:none">Edit</th>
+                                                            <th style="background-color:#3498DB;color:white">Department Name <i style="float:right" class="fas fa-plus" onclick="AddNew('D')"></i></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tbldepartmentBody">
+                                                        @{int i = 1;}
+                                                        @if (ViewBag.Departmentlist != null)
+                                                        {
+                                                            foreach (var item in ViewBag.Departmentlist)
+                                                            {
+                                                                <tr id="TDRR@(i)">
+                                                                    <td style="display:none" id="TDC@(i)">@item.DEPT_CODE</td>
+                                                                    <td contenteditable="true" onfocus="Checklength(this)" id="TDN@(i)" style="height:30px"><a id="TDNA@(i)" onclick="getGroup('TDRR@(i)')">@item.DEPT_NAME</a><a onclick="updateDepartment('@(i)')" style=float:right class='fa fa-edit'></a></td>
+
+                                                                </tr>
+                                                                i = i + 1;
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="row" id="tableGroupDetail">
+                                        <div class="col-12">
+                                            <div class="table-responsive">
+                                                <table id="purchaseDetail_Table" class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                                    <thead>
+
+                                                        <tr>
+                                                            <th style="display:none">Group Code</th>
+                                                            <th style="background-color:#3498DB;color:white">Group Name<i style="float:right" class="fas fa-plus" onclick="AddNew('DG')"></i></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tblgroupBody"></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="row" id="tableSubGroupDetail">
+                                        <div class="col-12">
+                                            <div class="table-responsive">
+                                                <table id="purchaseDetail_Table" class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                                    <thead>
+
+                                                        <tr>
+                                                            <th style="display:none">Group Code</th>
+                                                            <th style="background-color:#3498DB;color:white">Sub Group Name<i style="float:right" class="fas fa-plus" onclick="AddNew('DGS')"></i></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tblsubGroupBody"></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <input type="text" id="DeptCode" style="display:none" />
+        <input type="text" id="GroupCode" style="display:none" />
+
+
+        <div id="AddNewDepartment" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header btn-primary">
+                        <h4 class="modal-title">Add Department</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="DeptName" class="form-control" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" id="SaveDept" onclick="SaveDepartment()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="AddNewGroup" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header btn-primary">
+                        <h4 class="modal-title">Add Group</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="GroupName" class="form-control" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" id="SaveDept" onclick="SaveGroup()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="AddNewSubGroup" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header btn-primary">
+                        <h4 class="modal-title">Add SubGroup</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="SubGroupName" class="form-control" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" id="SaveDept" onclick="SaveSubGroup()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#ddl_SubGroup').empty();
+            $('#ddl_Group').empty();
+
+
+        })
+        function FillGroup() {
+            $('#ddl_SubGroup').empty();
+            var v = jQuery("#ddl_Department option:selected").text();
+            var stateId = $('#ddl_Department').val();
+            $('#txt_depgroup').val(stateId);
+            $.ajax({
+                url: "FillGroup/" + stateId,
+                type: "GET",
+                dataType: "JSON",
+                success: function (_data) {
+                    var obj = JSON.parse(_data);
+                    var items = "";
+                    $('#ddl_Group').empty();
+                    $('#ddl_Group').append(new Option('Group', ''));
+                    $.each(obj, function (index, element) {
+                        $('#ddl_Group').append(new Option(obj[index].GROUP_NAME, obj[index].GROUP_CODE));
+                    });
+
+                    $('#ddl_Group').append(new Option('Add New', ''));
+                    // AddStyle();
+                },
+                error: function (xhr) {
+                    //alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                }
+            }
+            );
+        }
+        function FillSubGroup() {
+            //   HideAll();
+            var v = jQuery("#ddl_Group option:selected").text();
+            var stateId = $('#ddl_Group').val();
+            var _id = '';
+            var stateId = $('#ddl_Department').val();
+            $('#txt_depgroup').val(stateId);
+            var _stateId = $('#ddl_Group').val();
+            _id = stateId + _stateId;
+            $('#txt_groupsubgroup').val(_stateId);
+            $.ajax({
+                url: "FillSubGroup/" + _id,
+                type: "GET",
+                dataType: "JSON",
+                success: function (_data) {
+                    var obj = JSON.parse(_data);
+                    var items = "";
+                    $('#ddl_SubGroup').empty();
+                    $('#ddl_SubGroup').append(new Option('Sub Group', ''));
+                    $.each(obj, function (index, element) {
+                        $('#ddl_SubGroup').append(new Option(obj[index].SGROUP_NAME, obj[index].SGROUP_CODE));
+                    });
+                },
+                error: function (xhr) {
+                    //alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                }
+            }
+            );
+        }
+        function getGroup(id) {
+            var id = id.substr(4, 7);
+            var DeptId = "#TDC" + id;
+            var DeptCode = $("#TDC" + id).text();
+            $("#DeptCode").val(DeptCode);
+            $.ajax({
+                url: "FillGroup/" + DeptCode,
+                type: "GET",
+                dataType: "JSON",
+                success: function (_data) {
+                    var obj = JSON.parse(_data);
+                    AddStyle();
+                    CreateGroupTable(obj);
+                    // alert("TDN1" + id);
+                    $("#TDN" + id).css("background-color", "#ddd");
+                },
+                error: function (xhr) {
+                    //alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                }
+            })
+        }
+        function CreateGroupTable(obj) {
+            $("#tblgroupBody tr").remove();
+            $("#tblsubGroupBody tr").remove();
+            var m = 1;
+            $.each(obj, function (index, element) {
+                //  $('#ddl_Group').append(new Option(obj[index].GROUP_NAME, obj[index].GROUP_CODE));
+                $("#tblgroupBody").append("<tr id=TGRR"
+                    + m + " ><td id=TGC" + m + " style=display:none>" + obj[index].GROUP_CODE +
+                    "</td><td onfocus=Checklength(this) style=height:30px contenteditable=true id=TGN" + m + "><a id=TGNA" + m + " onclick=getSubGroup(TGRR" + m + ") >"
+                    + obj[index].GROUP_NAME + "</a><a onclick=updateGroup(" + m + ") style=float:right class='fa fa-edit'></a></td></tr>");
+                m = m + 1;
+            });
+            // tblgroupBody
+        }
+        function getSubGroup(id) {
+            var TrId = id.id;
+            var id = TrId.substr(4, 7);
+            // var DeptId = "#TDC" + id;
+            var DeptCode = $("#DeptCode").val();//$("#TDC" + id).text();
+            //  var DeptId = "#TGC" + id;
+            var GroupCode = DeptCode + $("#TGC" + id).text();
+            //   alert(GroupCode);
+            $("#GroupCode").val($("#TGC" + id).text());
+            $.ajax({
+                url: "FillSubGroup/" + GroupCode,
+                type: "GET",
+                dataType: "JSON",
+                success: function (_data) {
+                    var obj = JSON.parse(_data);
+                    $("#" + TrId).css("background-color", "#ddd");
+                    CreateSubGroupTable(obj);
+                    // alert("success");
+                },
+                error: function (xhr) {
+                    //alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                }
+            })
+        }
+        function CreateSubGroupTable(obj) {
+            $("#tblsubGroupBody tr").remove();
+            var m = 1;
+            $.each(obj, function (index, element) {
+                //  $('#ddl_Group').append(new Option(obj[index].GROUP_NAME, obj[index].GROUP_CODE));
+                $("#tblsubGroupBody").append("<tr id=TSGR"
+                    + m + "><td id=TSGC" + m + " style=display:none>" + obj[index].SGROUP_CODE +
+                    "</td><td onfocus=Checklength(this) style=height:30px contenteditable=true id=TSGN" + m + " ><a id=TSGA" + m + ">"
+                    + obj[index].SGROUP_NAME + "</a><a onclick=updateSubGroup(" + m + ") style=float:right class='fa fa-edit'></a></td></tr>");
+                m = m + 1;
+            });
+            // tblgroupBodyd
+        }
+        function updateDepartment(id) {
+            var vmdep = {};
+
+            vmdep.DEPT_CODE = $("#TDC" + id).text();
+            //vmdep.DEPT_NAME = $("#TDN" + id).text();
+            var uppervalue = toUpper($("#TDN" + id).text());
+            $("#TDNA" + id).text(uppervalue);
+            vmdep.DEPT_NAME = $("#TDN" + id).text();
+            $.ajax({
+                url: "/DGS/UpdateDepartment",
+                method: "post",
+                data: vmdep
+            }).done(function (obj) {
+                toastr.success('Department Updated successfully.');
+            }).fail(function () {
+                toastr.error('Department not Updated.');
+            });
+        }
+        function updateGroup(id) {
+            var vmdep = {};
+            vmdep.DEPT_CODE = $("#DeptCode").val();
+            vmdep.GROUP_CODE = $("#TGC" + id).text();
+            var uppervalue = toUpper($("#TGN" + id).text());
+            $("#TGNA" + id).text(uppervalue);
+            vmdep.GROUP_NAME = $("#TGN" + id).text();
+            $.ajax({
+                url: "/DGS/UpdateGroup",
+                method: "post",
+                data: vmdep
+            }).done(function (obj) {
+                toastr.success('Group Updated successfully.');
+            }).fail(function () {
+                toastr.error('Group Not Updated.');
+            });
+        }
+        function updateSubGroup(id) {
+            var vm = {};
+            vm.SGROUP_CODE = $("#TSGC" + id).text();
+            var uppervalue = toUpper($("#TSGN" + id).text());
+            $("#TSGA" + id).text(uppervalue);
+            vm.SGROUP_NAME = $("#TSGN" + id).text();
+            vm.DEPT_CODE = $("#DeptCode").val();
+            vm.GROUP_CODE = $("#GroupCode").val();
+            // vmdep.DEPT_CODE = $("#DeptCode").val();
+            //vmdep.GROUP_CODE = $("#TGC" + id).text();
+            //vmdep.GROUP_NAME = $("#TGN" + id).text();
+            $.ajax({
+                url: "/DGS/UpdateSubGroup",
+                method: "post",
+                data: vm
+            }).done(function (obj) {
+                toastr.success('SubGroup Updated successfully.');
+            }).fail(function () {
+                toastr.error('SubGroup not Updated successfully.');
+            });
+
+        }
+        function AddNew(q) {
+            if (q == "D") {
+                $("#AddNewDepartment").modal('show');
+            }
+            if (q == "DG") {
+                $("#AddNewGroup").modal('show');
+            }
+            if (q == "DGS") {
+                $("#AddNewSubGroup").modal('show');
+            }
+        }
+        function SaveDepartment() {
+            var DeptName = $("#DeptName").val().trim().toUpperCase();
+            department = {};
+            department.DEPT_NAME = DeptName;
+            $.ajax({
+                url: "/api/Department",
+                method: "post",
+                data: department
+            }).done(function (obj) {
+                if (obj == "exist") {
+                    toastr.error('Department with this name is already exist.');
+                }
+                if (obj == "ex") {
+                    toastr.error('Something Went Wrong');
+                }
+                else {
+                    //var lastInsertedDeptId;
+                    //$('#ddl_Department').empty();
+                    //$('#ddl_Department').append(new Option('Department', ''));
+                    //$.each(obj, function (index, element) {
+                    //    $('#ddl_Department').append(new Option(obj[index].DEPT_NAME, obj[index].DEPT_CODE));
+                    //    lastInsertedDeptId = obj[index].DEPT_CODE;
+                    //});
+                    //toastr.success('Department saved successfully.');
+                    //$('#ddl_Department').append("<option style='color:blue' value='Add New'>Add New</option>");
+                    ////$('#ddl_Department').val(lastInsertedDeptId);
+                    $("#DeptName").val("")
+                    window.location.reload();
+                }
+            }).fail(function () {
+                toastr.error('Data not saved.');
+            });
+
+        }
+        function SaveGroup() {
+            var group = {};
+            group.DEPT_CODE = $('#DeptCode').val();
+            group.GROUP_NAME = $("#GroupName").val().trim().toUpperCase();
+            if (group.GROUP_NAME == "" || group.DEPT_CODE == "") {
+                toastr.error("First Select Corresponding Department and Enter Correct Group Name");
+                return;
+            }
+            else {
+                $.ajax({
+                    url: "/api/Group",
+                    method: "post",
+                    data: group
+                }).done(function (obj) {
+                    if (obj == "exist") {
+                        toastr.error('Group with this name is already exist.');
+                    }
+                    else {
+                        //var lastInsertedGroupId;
+                        //$('#ddl_Group').empty();
+                        //$('#ddl_Group').append(new Option('Group', ''));
+                        //$.each(obj, function (index, element) {
+                        //    $('#ddl_Group').append(new Option(obj[index].GROUP_NAME, obj[index].GROUP_CODE));
+                        //    lastInsertedGroupId = obj[index].GROUP_CODE;
+                        //});
+                        //toastr.success('Group saved successfully.');
+                        //$('#ddl_Group').append("<option style='color:blue' value='Add New'>Add New</option>");
+                        ////$('#ddl_Group').val(lastInsertedGroupId);
+                        $("#GroupName").val("");
+                        window.location.reload();
+                    }
+                }).fail(function () {
+                    toastr.error('Data not saved.');
+                });
+            }
+        }
+        function SaveSubGroup() {
+            var SubGroup = {};
+            SubGroup.DEPT_CODE = $('#DeptCode').val();
+            SubGroup.GROUP_CODE = $("#GroupCode").val();
+            SubGroup.SGROUP_NAME = $("#SubGroupName").val().trim().toUpperCase();
+            if (SubGroup.DEPT_CODE == "" || SubGroup.GROUP_CODE == "" || SubGroup.SGROUP_NAME == "") {
+                toastr.error("First Select Corresponding Department,Group and Enter Correct Sub Group Name");
+                return;
+            }
+            else {
+                $.ajax({
+                    url: "/api/SubGroup",
+                    method: "post",
+                    data: SubGroup
+                })
+                .done(function (obj) {
+                    if (obj == "exist") {
+                        toastr.error("Sub Group with this name is already exist");
+                    }
+                    else {
+                        //var lastInsertedSubGroupId;
+                        //$('#ddl_SubGroup').empty();
+                        //$('#ddl_SubGroup').append(new Option('Sub Group', ''));
+                        //$.each(obj, function (index, element) {
+                        //    $('#ddl_SubGroup').append(new Option(obj[index].SGROUP_NAME, obj[index].SGROUP_CODE));
+                        //    lastInsertedSubGroupId = obj[index].SGROUP_CODE;
+                        //});
+                        //$('#ddl_SubGroup').append("<option style='color:blue' value='Add New'>Add New</option>");
+                        ////$('#ddl_SubGroup').val(lastInsertedSubGroupId);
+                        //toastr.success('SubGroup saved successfully.');
+                        $('#SubGroupName').val('');
+                        window.location.reload();
+                    }
+                })
+                .fail(function () {
+                    toastr.error('Data not saved.');
+                });
+            }
+        }
+        function Checklength(id) {
+            var id = "#" + id.id;
+            $(id).keypress(function (event) {
+                var keycode = event.which;
+                //var regex = new RegExp("^[a-z A-Z]+$");
+                //var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                ////if (!(event.shiftKey == false && (keycode == 46 || keycode == 8 || keycode == 37 || keycode == 39 || (keycode >= 48 && keycode <= 57)))) {
+                ////    event.preventDefault();
+                ////}
+                //if (!regex.test(key)) {
+                //    event.preventDefault();
+                //    return false;
+                //}
+
+                var data = $(id).text();
+                var length = data.length;
+                // alert(length);
+                if (length >= 30) {
+
+                    event.preventDefault();
+                }
+
+            })
+        }
+        function toUpper(str) {
+            return str
+                .toUpperCase()
+                .split(' ')
+                .map(function (word) {
+                    return word[0].toUpperCase() + word.substr(1);
+                })
+                .join(' ');
+        }
+        function AddStyle() {
+            var length = $("#tbldepartmentBody").find('tr');
+            length = length.length;
+            for (i = 1; i <= length; i++) {
+                if (i % 2 != 0) {
+                    $("#TDN" + i).css("background-color", "#f8f8f8");
+                }
+                else {
+                    $("#TDN" + i).css("background-color", "#ffffff");
+                }
+            }
+        }
+    </script>
+}

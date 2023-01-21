@@ -1,0 +1,170 @@
+﻿@{
+    ViewBag.Title = "Sales";
+}
+<link href="~/AdminLte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+<style>
+    .mar-top10 {
+        margin-top: 10px;
+    }
+
+    .float-right1 {
+        float: right;
+    }
+
+    .float-left1 {
+        float: left;
+    }
+
+    .desktopview {
+        display: block;
+    }
+
+    .mobileview {
+        display: none;
+    }
+
+    @@media only screen and (max-width:400px) {
+           .mar-top10 {
+        margin-top: 0px;
+    }
+        /*.col3-mbl{
+            max-width:33%;
+        }*/
+        .float-left1 {
+            float: none;
+        }
+
+        .float-right1 {
+            float: none;
+        }
+        /*.mar-topmblminus5{
+            margin-top:-5px;
+        }*/
+        .font-sizesmall {
+            font-size: 14px;
+        }
+        /*.mar-leftmbl{
+                margin-left: 251px;
+        }
+        .mar-topmblminus58{
+            margin-top:-58px;
+        }
+         .mar-topmblminus44{
+            margin-top:-44px;
+        }*/
+        .desktopview {
+            display: none;
+        }
+
+        .mobileview {
+            display: block;
+        }
+
+        .mar-topmbl {
+            margin-top: 62px;
+        }
+
+        .positionmbl {
+            position: absolute;
+            top: 128px;
+            width: 93%;
+        }
+        .pabsolute{
+            position:absolute;
+        }
+        .marleft165{
+            margin-left:165px;
+        }
+    }
+</style>
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="card" style="width:100%">
+                    <div class="card-header" style="background-color:rgba(0, 0, 0, 0.075)">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6 mar-top10 mar-topmbl">
+                                @Html.DropDownList("Branch", new SelectList(ViewBag.Branch, "Id", "Name"), "Select Branch",
+                        new { @style = "margin-top:2px", @id = "ddl_Branch", name = "ddl_Branch", @onchange = "Branch()", @class = "form-control" })
+                            </div>
+                           
+                            <div class="col-md-3 col-sm-6 mar-top10 pabsolute marleft165">
+                               
+                            </div>
+                            <div class="col-md-3 col-sm-6 mar-top10 mar-topmbl">
+                                <div class="ds">
+                                    <input type="radio" id="Detail" name="DS" value="Detail" onclick="IframeView(this)" /><span class="font-sizesmall"> &nbsp;&nbsp; Detail &nbsp;&nbsp;&nbsp;</span>
+                                    <input type="radio" id="Summary" name="DS" value="Summary" onclick="IframeView(this)" />&nbsp;&nbsp;<span class="font-sizesmall"> Summary</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mar-top10 pabsolute mar-top10">
+                                <button id="Report" class="btn btn-primary pull-right" onclick="GetData()">Report</button>
+
+                               
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="DetailReport">
+                            <iframe name="DetailFrame" id="DetailFrame" src="" style="width:100%;height:800px;background-color:white" frameborder="0"></iframe>
+                            @*</div>
+                                <div id="SummaryReport">*@
+                            <iframe name="SummaryFrame" id="SummaryFrame" src="" style="width:100%;height:800px;background-color:white" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                    @*<div class="card-footer">Footer</div>*@
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+
+        $("#SetExtraText").text("(Negitive Stock Report)");
+
+
+
+        $(document).ready(function () {
+           
+
+            $(".ds").hide();
+        });
+       
+        function IframeView(e) {
+            var valueofRadio = e.value;
+            if (valueofRadio == "Detail") {
+                $("#DetailFrame").show();
+                $("#SummaryFrame").hide();
+            }
+            else {
+                $("#DetailFrame").hide();
+                $("#SummaryFrame").show();
+            }
+        }
+        //function(s for webReport)
+        function GetData() {
+            var BranchId = $("#ddl_Branch").val();
+
+            $("#Report").attr("disabled", "disabled");
+
+            var DetailUrl = "";
+            var SummaryUrl = "";
+           
+              DetailUrl = "/Reports/NegitiveStockByBranch?Branch=" + BranchId;
+              SummaryUrl = "/Reports/NegitiveStockByBranch?Branch=" + BranchId;
+           
+
+            $('#DetailFrame').attr('src', "");
+            $('#DetailFrame').attr('src', DetailUrl);
+            $('#SummaryFrame').attr('src', "");
+            $('#SummaryFrame').attr('src', SummaryUrl);
+            $("#Report").removeAttr("disabled");
+            $("#Detail").click();
+            $(".ds").show();
+        }
+
+    </script>
+}

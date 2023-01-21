@@ -1,0 +1,366 @@
+﻿@model Inventory.ViewModels.GlChartViewModel
+
+@{
+    ViewBag.Title = "Chart Of Account";
+}
+<style>
+    .callout, .card, .info-box, .mb-3, .my-3, .small-box {
+        margin-bottom: 0.2rem !important;
+    }
+    .card-body{
+            height: 120px;
+    }
+    .card-header {
+        padding: .50rem 1.0rem;
+        padding-top: 0.25rem;
+        padding-right: 1.0rem;
+        padding-bottom: 0.0rem;
+        padding-left: 1.25rem;
+    }
+
+    select:focus, input:focus {
+        outline: none !important;
+        border-color: #719ECE !important;
+        box-shadow: 0 0 20px #719ECE !important;
+    }
+
+    #New,#list, #Sumbit {
+        width: 90px;
+        margin-left: 3px;
+    }
+    tbody>tr :hover{
+        outline: none !important;
+        box-shadow: 0 0 5px #719ECE !important;
+        cursor:pointer;
+    }
+
+</style>
+
+@using (Html.BeginForm("Save", "GlChart", FormMethod.Post, new { enctype = "multipart/form-data", id = "Form", Class = "was-validated" }))
+{
+    @Html.EditorFor(model => model.ACCOUNT_CODE, new { htmlAttributes = new { @type = "hidden" } })
+    @Html.EditorFor(m => m.MAIN_ACCOUNT_CODE, new { htmlAttributes = new { @type = "hidden" } })
+    @Html.EditorFor(m => m.CONTROL_CODE, new { htmlAttributes = new { @type = "hidden" } })
+    @Html.EditorFor(m => m.SUB_CONTROL_CODE, new { htmlAttributes = new { @type = "hidden" } })
+    @Html.EditorFor(m => m.SUBSIDIARY_CONTROL_CODE, new { htmlAttributes = new { @type = "hidden" } })
+    
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="row" id="_form">
+                <div class="col-12">
+                    <!-- Custom Tabs -->
+                    <div class="card">
+                        <div class="card-header d-flex p-0" style="background-color:#3498DB">
+                                <h2 class="card-title p-3"><b style="color:white">Chart of Account</b></h2>
+                            <ul class="nav nav-pills ml-auto p-2">
+                                <li><button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="New" class="btn fa-pull-right" onclick="ClearMe()"> NEW </button></li>
+                                    <li><button style="border:1px solid; background-color:#3985d2;color:white" type="button" value="Save" id="Sumbit" class="btn fa-pull-right" > Save</button></li>
+                                    @*<li><button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="list" class="btn  fa-pull-right" onclick="location.href='@Url.Action("List", "GlChart", new { target = "_blank" })'">List</button></li>*@
+                            </ul>
+                        </div><!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-3 col-md-3 col-sm-6">
+                                    <div class="form-group has-float-label">
+                                        @Html.DropDownListFor(m => m.ACCOUNT_TYPE, new SelectList(Model.AccountTypeList, "Value", "Text"), "Account Type", new { @class = "form-control", @id = "ACCOUNT_TYPE", @name = "ACCOUNT_TYPE", required = "required", @onchange = "GetLevelOne()" })
+                                        <label for="ACCOUNT_TYPE">Account Type</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.ACCOUNT_TITLE, new { htmlAttributes = new { @class = "form-control", @placeholder = "Account Title", @required = "required" } })
+                                        <label for="ACCOUNT_TITLE">Account Title</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.TITLE_URDU, new { htmlAttributes = new { @class = "form-control", @placeholder = "Urdu Title" } })
+                                        <label for="TITLE_URDU">Urdu Title</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6" id="accCategory" style="display:none">
+                                    <div class="form-group has-float-label">
+                                        @Html.DropDownListFor(m => m.ACCOUNT_CATEGORY, new SelectList(Model.AccountCategoryList, "Value", "Text"), "Account Category", new { @class = "form-control", @id = "ACCOUNT_CATEGORY", @name = "ACCOUNT_CATEGORY" })
+                                        <label for="ACCOUNT_CATEGORY">Account Category</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-3 col-sm-6" id="openBal" style="display:none">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.OPEN_BAL, new { htmlAttributes = new { @class = "form-control", @placeholder = "Opening Balance" } })
+                                        <label for="OPEN_BAL">Opening Balance</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6" id="openBalCr" style="display:none">
+                                    <div class="form-group has-float-label">
+                                        @Html.EditorFor(model => model.OPEN_BAL_CR, new { htmlAttributes = new { @class = "form-control", @placeholder = "Opening Balance Credit" } })
+                                        <label for="OPEN_BAL_CR">Opening Balance Credit</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:15px">
+                <div class="col-12">
+                    <div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th><span id="headingTitle"></span><span onclick="backTo()" class="fa fa-pull-right fa-arrow-left"></span></th>
+                                </tr>
+                            </thead>
+                            <tbody  id="LoadData">
+                                    @foreach (var main in Model.MainAccountList)
+                                    {
+                                        <tr>
+                                            <td style="padding-left:25px;" onclick="getData(this)" id="@main.Value" data="Level1">@main.Text</td>
+                                        </tr>
+                                    }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section scripts{
+    <script>
+        var CurrentLevel = "";
+        var fetchingData = false;
+        @if (TempData["fail"] != null) {
+                var message = TempData["fail"].ToString();
+                @:toastr.error('@message');
+        }
+        @if (TempData["success"] != null) {
+                var message = TempData["success"].ToString();
+                @:toastr.success('@message');
+            }
+        
+        function getData(obj)
+        {
+            if (fetchingData) {
+                return;
+            }
+            fetchingData = true;
+            showBal();
+            showAccountCategory();
+            var id = obj.id;
+            var level = obj.getAttribute('data');
+            var accountTitle = obj.textContent;
+            accountTitle = accountTitle + " /";
+            var previousHeading = $('#headingTitle').text();
+            previousHeading = previousHeading + accountTitle;
+            if (level == "Level1") {
+                $('#headingTitle').text(previousHeading);
+                showBal();
+                showAccountCategory("show");
+                GetCOA(2, id);
+                $('#MAIN_ACCOUNT_CODE').val(id);
+                //$('#CONTROL_CODE').val();
+                //$('#SUB_CONTROL_CODE').val();
+                //$('#SUBSIDIARY_CONTROL_CODE').val()
+                getSelectedAccountData(id);
+            }
+            else if (level == "Level2") {
+                $('#headingTitle').text(previousHeading);
+                showBal();
+                showAccountCategory("show");
+                GetCOA(3, id);
+                $('#CONTROL_CODE').val(id);
+                //$('#SUB_CONTROL_CODE').val();
+                //$('#SUBSIDIARY_CONTROL_CODE').val();
+                getSelectedAccountData(id);
+            }
+            else if (level == "Level3") {
+                $('#headingTitle').text(previousHeading);
+                showBal("show");
+                showAccountCategory("show");
+                GetCOA(4, id);
+                $('#SUB_CONTROL_CODE').val(id);
+                //$('#SUBSIDIARY_CONTROL_CODE').val();
+                getSelectedAccountData(id);
+            }
+            else if (level == "Level4") {
+                showBal("show");
+                showAccountCategory("show");
+                getSelectedAccountData(id);
+                fetchingData = false;
+            }
+            else {
+                fetchingData = false;
+                return;
+            }
+        }
+        
+        function GetCOA(level, main) {
+            $.ajax({
+                url: "/GlChart/GetCOA/?level=" + level + "&parent=" + main,
+                type: "GET",
+                dataType: "JSON",
+                success: function (obj) {
+                    var html = "";
+                    var nextLevel = "Level" + (level);
+                    $.each(obj, function (index, element) {
+                        html += '<tr><td style="padding-left:25px;" onclick="getData(this)" id="' + obj[index].Value + '" data="' + nextLevel + '">' + obj[index].Text + '</td></tr>';
+                    });
+                    CurrentLevel = nextLevel;
+                    $('#LoadData').html(html);
+                    fetchingData = false;
+                },
+                error: function (xhr) {
+                    alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                }
+            });
+        }
+        function backTo() {
+            var arr = $('#headingTitle').text();
+            arr = arr.split('/');
+            var main = "";
+            if (CurrentLevel == "Level2") {
+                main = "";
+                GetCOA(1, main);
+                
+                //$('#MAIN_ACCOUNT_CODE').val("");
+                //$('#CONTROL_CODE').val("");
+                //$('#SUB_CONTROL_CODE').val("");
+                //$('#SUBSIDIARY_CONTROL_CODE').val("");
+                $('#headingTitle').text("");
+                showBal();
+                showAccountCategory();
+                getSelectedAccountData("");
+            }
+            else if (CurrentLevel == "Level3") {
+                main = $('#MAIN_ACCOUNT_CODE').val();
+                GetCOA(2, main);
+
+                ////$('#MAIN_ACCOUNT_CODE').val("");
+                //$('#CONTROL_CODE').val("");
+                //$('#SUB_CONTROL_CODE').val("");
+                //$('#SUBSIDIARY_CONTROL_CODE').val("");
+                $('#headingTitle').text(arr[0] + " /");
+                showBal();
+                showAccountCategory("show");
+                getSelectedAccountData(main);
+            }
+            else if (CurrentLevel == "Level4") {
+                main = $('#CONTROL_CODE').val();
+                GetCOA(3, main);
+                ////$('#CONTROL_CODE').val("");
+                //$('#SUB_CONTROL_CODE').val("");
+                //$('#SUBSIDIARY_CONTROL_CODE').val("");
+                $('#headingTitle').text(arr[0] + " /" + arr[1] + " /");
+                showBal();
+                showAccountCategory("show");
+                getSelectedAccountData(main);
+            }
+            else{
+                return;
+            }
+        }
+        function getSelectedAccountData(accountCode) {
+            if (accountCode == "") {
+                $('#ACCOUNT_TYPE').val("");
+                $('#ACCOUNT_TITLE').val("");
+                $('#TITLE_URDU').val("");
+                $('#ACCOUNT_CATEGORY').val("");
+                $('#OPEN_BAL').val("");
+                $('#OPEN_BAL_CR').val("");
+                $('#ACCOUNT_CODE').val("");
+                return;
+            }
+            $.ajax({
+                url: "/GlChart/Edit/?id=" + accountCode,
+                type: "GET",
+                dataType: "JSON",
+                success: function (obj) {
+                    $('#ACCOUNT_TYPE').val(obj.ACCOUNT_TYPE);
+                    $('#ACCOUNT_TITLE').val(obj.ACCOUNT_TITLE);
+                    $('#TITLE_URDU').val(obj.TITLE_URDU);
+                    $('#ACCOUNT_CATEGORY').val(obj.ACCOUNT_CATEGORY);
+                    $('#OPEN_BAL').val(obj.OPEN_BAL);
+                    $('#OPEN_BAL_CR').val(obj.OPEN_BAL_CR);
+                    $('#ACCOUNT_CODE').val(obj.ACCOUNT_CODE);
+                    $('#ACCOUNT_TYPE').attr("disabled","disabled");
+                },
+                error: function (xhr) {
+                    alert('Request Status: \n ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                }
+            });
+        }
+        function showBal(s) {
+            if (s == "show") {
+                $('#openBal').show();
+                $('#openBalCr').show();
+            }
+            else {
+                $('#openBal').hide();
+                $('#openBal').val("");
+                $('#openBalCr').hide();
+                $('#openBalCr').val("");
+            }
+        }
+        function showAccountCategory(s) {
+            if (s == "show") {
+                $('#accCategory').show();
+            }
+            else {
+                $('#accCategory').hide();
+                $("#ACCOUNT_CATEGORY").val('');
+            }
+        }
+
+        $('#Sumbit').click(function () {
+            if (CurrentLevel == "Level1") {
+                $('#MAIN_ACCOUNT_CODE').val("");
+                $('#CONTROL_CODE').val("");
+                $('#SUB_CONTROL_CODE').val("");
+                $('#SUBSIDIARY_CONTROL_CODE').val("");
+            }
+            else if (CurrentLevel == "Level2") {
+                $('#CONTROL_CODE').val("");
+                $('#SUB_CONTROL_CODE').val("");
+                $('#SUBSIDIARY_CONTROL_CODE').val("");
+            }
+            else if (CurrentLevel == "Level3") {
+                $('#SUB_CONTROL_CODE').val("");
+                $('#SUBSIDIARY_CONTROL_CODE').val("");
+            }
+            else if (CurrentLevel == "Level4") {
+                $('#SUBSIDIARY_CONTROL_CODE').val("");
+            }
+           
+            var type = $('#ACCOUNT_TYPE').val();
+            var title = $('#ACCOUNT_TITLE').val();
+
+            if (type == "" || type == null || type == undefined) {
+                toastr.error("Select Account Type");
+                return;
+            }
+            else if (title == "" || title == null || title == undefined) {
+                toastr.error("Account Title Is Required");
+                return;
+            }
+            else {
+                $('#ACCOUNT_TYPE').removeAttr("disabled");
+                $('#Form').submit();
+            }
+            
+        });
+        function ClearMe() {
+            $('#ACCOUNT_CODE').val(""); 
+            $('#ACCOUNT_TYPE').removeAttr("disabled");
+            $('#ACCOUNT_TYPE').val("");
+            $('#ACCOUNT_TITLE').val("");
+            $('#TITLE_URDU').val("");
+            $('#ACCOUNT_CATEGORY').val("");
+            $('#OPEN_BAL').val("");
+            $('#OPEN_BAL_CR').val("");
+        }
+</script>
+}
+
+

@@ -1,0 +1,58 @@
+﻿@model Inventory.ViewModels.LoginViewModel
+@{
+    ViewBag.Title = "LoginForm";
+    Layout = "~/Views/Shared/_Login.cshtml";
+}
+<style>
+    body {
+        background-color: lightblue;
+    }
+</style>
+
+<br />
+<div class="row">
+    <div style="margin-top:150px">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xl-3"></div>
+
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xl-3">
+                <img src="~/images/ghee.jpg" id="" onclick="GoTo('gold')" alt="" class="img-responsive" style="height:250px; width:100%" />
+                <div class="col-12">
+                    <input type="button" value="SB GOLD GHEE" onclick="GoTo('gold')" class="btn btn-block" style="background-color: #4285f4; color: #ffffff; height:40px; margin-top:10px" />
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xl-3">
+                <img src="~/images/sugar.jpg" id="" onclick="GoTo('sugar')" alt="" class="img-responsive" style="height:250px; width:100%" />
+                <div class="col-12">
+                    <input type="button" value="SB GOLD SUGAR" class="btn btn-block" onclick="GoTo('sugar')" style="background-color: #4285f4; color: #ffffff; height:40px; margin-top:10px" />
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xl-3"></div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts{
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <script src="~/AdminLte/plugins/toastr/toastr.min.js"></script>
+    <script>
+
+        function GoTo(str) {
+            if (str == 'gold') {
+                window.location.href = 'http://sbgold.irfannbrothers.com/Account/Login';
+            }
+            else if (str == 'sugar') {
+                window.location.href = 'http://sugar.irfannbrothers.com/Account/Login';
+            }
+    }
+    </script>
+}
+
+
+
+
+
+

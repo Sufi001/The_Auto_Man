@@ -1,0 +1,216 @@
+﻿@model IEnumerable<Inventory.ViewModels.DocumentListViewModel>
+@{
+    ViewBag.Title = "List";
+}
+@section CSS{
+    <style>
+        #list {
+            width: 90px;
+            margin-left: 3px;
+        }
+
+        #Product {
+            width: 90px;
+            margin-left: 3px;
+        }
+
+        table thead tr th {
+            color: white;
+        }
+    </style>
+
+}
+
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        @*<section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-1">
+                        <div class="col-sm-6">
+                            <h1>DataTables</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active">DataTables</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>*@
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+
+                    <!-- /.card -->
+                    <div class="card">
+                        <div class="card-header" style="background-color:#3498DB;height:55px" >
+                            <div class="row">
+                                <div class="col-6 pt-1">
+                                    <h2 class="card-title"><b style="color:white">Wast List</b></h2>
+                                </div>
+                                <div class="col-6">
+                                    <button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="list" class="btn btn-default fa-pull-right" onclick="location.href='@Url.Action("Index", "StockAdjustment", new { target="_blank" })'">Wast</button>
+                                </div>
+                            </div>
+                        </div>
+                        @{int i = 0;}
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped" width="100%" cellspacing="0">
+                                    <thead style="background-color:#3498DB;color:white">
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Doc No</th>
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var item in Model)
+                                        {
+                                            i = i + 1;
+                                            <tr>
+                                                <td>@i</td>
+                                                <td>@Html.ActionLink(item.DocNo, "Edit", new { docno = item.DocNo })</td>
+                                                <td>@item.Doc.ToString("dd-MM-yyyy")</td>
+                                                @{
+                                                    var data = String.Format("{0:0.00}", item.Amount);
+                                                }
+                                                <td>@data</td>
+                                                <td>@item.Status</td>
+                                            </tr>
+                                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*<div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </span>
+                    <input type="text" class="form-control" id="txt_docNo" name="txt_docNo" placeholder="search" />
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6  col-sm-12 col-xs-12">
+
+            </div>
+        </div>
+
+        <div class="row" style="margin-left:2px;margin-top:10px">
+
+            <div class="panel panel-default" name="tbl_custTable">
+                <div class="panel-heading">
+                    Purchase List
+                </div>
+                @{int i = 0;}
+                <div style="display:block; height:415px;overflow:auto; overflow-y:scroll;">
+
+                    <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="stock_Table">
+
+                        <thead>
+                            <tr>
+                                <th class="col-xs-1">No</th>
+                                <th class="col-lg-3 col-md-3 col-xs-2">Doc_No</th>
+                                <th class="col-lg-3 col-md-3 col-xs-2">Date</th>
+                                <th class="col-lg-3 col-md-3 col-xs-2">Location</th>
+                                <th style="display:none">Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                i = i + 1;
+                                <tr>
+                                    <td class="col-xs-1">@i</td>
+                                    <td class="col-lg-3 col-md-3 col-xs-2">@Html.ActionLink(item.DocNo, "Edit", new { docno = item.DocNo })</td>
+                                    <td class="col-lg-3 col-md-3 col-xs-2">@item.Doc.ToString("dd-MM-yyyy")</td>
+                                    <td class="col-lg-3 col-md-3 col-xs-2">@item.Location</td>
+                                    @{
+                                        var data = String.Format("{0:0.00}", item.Amount);
+                                    }
+                                    <td style="display:none">@data</td>
+                                    <td>@item.Status</td>
+                                </tr>
+                                        }
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+            <p id="filter" style="margin-left:1px; margin-top:20px"></p>
+        </div>
+        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+            <p id="pagination" style="float:right"></p>
+        </div>
+
+
+    </div>*@
+@section scripts
+
+{
+    <script src="~/AdminLte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/AdminLte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script>
+        $("#example1").DataTable({
+            "pageLength": 50
+        });
+
+    </script>
+}

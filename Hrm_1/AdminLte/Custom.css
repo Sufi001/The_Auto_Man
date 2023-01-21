@@ -1,0 +1,30 @@
+﻿body {
+    line-height:1;
+}
+.card-body {
+    padding: .8rem;
+}
+
+.form-control.is-valid, .was-validated .form-control:valid,.was-validated .form-control:invalid {
+    padding-right: 1rem;
+    background-image: none;
+}
+
+
+
+
+
+.progress-description,
+  .info-box-text{
+    max-width: 139px;
+}
+
+
+
+
+@media (min-width: 1000px) {
+   .progress-description,
+  .info-box-text{
+    max-width: 800px;
+}
+}

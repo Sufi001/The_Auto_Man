@@ -1,0 +1,112 @@
+﻿@model List<Inventory.FBR_POS_ID>
+@{
+    ViewBag.Title = "POS List";
+}
+@section CSS{
+    <style>
+        #list,#Product {
+            width: 90px;
+            margin-left: 3px;
+        }
+
+        table thead tr th {
+            color: white;
+        }
+    </style>
+}
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header" style="background-color:#3498DB;height:55px">
+                            <div class="row">
+                                <div class="col-6 pt-1">
+                                    <h2 class="card-title"><b style="color:white">Registred POS List</b></h2>
+                                </div>
+                                <div class="col-6">
+                                    <button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="list" class="btn  fa-pull-right" onclick="location.href='@Url.Action("Registration", "POS")'">Back</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="example1">
+                                    <thead style="background-color:#3498DB">
+                                        <tr>
+                                            <th width="5%">No</th>
+                                            <th width="15%">POS ID</th>
+                                            <th width="20%">Branch Name</th>
+                                            <th width="20%">Business Name</th>
+                                            <th width="20%">NTN</th>
+                                            <th width="15%">City</th>
+                                            <th width="5%">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{int n = 0;}
+                                        @foreach (var item in Model)
+                                        {
+                                            n = n + 1;
+                                            <tr>
+                                                <td>@n</td>
+                                                <td>@item.POS_ID</td>
+                                                <td>@item.BRANCH_NAME</td>
+                                                <td>@item.BRANCH_NAME</td>
+                                                <td>@item.NTN</td>
+                                                <td>@item.CITY</td>
+                                                <td><a href="/POS/Edit/@item.POS_ID"><span><i class='fa fa-edit'></i></span></a></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/AdminLte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/AdminLte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script>
+  $(function () {
+    $("#example1").DataTable();
+    //$('#example2').DataTable({
+    //  "paging": true,
+    //  "lengthChange": false,
+    //  "searching": false,
+    //  "ordering": true,
+    //  "info": true,
+    //  "autoWidth": false,
+    //});
+  });
+    </script>
+    <script>
+        $(document).ready(function () {
+            //  Product_Table
+            var table = $('#item_Table').DataTable({
+                "bAutoWidth": false,
+                "bScrollCollapse": true,
+
+                "responsive": true,
+
+                "dom": "<'row'<'col-sm-12'tr>>" +
+         "<'row'<'col-sm-4'l><'col-sm-8'p>>",
+                "oLanguage": {
+                    "sLengthMenu": "_MENU_ "
+                }
+            });
+        });
+
+    </script>
+}

@@ -1,0 +1,235 @@
+﻿@model IEnumerable<Inventory.ViewModels.Item.ItemViewModel>
+@{
+    ViewBag.Title = "Item List";
+}
+@section CSS{
+    <style>
+        #ShowProducts {
+            width: 150px;
+            margin-left: 3px;
+        }
+
+        #CodeGenerate {
+            width: 150px;
+            margin-left: 3px;
+        }
+
+        table thead tr th {
+            color: white;
+        }
+
+        .item-list-header {
+            background-color: #3498DB;
+            height: 55px;
+        }
+
+        @@media only screen And (max-width:400px) {
+            .item-list-header {
+                background-color: #3498DB;
+                height: 93px;
+            }
+        }
+    </style>
+}
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header item-list-header" style="">
+                            <div class="row">
+                                <div class="col-6 pt-1">
+                                    <h2 class="card-title"><b style="color:white">Item List</b></h2>
+                                </div>
+                                <div class="col-6">
+                                    <button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="CodeGenerate" class="btn  fa-pull-right" onclick="Generate()">Generate Code</button>
+                                    <button style="border:1px solid; background-color:#3985d2;color:white" type="button" id="ShowProducts" class="btn  fa-pull-right" onclick="showModel()">Show Product</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="ProductTable">
+                                    <thead style="background-color:#3498DB">
+                                        <tr>
+                                            <th width="">No</th>
+                                            <th width="">Barcode</th>
+                                            @*<th width="">R.F Code</th>*@
+                                            <th width="">Name</th>
+                                            @*<th width="">Name</th>*@
+                                            @*<th width="">C.Size</th>
+                                                <th width="">UAN</th>
+                                                <th width="">Cost</th>
+                                                <th width="">Retail</th>*@
+
+                                            <th width="">QTY</th>
+                                            <th width="">Exp</th>
+                                            <th width="">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{int n = 0;}
+                                        @foreach (var item in Model)
+                                        {
+                                            n = n + 1;
+
+                                            <tr>
+                                                <td align="center">@n</td>
+                                                <td>@item.Barcode</td>
+                                                @*<td>@item.ReferenceCode</td>*@
+                                                <td>@item.Description</td>
+                                                @*<td>@item.UrduName</td>*@
+                                                @*<td align="center">@item.Ctnpcs</td>
+                                                    <td>@item.Uanno</td>
+                                                    <td align="center">@item.Cost</td>
+                                                    <td align="center">@item.Retail</td>*@
+
+                                                <td align="center"><input class="form-control" type="number" id="@(item.Barcode)" style="max-width:100px;max-height:20px" /></td>
+                                                <td align="center"><input class="form-control" type="text" id="@(item.Barcode)E" style="max-width:100px;max-height:20px" /></td>
+                                                <td align="center"><span onclick="AddProduct('@item.Barcode','@item.Description')"><i class='fa fa-plus' style="color:dodgerblue"></i></span></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="modal fade" id="pModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Products For Barcode</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="">
+                <div class="table-responsive">
+                    <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="">
+                        @*<thead style="background-color:#3498DB">
+                                <tr>
+                                    <th width="">No</th>
+                                    <th width="">Barcode</th>
+                                    <th width="">Name</th>
+                                    <th width="">QTY</th>
+                                    <th width="">Exp</th>
+                                    <th width="">Action</th>
+                                </tr>
+                            </thead>*@
+                        <tbody id="pBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12 col-xs-12">
+    <div class="modal fade" id="myReportModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            <div class="modal-content">
+                <iframe name="DetailFrame" id="DetailFrame" src="about:blank" class="col-xs-12" style="height:600px"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/AdminLte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/AdminLte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script>
+        $(function () {
+            $("#ProductTable").DataTable({
+                "pageLength": 50
+            });
+        });
+        var productList = [];
+
+        function AddProduct(bCode, name) {
+            var obj = {};
+            obj.Barcode = bCode
+            obj.Name = name
+            obj.Qty = $("#" + bCode).val();
+            obj.Exp = $("#" + bCode + "E").val();
+            debugger;
+            if (bCode == null || bCode == "" || bCode == undefined) {
+                toastr.error("Invalid Selectiony");
+                return;
+            }
+            if (obj.Qty == null || obj.Qty == "" || obj.Qty == undefined) {
+                toastr.error("Enter Quantity");
+                return;
+            }
+
+
+
+            var isExist = false;
+            jQuery.each(productList, function (i, val) {
+                if (val.Barcode == bCode) {
+                    val.Qty = obj.Qty;
+                    val.Exp = obj.Exp;
+                    isExist = true;
+                }
+            });
+
+            if (!isExist) {
+                productList.push(obj);
+            }
+
+            toastr.success("Product Added");
+        }
+
+        function showModel() {
+            $("#pModal").modal();
+            FillModal();
+        }
+
+
+        function FillModal() {
+            $("#pBody").empty();
+            var counter = 1;
+            jQuery.each(productList, function (i, val) {
+                var Html = "<tr id=trrr" + counter + ">" +
+                          "<td>" + counter + "</td>" +
+                          "<td>" + val.Barcode + "</td>" +
+                          "<td>" + val.Name + "</td>" +
+                          "<td>" + val.Qty + "</td>" +
+                          "<td>" + val.Exp + "</td>" +
+                          "</tr>"
+                $("#pBody").append(Html);
+                $("#pBody tr").last().append("<td align='center'><a onclick='RemoveRow(trrr" + counter + "," + val.Barcode + ")' class='fa fa-minus' style='color:red'></a></td>");
+
+                counter++;
+            });
+        }
+
+        function RemoveRow(id, bCode) {
+            var data = $.grep(productList, function (e) {
+                return e.Barcode != bCode;
+            });
+            productList = data;
+            $(id).remove();
+            toastr.success("Product Removed");
+        }
+
+        function Generate() {
+            $.post("/Reports/SaveData", { RptData: productList },
+               function () {
+                   $('#DetailFrame').attr('src', "about:blank");
+                   var Url = "/Reports/GenerateBarcode";
+                   $('#DetailFrame').attr('src', Url);
+                   $('#myReportModal').modal();
+               });
+        }
+
+    </script>
+}
